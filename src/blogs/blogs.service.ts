@@ -42,4 +42,19 @@ export class BlogsService {
       throw new BadRequestException();
     }
   }
+
+  public async updateById(
+    _id: string,
+    pojo: BlogInputModel,
+  ): Promise<BlogPresentationModel> {
+    return await this.BlogModel.findOneAndUpdate({ _id }, pojo);
+  }
+
+  public async deleteById(_id: string) {
+    const result = await this.BlogModel.deleteOne({ _id });
+    if (result.deletedCount > 0) {
+      return;
+    }
+    throw new NotFoundException('blog does not exist');
+  }
 }
