@@ -3,16 +3,11 @@ import { BlogLogicModel } from '../Type/blogs.types';
 import { urlRegex } from '../../helpers/variables/urlRegex';
 import { MessageENUM } from '../../helpers/enums/message';
 import { ObjectId } from 'mongodb';
+import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
 @Schema({
   toJSON: {
     getters: true,
-    transform: (_, ret) => {
-      for (const key in ret) {
-        if (key.startsWith('_')) {
-          delete ret[key];
-        }
-      }
-    },
+    transform: deleteHidden,
   },
 })
 export class Blog implements Omit<BlogLogicModel, '_id'> {
