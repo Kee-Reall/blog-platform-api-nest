@@ -10,14 +10,11 @@ export type BlogLogicModel = {
   name: string;
   description: string;
   websiteUrl: string;
-  createdAt: string;
+  createdAt: Date;
   isMembership: boolean;
 };
 
-export type BlogPresentationModel = Omit<
-  BlogLogicModel,
-  '_id' | 'createdAt'
-> & {
+export type BlogPresentationModel = Omit<BlogLogicModel, '_id'> & {
   id: string;
   createdAt: string;
 };

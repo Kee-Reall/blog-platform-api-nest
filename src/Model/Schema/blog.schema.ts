@@ -1,9 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BlogLogicModel } from '../Type/blogs.types';
-import { urlRegex } from '../../helpers/variables/urlRegex';
+import { BlogLogicModel, BlogPresentationModel } from '../Type/blogs.types';
+import { urlRegexVariable } from '../../helpers/variables/urlRegex.variable';
 import { MessageENUM } from '../../helpers/enums/message';
 import { ObjectId } from 'mongodb';
 import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
+import { HydratedDocument } from 'mongoose';
+
+export type BlogDocument = HydratedDocument<BlogPresentationModel>;
+
 @Schema({
   toJSON: {
     getters: true,
@@ -29,19 +33,15 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
     required: [true, MessageENUM.REQUIRED_FIELD],
     minlength: [1, MessageENUM.LENGTH],
     maxlength: [300, MessageENUM.LENGTH],
-    validate: [urlRegex, MessageENUM.NOT_URL],
+    validate: [urlRegexVariable, MessageENUM.NOT_URL],
     trim: true,
   })
   public websiteUrl: string;
-  @Prop({ readOnly: true, default: new Date() }) private _createdAt: Date;
+  @Prop({ readOnly: true, default: new Date() }) public createdAt: Date;
   @Prop({ default: false }) public isMembership: boolean;
 
   get id(): string {
     return this._id.toHexString();
   }
-  get createdAt(): string {
-    return this._createdAt.toISOString();
-  }
 }
-
 export const BlogSchema = SchemaFactory.createForClass(Blog);

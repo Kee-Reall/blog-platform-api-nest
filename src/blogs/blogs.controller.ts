@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import {
@@ -15,15 +16,29 @@ import {
   BlogPresentationModel,
 } from '../Model/Type/blogs.types';
 import { VoidPromise } from '../Model/Type/promise.types';
+import { BlogFilters } from '../Model/Type/query.types';
+import { BlogsQueryRepository } from './repos/blogs.query.repository';
+import { PaginatedOutput } from '../Model/Type/pagination.types';
 
-@Controller()
+@Controller('api/blogs')
 export class BlogsController {
-  constructor(private blogService: BlogsService) {}
+  constructor(
+    private blogService: BlogsService,
+    private queryRepo: BlogsQueryRepository,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getBlogs(): Promise<BlogPresentationModel[]> {
-    return await this.blogService.getBlogs();
+  async getBlogs(
+    @Query() query: BlogFilters,
+  ): Promise<PaginatedOutput<BlogPresentationModel>> {
+    return await this.queryRepo.getBlogsWithPaginationConfig(query);
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getBlog(@Param('id') blogId: string): Promise<BlogPresentationModel> {
+    return await this.queryRepo.getBlogById(blogId);
   }
 
   @Post()
@@ -32,12 +47,6 @@ export class BlogsController {
     @Body() crateBlogPOJO: BlogInputModel,
   ): Promise<BlogPresentationModel> {
     return await this.blogService.createBlog(crateBlogPOJO);
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async getBlog(@Param('id') blogId: string): Promise<BlogPresentationModel> {
-    return await this.blogService.findById(blogId);
   }
 
   @Put(':id')
