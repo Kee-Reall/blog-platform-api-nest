@@ -14,8 +14,8 @@ export class BlogsQueryRepository {
   public async getBlogsWithPaginationConfig(
     query: BlogFilters,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
-    const config = new BlogsPaginationConfig(query);
-    const { filter, sortBy, sortDirection, shouldSkip, limit } = config;
+    const { filter, sortBy, sortDirection, shouldSkip, limit } =
+      new BlogsPaginationConfig(query);
     const direction: 1 | -1 = sortDirection === 'asc' ? 1 : -1;
     const items = await this.BlogModel.find(filter)
       .sort({ [sortBy]: direction })
@@ -24,7 +24,7 @@ export class BlogsQueryRepository {
     const totalCount = await this.BlogModel.countDocuments(filter);
     return {
       pagesCount: Math.ceil(totalCount / limit),
-      page: +query.pageNumber,
+      page: +query.pageNumber || 1,
       pageSize: limit,
       totalCount,
       items,
@@ -37,5 +37,13 @@ export class BlogsQueryRepository {
       throw new NotFoundException();
     }
     return blog;
+  }
+
+  public async getPostsByBlogId(id: string) {
+    const blog = this.BlogModel.findById(id);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    return true;
   }
 }

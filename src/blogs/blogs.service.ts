@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from '../Model/Schema/blog.schema';
 import {
@@ -26,14 +30,24 @@ export class BlogsService {
     return blog;
   }
 
-  // public async updateById(
-  //   _id: string,
-  //   pojo: BlogInputModel,
-  // ): Promise<BlogPresentationModel> {
-  //
-  // }
+  public async updateById(
+    _id: string,
+    pojo: BlogInputModel,
+  ): Promise<BlogPresentationModel> {
+    const blog = await this.BlogModel.findOneAndUpdate({ _id }, pojo, {
+      returnDocument: 'after',
+    });
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    return blog;
+  }
 
-  // public async deleteById(_id: string) {
-  //
-  // }
+  async deleteById(blogId: string) {
+    const result = await this.BlogModel.deleteOne({ _id: blogId });
+    if (result.deletedCount < 0) {
+      throw new NotFoundException();
+    }
+    return;
+  }
 }

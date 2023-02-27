@@ -19,6 +19,7 @@ import { VoidPromise } from '../Model/Type/promise.types';
 import { BlogFilters } from '../Model/Type/query.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
+import { PostInputModel } from '../Model/Type/posts.types';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -29,29 +30,31 @@ export class BlogsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getBlogs(
+  public async getBlogs(
     @Query() query: BlogFilters,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async getBlog(@Param('id') blogId: string): Promise<BlogPresentationModel> {
-    return await this.queryRepo.getBlogById(blogId);
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createBlog(
+  public async createBlog(
     @Body() crateBlogPOJO: BlogInputModel,
   ): Promise<BlogPresentationModel> {
     return await this.blogService.createBlog(crateBlogPOJO);
   }
 
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  public async getBlog(
+    @Param('id') blogId: string,
+  ): Promise<BlogPresentationModel> {
+    return await this.queryRepo.getBlogById(blogId);
+  }
+
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async updateBlog(
+  public async updateBlog(
     @Param('id') blogId: string,
     @Body() updateBlogPOJO: BlogInputModel,
   ): Promise<BlogPresentationModel> {
@@ -60,7 +63,21 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteBlog(@Param('id') blogId: string): VoidPromise {
+  public async deleteBlog(@Param('id') blogId: string): VoidPromise {
     return await this.blogService.deleteById(blogId);
+  }
+
+  @Get(':id/posts')
+  @HttpCode(HttpStatus.OK)
+  public async getPostsByBlogID(@Query() query, @Body('id') id: string) {
+    return await this.queryRepo.getPostsByBlogId(id);
+  }
+  @Post(':id/posts')
+  @HttpCode(HttpStatus.CREATED)
+  public async createPost(
+    @Param('id') blogId: string,
+    @Body() input: PostInputModel,
+  ) {
+    return true;
   }
 }

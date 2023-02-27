@@ -1,6 +1,8 @@
+import { FilterQuery } from 'mongoose';
+
 export type SortDirection = 'asc' | 'desc';
 export interface IPaginationConfig {
-  filter?: any;
+  filter?: FilterQuery<any>;
   sortBy: string;
   shouldSkip: number;
   limit: number;

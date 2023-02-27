@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BlogLogicModel, BlogPresentationModel } from '../Type/blogs.types';
 import { urlRegexVariable } from '../../helpers/variables/urlRegex.variable';
-import { MessageENUM } from '../../helpers/enums/message';
+import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
 import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
 import { HydratedDocument } from 'mongoose';
@@ -37,7 +37,12 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
     trim: true,
   })
   public websiteUrl: string;
-  @Prop({ readOnly: true, default: new Date() }) public createdAt: Date;
+  @Prop({
+    readOnly: true,
+    default: new Date(),
+    transform: (date: Date): string => date.toISOString(),
+  })
+  public createdAt: Date;
   @Prop({ default: false }) public isMembership: boolean;
 
   get id(): string {

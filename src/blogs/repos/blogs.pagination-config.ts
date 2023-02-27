@@ -1,11 +1,11 @@
 import { IPaginationConfig } from '../../Model/Type/pagination.types';
 import { BlogLogicModel } from '../../Model/Type/blogs.types';
-import { PaginationConfig } from '../../helpers/classes/pagination-config';
+import { PaginationConfigClass } from '../../helpers/classes/pagination-config.class';
 import { BlogFilters } from '../../Model/Type/query.types';
 import { FilterQuery } from 'mongoose';
 
 export class BlogsPaginationConfig
-  extends PaginationConfig<BlogLogicModel>
+  extends PaginationConfigClass<BlogLogicModel>
   implements IPaginationConfig
 {
   filter: FilterQuery<BlogLogicModel>;
