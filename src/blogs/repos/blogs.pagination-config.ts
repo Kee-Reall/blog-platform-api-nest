@@ -5,7 +5,7 @@ import { BlogFilters } from '../../Model/Type/query.types';
 import { FilterQuery } from 'mongoose';
 
 export class BlogsPaginationConfig
-  extends PaginationConfigClass<BlogLogicModel>
+  extends PaginationConfigClass
   implements IPaginationConfig
 {
   filter: FilterQuery<BlogLogicModel>;

@@ -5,7 +5,7 @@ import { FilterQuery } from 'mongoose';
 import { PostFilters } from '../../Model/Type/query.types';
 
 export class PostsPaginationConfig
-  extends PaginationConfigClass<PostLogicModel>
+  extends PaginationConfigClass
   implements IPaginationConfig
 {
   filter: FilterQuery<PostLogicModel>;
