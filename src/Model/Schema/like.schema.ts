@@ -1,13 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { MessageENUM } from '../../helpers/enums/message.enum';
+import { LikeModel } from '../Type/likes.types';
+import { HydratedDocument } from 'mongoose';
+import { ObjectId } from 'mongodb';
+
+export type LikeDocument = HydratedDocument<Like>;
 
 @Schema()
-export class Like {
-  @Prop({ required: true, readonly: true }) public target: string;
-  @Prop({ required: true, readonly: true }) public userId: string;
-  @Prop({ required: true }) public login: string;
-  @Prop({ required: true, default: new Date() }) public AddedAt: Date;
+export class Like implements Omit<LikeModel, 'likeStatus'> {
+  @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
+  public target: ObjectId;
+  @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
+  public userId: ObjectId;
+  @Prop({ required: [true, MessageENUM.REQUIRED_FIELD] }) public login: string;
+  @Prop({ required: true, default: new Date() }) public addedAt: Date;
   @Prop({ default: 'None', enum: ['Like', 'Dislike', 'None'] })
-  public LikeStatus: string;
+  public likeStatus: string;
 }
 
 export const LikeSchema = SchemaFactory.createForClass(Like);

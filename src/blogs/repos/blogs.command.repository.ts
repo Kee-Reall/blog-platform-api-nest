@@ -1,30 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
 import { Model } from 'mongoose';
 import { BlogInputModel } from '../../Model/Type/blogs.types';
+import { Repository } from '../../helpers/classes/repository.class';
+import { PostDocument } from '../../Model/Schema/post.schema';
 
 @Injectable()
-export class BlogsCommandRepository {
-  constructor(@InjectModel(Blog.name) private BlogModel: Model<BlogDocument>) {}
-  public async saveBlog(blog: BlogDocument): Promise<boolean> {
-    try {
-      await blog.save();
-      return true;
-    } catch (e) {
-      return false;
-    }
+export class BlogsCommandRepository extends Repository {
+  constructor(@InjectModel(Blog.name) private BlogModel: Model<BlogDocument>) {
+    super();
   }
 
-  public async updateBlog(_id: string, pojo: BlogInputModel): Promise<boolean> {
-    try {
-      const blog = await this.BlogModel.findOneAndUpdate({ _id }, pojo, {
-        returnDocument: 'after',
-      });
-      return !!blog;
-    } catch (e) {
-      return false;
+  public async updateBlog(id: string, pojo: BlogInputModel): Promise<boolean> {
+    const blog = await this.findById(this.BlogModel, id);
+    if (!blog) {
+      throw new NotFoundException();
     }
+    for (const key in pojo) {
+      blog[key] = pojo[key];
+    }
+    const isSaved: boolean = await this.save(blog);
+    if (!isSaved) {
+      throw new BadRequestException();
+    }
+    return !!blog;
+  }
+
+  public saveBlog(blog: BlogDocument): Promise<boolean> {
+    return this.save(blog);
+  }
+
+  public savePost(post: PostDocument): Promise<boolean> {
+    return this.save(post);
   }
 
   public async deleteBlog(_id: string): Promise<boolean> {

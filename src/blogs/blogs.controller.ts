@@ -19,7 +19,11 @@ import { VoidPromise } from '../Model/Type/promise.types';
 import { BlogFilters, PostFilters } from '../Model/Type/query.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
-import { PostInputModel } from '../Model/Type/posts.types';
+import {
+  PostInputModel,
+  PostPresentationModel,
+} from '../Model/Type/posts.types';
+import { WithLike } from '../Model/Type/likes.types';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -73,15 +77,15 @@ export class BlogsController {
   public async getPostsByBlogID(
     @Query() query: PostFilters,
     @Param('id') id: string,
-  ) {
+  ): Promise<PaginatedOutput<WithLike<PostPresentationModel>>> {
     return await this.queryRepo.getPostsByBlogId(id, query);
   }
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,
-    @Body() input: PostInputModel,
+    @Body() input: Omit<PostInputModel, 'blogId'>,
   ) {
-    return true;
+    return await this.blogService.createPostWithSpecifiedBlog(blogId, input);
   }
 }

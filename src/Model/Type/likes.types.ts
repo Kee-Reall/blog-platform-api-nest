@@ -1,9 +1,11 @@
+import { ObjectId } from 'mongodb';
+
 export type LikeStatus = 'Like' | 'Dislike' | 'None';
 
 export interface LikeModel {
   addedAt: Date;
-  target: string;
-  userId: string;
+  target: ObjectId;
+  userId: ObjectId;
   login: string;
   likeStatus: LikeStatus;
 }
@@ -28,6 +30,8 @@ export type NewestLikeArray = Array<
 export type NewestLikeArrayWithTarget = Array<
   Pick<LikeModel, 'login' | 'addedAt' | 'userId' | 'target'>
 >;
+
+export type LikeMapped = Pick<LikeModel, 'likeStatus' | 'target' | 'userId'>;
 
 export type LastLikes = { newestLikes: NewestLikeArray };
 
