@@ -5,45 +5,58 @@ import { Model } from 'mongoose';
 import { BlogsPaginationConfig } from './blogs.pagination-config';
 import { BlogPresentationModel } from '../../Model/Type/blogs.types';
 import { PaginatedOutput } from '../../Model/Type/pagination.types';
-import { BlogFilters } from '../../Model/Type/query.types';
+import { BlogFilters, PostFilters } from '../../Model/Type/query.types';
+import { Post, PostDocument } from '../../Model/Schema/post.schema';
+import { QueryRepository } from '../../helpers/classes/query-repository.class';
+import { PostsPaginationConfig } from '../../posts/repos/posts.pagination-config';
+import { PostPresentationModel } from '../../Model/Type/posts.types';
 
 @Injectable()
-export class BlogsQueryRepository {
-  constructor(@InjectModel(Blog.name) private BlogModel: Model<BlogDocument>) {}
+export class BlogsQueryRepository extends QueryRepository {
+  constructor(
+    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+  ) {
+    super();
+  }
 
   public async getBlogsWithPaginationConfig(
     query: BlogFilters,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
-    const { filter, sortBy, sortDirection, shouldSkip, limit } =
-      new BlogsPaginationConfig(query);
-    const direction: 1 | -1 = sortDirection === 'asc' ? 1 : -1;
-    const items = await this.BlogModel.find(filter)
-      .sort({ [sortBy]: direction })
-      .skip(shouldSkip)
-      .limit(limit);
-    const totalCount = await this.BlogModel.countDocuments(filter);
+    const config = new BlogsPaginationConfig(query);
+    const [items, totalCount] = await this.paginate(this.blogModel, config);
     return {
-      pagesCount: Math.ceil(totalCount / limit),
-      page: +query.pageNumber || 1,
-      pageSize: limit,
+      pagesCount: Math.ceil(totalCount / config.limit),
+      page: config.pageNumber,
+      pageSize: config.limit,
       totalCount,
       items,
     } satisfies PaginatedOutput<BlogPresentationModel>;
   }
 
   public async getBlogById(id: string): Promise<BlogPresentationModel> {
-    const blog = this.BlogModel.findById(id);
+    const blog = await this.findById(this.blogModel, id);
     if (!blog) {
       throw new NotFoundException();
     }
     return blog;
   }
 
-  public async getPostsByBlogId(id: string) {
-    const blog = this.BlogModel.findById(id);
+  public async getPostsByBlogId(id: string, query: PostFilters) {
+    const blog = await this.findById(this.blogModel, id);
     if (!blog) {
       throw new NotFoundException();
     }
-    return true;
+    const config = new PostsPaginationConfig(query, {
+      blogId: blog._id,
+    });
+    const [items, totalCount] = await this.paginate(this.postModel, config);
+    return {
+      pagesCount: Math.ceil(totalCount / config.limit),
+      page: config.pageNumber,
+      pageSize: config.limit,
+      totalCount,
+      items,
+    } satisfies PaginatedOutput<PostPresentationModel>;
   }
 }

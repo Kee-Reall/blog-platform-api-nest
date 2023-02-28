@@ -11,12 +11,15 @@ import {
 } from '../Model/Type/blogs.types';
 import { Model } from 'mongoose';
 import { BlogsCommandRepository } from './repos/blogs.command.repository';
+import { BlogsQueryRepository } from './repos/blogs.query.repository';
+import { VoidPromise } from '../Model/Type/promise.types';
 
 @Injectable()
 export class BlogsService {
   constructor(
     @InjectModel(Blog.name) private BlogModel: Model<BlogDocument>,
     private commandRepo: BlogsCommandRepository,
+    private queryRepo: BlogsQueryRepository,
   ) {}
 
   public async createBlog(
@@ -30,22 +33,15 @@ export class BlogsService {
     return blog;
   }
 
-  public async updateById(
-    _id: string,
-    pojo: BlogInputModel,
-  ): Promise<BlogPresentationModel> {
-    const blog = await this.BlogModel.findOneAndUpdate({ _id }, pojo, {
-      returnDocument: 'after',
-    });
-    if (!blog) {
+  public async updateById(id: string, pojo: BlogInputModel): VoidPromise {
+    if (!(await this.commandRepo.updateBlog(id, pojo))) {
       throw new NotFoundException();
     }
-    return blog;
+    return;
   }
 
-  async deleteById(blogId: string) {
-    const result = await this.BlogModel.deleteOne({ _id: blogId });
-    if (result.deletedCount < 0) {
+  public async deleteById(blogId: string): VoidPromise {
+    if (!(await this.commandRepo.deleteBlog(blogId))) {
       throw new NotFoundException();
     }
     return;

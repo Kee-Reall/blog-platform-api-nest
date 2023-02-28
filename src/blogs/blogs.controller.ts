@@ -16,7 +16,7 @@ import {
   BlogPresentationModel,
 } from '../Model/Type/blogs.types';
 import { VoidPromise } from '../Model/Type/promise.types';
-import { BlogFilters } from '../Model/Type/query.types';
+import { BlogFilters, PostFilters } from '../Model/Type/query.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
 import { PostInputModel } from '../Model/Type/posts.types';
@@ -58,7 +58,8 @@ export class BlogsController {
     @Param('id') blogId: string,
     @Body() updateBlogPOJO: BlogInputModel,
   ): Promise<BlogPresentationModel> {
-    return await this.blogService.updateById(blogId, updateBlogPOJO);
+    await this.blogService.updateById(blogId, updateBlogPOJO);
+    return;
   }
 
   @Delete(':id')
@@ -69,8 +70,11 @@ export class BlogsController {
 
   @Get(':id/posts')
   @HttpCode(HttpStatus.OK)
-  public async getPostsByBlogID(@Query() query, @Body('id') id: string) {
-    return await this.queryRepo.getPostsByBlogId(id);
+  public async getPostsByBlogID(
+    @Query() query: PostFilters,
+    @Param('id') id: string,
+  ) {
+    return await this.queryRepo.getPostsByBlogId(id, query);
   }
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
