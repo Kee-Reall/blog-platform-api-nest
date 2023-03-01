@@ -44,3 +44,8 @@ export type WithLike<T> = T & {
 export type WithExtendedLike<T> = T & {
   extendedLikesInfo: ExtendedLikesInfo;
 };
+
+export type UserCommentator = {
+  userLogin: string;
+  userId: ObjectId;
+};

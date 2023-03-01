@@ -7,4 +7,5 @@ export enum MessageENUM {
   EXPIRED = 'A field expired or not exist',
   SYMBOLS = 'field has prohibited symbols',
   FORBIDDEN_VALUE = 'field has forbidden value',
+  READONLY = 'attempt change readonly value',
 }
