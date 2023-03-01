@@ -1,10 +1,13 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { MessageENUM } from '../../helpers/enums/message.enum';
 import {
   CommentatorInfoType,
   CommentsLogicModel,
 } from '../Type/comments.types';
+import { HydratedDocument } from 'mongoose';
+
+export type CommentDocument = HydratedDocument<Comment>;
 
 @Schema({ versionKey: false, _id: false })
 export class CommentatorInfo implements CommentatorInfoType {
@@ -43,3 +46,5 @@ export class Comment implements CommentsLogicModel {
     return this._id.toHexString();
   }
 }
+
+export const CommentSchema = SchemaFactory.createForClass(Comment);
