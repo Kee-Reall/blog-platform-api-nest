@@ -1,5 +1,6 @@
 import { BlogPresentationModel } from './blogs.types';
 import { PostPresentationModel } from './posts.types';
+import { CommentsLogicModel } from './comments.types';
 
 export interface AbstractFilter<T> {
   pageNumber?: number;
@@ -19,6 +20,6 @@ export type PostFilters = AbstractFilter<PostPresentationModel>;
 //   searchEmailTerm?: string
 // }
 //
-// export interface CommentsFilter extends AbstractFilter<CommentsLogicModel> {
-//   searchId?:string
-// }
+export interface CommentsFilter extends AbstractFilter<CommentsLogicModel> {
+  searchId?: string;
+}

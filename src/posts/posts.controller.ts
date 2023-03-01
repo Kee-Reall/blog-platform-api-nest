@@ -16,7 +16,7 @@ import {
   PostPresentationModel,
 } from '../Model/Type/posts.types';
 import { PostsQueryRepository } from './repos/posts.query.repository';
-import { PostFilters } from '../Model/Type/query.types';
+import { CommentsFilter, PostFilters } from '../Model/Type/query.types';
 import { WithExtendedLike } from '../Model/Type/likes.types';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
 import { VoidPromise } from '../Model/Type/promise.types';
@@ -67,7 +67,10 @@ export class PostsController {
 
   @Get(':id/comments')
   @HttpCode(HttpStatus.OK)
-  public async getCommentsForPost(@Param('id') postId: string) {
-    return await this.queryRepo.getPaginatedComments(postId);
+  public async getCommentsForPost(
+    @Query() query: CommentsFilter,
+    @Param('id') postId: string,
+  ) {
+    return await this.queryRepo.getPaginatedComments(query, postId);
   }
 }

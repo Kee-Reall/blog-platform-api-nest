@@ -4,12 +4,13 @@ import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Model } from 'mongoose';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
 import { PostPresentationModel } from '../../Model/Type/posts.types';
-import { PostFilters } from '../../Model/Type/query.types';
+import { CommentsFilter, PostFilters } from '../../Model/Type/query.types';
 import { PostsPaginationConfig } from './posts.pagination-config';
 import { Repository } from '../../helpers/classes/repository.class';
 import { Like, LikeDocument } from '../../Model/Schema/like.schema';
 import { WithExtendedLike } from '../../Model/Type/likes.types';
 import { PaginatedOutput } from '../../Model/Type/pagination.types';
+import { CommentsPaginationConfig } from './comments.pagination-config';
 
 @Injectable()
 export class PostsQueryRepository extends Repository {
@@ -76,7 +77,7 @@ export class PostsQueryRepository extends Repository {
     };
   }
 
-  public async getPaginatedComments(postId: string) {
-    return Promise.resolve(undefined);
+  public async getPaginatedComments(query: CommentsFilter, postId: string) {
+    const config = new CommentsPaginationConfig(query, postId);
   }
 }
