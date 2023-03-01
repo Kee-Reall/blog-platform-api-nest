@@ -75,4 +75,8 @@ export class PostsQueryRepository extends Repository {
       items,
     };
   }
+
+  public async getPaginatedComments(postId: string) {
+    return Promise.resolve(undefined);
+  }
 }

@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
 import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
+import { NullablePromise } from '../Type/promise.types';
 
 export type PostDocument = mongoose.HydratedDocument<PostPresentationModel>;
 
@@ -50,3 +51,26 @@ export class Post implements Omit<PostLogicModel, '_id'> {
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
+
+PostSchema.statics = {
+  async NullableFindById(id: string | ObjectId): NullablePromise<PostDocument> {
+    try {
+      return await this.findById(id);
+    } catch (e) {
+      return null;
+    }
+  },
+  async isPostExist(id: string | ObjectId): Promise<boolean> {
+    try {
+      const _id = id instanceof ObjectId ? id : new ObjectId(id);
+      return (await this.countDocuments({ _id })) > 0;
+    } catch (e) {
+      return false;
+    }
+  },
+};
+
+export interface PostSchemaMethods {
+  NullableFindById: (id: string | ObjectId) => NullablePromise<PostDocument>;
+  isBlogExist: (id: string | ObjectId) => Promise<boolean>;
+}

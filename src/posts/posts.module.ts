@@ -6,6 +6,7 @@ import { Post, PostSchema } from '../Model/Schema/post.schema';
 import { Blog, BlogSchema } from '../Model/Schema/blog.schema';
 import { PostsQueryRepository } from './repos/posts.query.repository';
 import { Like, LikeSchema } from '../Model/Schema/like.schema';
+import { PostsCommandRepository } from './repos/posts.command.repository';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { Like, LikeSchema } from '../Model/Schema/like.schema';
     ]),
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsQueryRepository],
+  providers: [PostsService, PostsQueryRepository, PostsCommandRepository],
 })
 export class PostsModule {}

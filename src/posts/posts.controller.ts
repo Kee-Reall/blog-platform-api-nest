@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -17,6 +19,7 @@ import { PostsQueryRepository } from './repos/posts.query.repository';
 import { PostFilters } from '../Model/Type/query.types';
 import { WithExtendedLike } from '../Model/Type/likes.types';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
+import { VoidPromise } from '../Model/Type/promise.types';
 
 @Controller('api/posts')
 export class PostsController {
@@ -34,9 +37,9 @@ export class PostsController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.CREATED)
   public async createPost(@Body() pojo: PostInputModel) {
-    return;
+    return await this.postService.createPost(pojo);
   }
 
   @Get(':id')
@@ -45,5 +48,26 @@ export class PostsController {
     @Param('id') postId: string,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     return await this.queryRepo.findPostById(postId);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async updatePost(
+    @Param('id') postId: string,
+    @Body() pojo: PostInputModel,
+  ): VoidPromise {
+    return await this.postService.updatePost(postId, pojo);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deletePost(@Param('id') postId: string): VoidPromise {
+    return await this.postService.deletePost(postId);
+  }
+
+  @Get(':id/comments')
+  @HttpCode(HttpStatus.OK)
+  public async getCommentsForPost(@Param('id') postId: string) {
+    return await this.queryRepo.getPaginatedComments(postId);
   }
 }

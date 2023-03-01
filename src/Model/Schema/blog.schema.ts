@@ -4,6 +4,7 @@ import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
 import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
 import { HydratedDocument } from 'mongoose';
+import { NullablePromise } from '../Type/promise.types';
 
 export type BlogDocument = HydratedDocument<BlogPresentationModel>;
 
@@ -48,3 +49,25 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
   }
 }
 export const BlogSchema = SchemaFactory.createForClass(Blog);
+
+BlogSchema.statics = {
+  async NullableFindById(id: string | ObjectId): NullablePromise<BlogDocument> {
+    try {
+      return await this.findById(id);
+    } catch (e) {
+      return null;
+    }
+  },
+  async isBlogExist(id: string | ObjectId) {
+    try {
+      const _id = id instanceof ObjectId ? id : new ObjectId(id);
+      return (await this.countDocuments({ _id })) > 0;
+    } catch (e) {
+      return false;
+    }
+  },
+};
+export interface BlogSchemaMethods {
+  NullableFindById: (id: string | ObjectId) => NullablePromise<BlogDocument>;
+  isBlogExist: (id: string | ObjectId) => Promise<boolean>;
+}

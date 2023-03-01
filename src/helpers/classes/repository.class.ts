@@ -129,4 +129,16 @@ export abstract class Repository {
       return [];
     }
   }
+
+  protected async deleteUsingId<T>(
+    model: Model<T>,
+    _id: string | ObjectId,
+  ): Promise<boolean> {
+    try {
+      const { deletedCount } = await model.deleteOne({ _id });
+      return deletedCount > 0;
+    } catch (e) {
+      return false;
+    }
+  }
 }
