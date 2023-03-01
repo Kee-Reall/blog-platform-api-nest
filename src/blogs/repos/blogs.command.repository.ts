@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
-import { Model } from 'mongoose';
 import { BlogInputModel } from '../../Model/Type/blogs.types';
 import { Repository } from '../../helpers/classes/repository.class';
 import { PostDocument } from '../../Model/Schema/post.schema';

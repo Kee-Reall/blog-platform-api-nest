@@ -13,7 +13,12 @@ export class Like implements Omit<LikeModel, 'likeStatus'> {
   @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
   public userId: ObjectId;
   @Prop({ required: [true, MessageENUM.REQUIRED_FIELD] }) public login: string;
-  @Prop({ required: true, default: new Date() }) public addedAt: Date;
+  @Prop({
+    required: true,
+    default: new Date(),
+    transform: (date: Date): string => date.toISOString(),
+  })
+  public addedAt: Date;
   @Prop({ default: 'None', enum: ['Like', 'Dislike', 'None'] })
   public likeStatus: string;
 }

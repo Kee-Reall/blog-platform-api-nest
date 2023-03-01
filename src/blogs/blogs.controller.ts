@@ -23,7 +23,7 @@ import {
   PostInputModel,
   PostPresentationModel,
 } from '../Model/Type/posts.types';
-import { WithLike } from '../Model/Type/likes.types';
+import { WithExtendedLike } from '../Model/Type/likes.types';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -77,7 +77,7 @@ export class BlogsController {
   public async getPostsByBlogID(
     @Query() query: PostFilters,
     @Param('id') id: string,
-  ): Promise<PaginatedOutput<WithLike<PostPresentationModel>>> {
+  ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     return await this.queryRepo.getPostsByBlogId(id, query);
   }
   @Post(':id/posts')

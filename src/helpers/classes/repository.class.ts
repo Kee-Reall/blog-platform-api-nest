@@ -4,6 +4,7 @@ import { IPaginationConfig } from '../../Model/Type/pagination.types';
 import {
   Nullable,
   NullablePromise,
+  VoidablePromise,
   VoidPromise,
 } from '../../Model/Type/promise.types';
 import { LikeDocument } from '../../Model/Schema/like.schema';
@@ -11,6 +12,7 @@ import {
   LikeMapped,
   LikesInfo,
   LikeStatus,
+  NewestLikeArray,
 } from '../../Model/Type/likes.types';
 import { LikeENUM } from '../enums/like.enum';
 
@@ -41,7 +43,7 @@ export abstract class Repository {
     }
   }
 
-  protected async save<T extends { save: () => Promise<void | T> }>(
+  protected async save<T extends { save: () => VoidablePromise<T> }>(
     entity: T,
   ): Promise<boolean> {
     try {
@@ -73,6 +75,7 @@ export abstract class Repository {
     }
 
     try {
+      const userIdCompare = userId ? userId.toHexString() : null;
       const targetIds: ObjectId[] = items.map((el) => el._id);
       const likes: LikeMapped[] = await model
         .find({
@@ -94,7 +97,7 @@ export abstract class Repository {
               } else if (like.likeStatus === LikeENUM.DISLIKE) {
                 await incrementDislikeReducer(reducer);
               }
-              if (like.userId.toHexString() === userId.toHexString()) {
+              if (like.userId.toHexString() === userIdCompare) {
                 await setStatusForLikesInfoReducer(reducer, like.likeStatus);
               }
             }
@@ -102,6 +105,26 @@ export abstract class Repository {
           return reducer;
         }),
       );
+    } catch (e) {
+      return [];
+    }
+  }
+
+  protected async getLastLikes(
+    model: Model<LikeDocument>,
+    target: ObjectId,
+    limit = 3,
+  ): Promise<NewestLikeArray> {
+    try {
+      return await model
+        .find({
+          target,
+          likeStatus: LikeENUM.LIKE,
+        })
+        .sort({ addedAt: -1 })
+        .limit(limit)
+        .select('userId login addedAt -_id')
+        .lean();
     } catch (e) {
       return [];
     }
