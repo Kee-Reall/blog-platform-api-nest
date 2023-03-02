@@ -15,21 +15,25 @@ import {
   NewestLikeArray,
 } from '../../Model/Type/likes.types';
 import { LikeENUM } from '../enums/like.enum';
+import { ImATeapotException } from '@nestjs/common';
 
 export abstract class Repository {
   protected async paginate<T>(
     model: Model<T>,
     config: IPaginationConfig,
   ): Promise<[Array<T>, number]> {
-    const direction: 1 | -1 = config.sortDirection === 'asc' ? 1 : -1;
-    const items = model
-      .find(config.filter)
-      .sort({ [config.sortBy]: direction })
-      .skip(config.shouldSkip)
-      .limit(config.limit);
-
-    const totalCount = model.countDocuments(config.filter);
-    return await Promise.all([items, totalCount]);
+    try {
+      const direction: 1 | -1 = config.sortDirection === 'asc' ? 1 : -1;
+      const items = model
+        .find(config.filter)
+        .sort({ [config.sortBy]: direction })
+        .skip(config.shouldSkip)
+        .limit(config.limit);
+      const totalCount = model.countDocuments(config.filter);
+      return await Promise.all([items, totalCount]);
+    } catch (e) {
+      throw new ImATeapotException();
+    }
   }
 
   protected async findById<T>(
