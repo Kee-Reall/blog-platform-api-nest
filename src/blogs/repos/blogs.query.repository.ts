@@ -34,7 +34,7 @@ export class BlogsQueryRepository extends Repository {
       pageSize: config.limit,
       totalCount,
       items,
-    } satisfies PaginatedOutput<BlogPresentationModel>;
+    };
   }
 
   public async getBlogById(id: string): Promise<BlogPresentationModel> {
