@@ -23,6 +23,7 @@ lerna-debug.log*
 .vercel/*
 .vercel/README.txt
 .vercel/project.json
+.vercel
 
 
 # IDEs and editors

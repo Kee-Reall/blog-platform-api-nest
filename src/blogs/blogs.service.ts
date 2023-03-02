@@ -18,6 +18,7 @@ import {
   PostPresentationModel,
 } from '../Model/Type/posts.types';
 import { Post, PostDocument } from '../Model/Schema/post.schema';
+import { WithExtendedLike } from '../Model/Type/likes.types';
 
 @Injectable()
 export class BlogsService {
@@ -64,7 +65,7 @@ export class BlogsService {
   public async createPostWithSpecifiedBlog(
     blogId: string,
     pojo: Omit<PostInputModel, 'blogId'>,
-  ): Promise<PostPresentationModel> {
+  ): Promise<WithExtendedLike<PostPresentationModel>> {
     const blog = await this.queryRepo.getBlogById(blogId);
     if (!blog) {
       throw new NotFoundException();
@@ -74,6 +75,14 @@ export class BlogsService {
     if (!result) {
       throw new BadRequestException();
     }
-    return post;
+    return {
+      ...(post.toJSON() as PostPresentationModel),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: 'None',
+        newestLikes: [],
+      },
+    };
   }
 }
