@@ -13,4 +13,8 @@ export class UsersCommandRepository extends Repository {
   public async deleteUser(id: string): Promise<boolean> {
     return await this.deleteUsingId(this.userModel, id);
   }
+
+  public async saveUser(user: UserDocument) {
+    return await this.save(user);
+  }
 }
