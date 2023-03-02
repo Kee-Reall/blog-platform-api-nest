@@ -11,12 +11,16 @@ export class BlogsCommandRepository extends Repository {
     super();
   }
 
-  public async saveBlog(blog: BlogDocument): Promise<boolean> {
-    return await this.save(blog);
+  public async saveNewBlog(blog: BlogDocument): Promise<boolean> {
+    return await this.saveNewEntity(blog);
   }
 
-  public async savePost(post: PostDocument): Promise<boolean> {
-    return await this.save(post);
+  public async saveBlog(blog: BlogDocument): Promise<boolean> {
+    return await this.saveEntity(blog);
+  }
+
+  public async saveNewPost(post: PostDocument): Promise<boolean> {
+    return await this.saveNewEntity(post);
   }
 
   public async deleteBlog(id: string): Promise<boolean> {

@@ -21,7 +21,7 @@ export class UsersService {
     const { login, email, password } = dto;
     const hash = await genHash(password, await genSalt(10));
     const user = new this.userModel({ login, email, hash });
-    const isSaved: boolean = await this.commandRepo.saveUser(user);
+    const isSaved: boolean = await this.commandRepo.saveNewUser(user);
     if (!isSaved) {
       throw new BadRequestException();
     }

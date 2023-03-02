@@ -42,7 +42,19 @@ export abstract class Repository {
     }
   }
 
-  protected async save<
+  protected async saveNewEntity<
+    T extends { save: () => VoidablePromise<T>; createdAt?: Date },
+  >(entity: T): Promise<boolean> {
+    try {
+      entity.createdAt = new Date();
+      await entity.save();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  protected async saveEntity<
     T extends { save: () => VoidablePromise<T>; createdAt?: Date },
   >(entity: T): Promise<boolean> {
     try {
