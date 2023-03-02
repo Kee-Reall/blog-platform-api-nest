@@ -46,6 +46,10 @@ export abstract class Repository {
     entity: T,
   ): Promise<boolean> {
     try {
+      const chron: number = Date.now();
+      while (chron <= chron + 15) {
+        console.log('waiting');
+      }
       await entity.save();
       return true;
     } catch (e) {

@@ -26,6 +26,10 @@ describe('AppController (e2e)', () => {
   });
 
   describe('/blogs', () => {
+    it('shoud had correct status', async () => {
+      request(app.getHttpServer()).get('/api/blogs').expect(200);
+    });
+
     it('should return blogs with correct default pagination', async function () {
       const res = await request(app.getHttpServer()).get('/api/blogs');
       expect(res).toBeDefined();
@@ -58,5 +62,64 @@ describe('AppController (e2e)', () => {
       expect(blog.createdAt).toEqual(expect.any(String));
       expect(blog.isMembership).toEqual(expect.any(Boolean));
     });
+
+    it('should clear all', async () => {
+      await request(app.getHttpServer())
+        .get('api/testing/all-data')
+        .expect(204);
+    });
+
+    // const arys = [
+    //   {
+    //     name: 'Timma',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Alla',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Allex',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Morgan',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Frank',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Emma',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'David',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Ciara',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    //   {
+    //     name: 'Belly',
+    //     description: 'description',
+    //     websiteUrl: 'https://someurl.com',
+    //   },
+    // ];
+    // it('create some entity,then get them',async ()=> {
+    //   arys.forEach(async (dto,i)=>{
+    //     await
+    //   })
+    // })
   });
 });
