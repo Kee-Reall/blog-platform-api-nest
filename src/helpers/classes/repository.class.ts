@@ -94,7 +94,7 @@ export abstract class Repository {
         })
         .select('likeStatus target userId')
         .lean();
-      return Promise.all(
+      return await Promise.all(
         targetIds.map(async (id) => {
           const reducer: LikesInfo = {
             likesCount: 0,

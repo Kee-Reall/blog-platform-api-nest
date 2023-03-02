@@ -62,7 +62,7 @@ export class BlogsQueryRepository extends Repository {
       throw new NotFoundException();
     }
     const config = new PostsPaginationConfig(query, {
-      blogId: blog._id,
+      blogId: blog.id,
     });
     const [itemsWithoutLike, totalCount] = await this.paginate(
       this.postModel,
