@@ -45,9 +45,15 @@ export abstract class Repository {
   protected async save<T extends { save: () => VoidablePromise<T> }>(
     entity: T,
   ): Promise<boolean> {
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+    }
+
     try {
       const chron: number = Date.now();
-      while (chron <= chron + 15) {
+      while (chron <= chron + getRandomInt(1, 20)) {
         console.log('waiting');
       }
       await entity.save();
