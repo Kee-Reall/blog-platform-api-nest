@@ -9,6 +9,7 @@ import { Like, LikeSchema } from '../Model/Schema/like.schema';
 import { PostsCommandRepository } from './repos/posts.command.repository';
 import { CommentSchema } from '../Model/Schema/comment.schema';
 import { CommentsController } from './comments.controller';
+import { Comment } from '../Model/Schema/comment.schema';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { CommentsController } from './comments.controller';
       { name: Post.name, schema: PostSchema },
       { name: Blog.name, schema: BlogSchema },
       { name: Like.name, schema: LikeSchema },
-      { name: Post.name, schema: CommentSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
   ],
   controllers: [PostsController, CommentsController],

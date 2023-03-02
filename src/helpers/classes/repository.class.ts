@@ -56,7 +56,7 @@ export abstract class Repository {
 
   protected async countLikesInfo<T>(
     model: Model<LikeDocument>,
-    items: HydratedDocument<T>[],
+    items: Array<T & { _id: ObjectId }>,
     userId: Nullable<ObjectId> = null,
   ) {
     async function incrementLikeReducer(reducer: LikesInfo): VoidPromise {

@@ -6,17 +6,15 @@ export type CommentatorInfoType = {
 };
 
 export type CommentsLogicModel = {
-  id: string;
+  _id: ObjectId;
   content: string;
   commentatorInfo: CommentatorInfoType;
   createdAt: Date;
   postId: ObjectId;
 };
 
-export type CommentPresentationModel = Pick<
-  CommentsLogicModel,
-  'id' | 'content'
-> & {
+export type CommentPresentationModel = Pick<CommentsLogicModel, 'content'> & {
+  id: string;
   postId: string;
   createdAt: string;
   commentatorInfo: {

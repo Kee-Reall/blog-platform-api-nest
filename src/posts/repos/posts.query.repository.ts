@@ -11,6 +11,7 @@ import { Like, LikeDocument } from '../../Model/Schema/like.schema';
 import { WithExtendedLike } from '../../Model/Type/likes.types';
 import { PaginatedOutput } from '../../Model/Type/pagination.types';
 import { CommentsPaginationConfig } from './comments.pagination-config';
+import { CommentDocument, Comment } from '../../Model/Schema/comment.schema';
 
 @Injectable()
 export class PostsQueryRepository extends Repository {
@@ -18,6 +19,7 @@ export class PostsQueryRepository extends Repository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {
     super();
   }
@@ -79,5 +81,28 @@ export class PostsQueryRepository extends Repository {
 
   public async getPaginatedComments(query: CommentsFilter, postId: string) {
     const config = new CommentsPaginationConfig(query, postId);
+    const [itemsWithoutLike, totalCount] = await this.paginate<CommentDocument>(
+      this.commentModel,
+      config,
+    );
+    const likesInfo = await this.countLikesInfo<CommentDocument>(
+      this.likeModel,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      itemsWithoutLike,
+    );
+    const items = itemsWithoutLike.map((item, idx) => {
+      return {
+        ...item.toJSON(),
+        likesInfo: likesInfo[idx],
+      };
+    });
+    return {
+      pagesCount: Math.ceil(totalCount / config.limit),
+      page: config.pageNumber,
+      pageSize: config.limit,
+      totalCount,
+      items,
+    };
   }
 }

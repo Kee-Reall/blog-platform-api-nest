@@ -1,6 +1,7 @@
 import { BlogPresentationModel } from './blogs.types';
 import { PostPresentationModel } from './posts.types';
 import { CommentsLogicModel } from './comments.types';
+import { UserPresentationModel } from './users.types';
 
 export interface AbstractFilter<T> {
   pageNumber?: number;
@@ -15,11 +16,11 @@ export interface BlogFilters extends AbstractFilter<BlogPresentationModel> {
 
 export type PostFilters = AbstractFilter<PostPresentationModel>;
 
-// export interface UsersFilters extends AbstractFilter<UserViewModel> {
-//   searchLoginTerm?: string
-//   searchEmailTerm?: string
-// }
-//
+export interface UsersFilters extends AbstractFilter<UserPresentationModel> {
+  searchLoginTerm?: string;
+  searchEmailTerm?: string;
+}
+
 export interface CommentsFilter extends AbstractFilter<CommentsLogicModel> {
   searchId?: string;
 }

@@ -5,9 +5,9 @@ import {
   CommentatorInfoType,
   CommentsLogicModel,
 } from '../Type/comments.types';
-import { HydratedDocument } from 'mongoose';
+import mongoose from 'mongoose';
 
-export type CommentDocument = HydratedDocument<Comment>;
+export type CommentDocument = mongoose.HydratedDocument<Comment>;
 
 @Schema({ versionKey: false, _id: false })
 export class CommentatorInfo implements CommentatorInfoType {
@@ -22,7 +22,7 @@ export class CommentatorInfo implements CommentatorInfoType {
 }
 
 @Schema()
-export class Comment implements CommentsLogicModel {
+export class Comment implements Omit<CommentsLogicModel, '_id'> {
   private _id: ObjectId;
 
   @Prop()
