@@ -10,11 +10,11 @@ export abstract class PaginationConfigClass {
   pageNumber: number;
   abstract filter: FilterQuery<unknown>;
   protected constructor(query: AbstractFilter<any>) {
-    this.pageNumber = +query.pageNumber || 1;
+    this.pageNumber = Math.floor(+query.pageNumber || 1);
     if (this.pageNumber < 1) {
       this.pageNumber = 1;
     }
-    this.limit = +query.pageSize || 10;
+    this.limit = Math.floor(+query.pageSize || 10);
     if (this.limit < 1) {
       this.limit = 10;
     }
