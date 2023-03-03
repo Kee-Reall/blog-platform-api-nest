@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Model } from 'mongoose';
+import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
 import { PostPresentationModel } from '../../Model/Type/posts.types';
 import { CommentsFilter, PostFilters } from '../../Model/Type/query.types';
@@ -87,8 +87,6 @@ export class PostsQueryRepository extends Repository {
     );
     const likesInfo = await this.countLikesInfo<CommentDocument>(
       this.likeModel,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
       itemsWithoutLike,
     );
     const items = itemsWithoutLike.map((item, idx) => {

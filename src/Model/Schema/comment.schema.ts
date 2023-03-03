@@ -23,7 +23,7 @@ export class CommentatorInfo implements CommentatorInfoType {
 
 @Schema()
 export class Comment implements Omit<CommentsLogicModel, '_id'> {
-  private _id: ObjectId;
+  _id: ObjectId;
 
   @Prop()
   commentatorInfo: CommentatorInfo;

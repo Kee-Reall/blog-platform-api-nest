@@ -13,13 +13,13 @@ export class UsersQueryRepository extends Repository {
   }
   public async getPaginatedUsers(query: UsersFilters) {
     const config = new UsersPaginationConfig(query);
-    const [itemsAll, totalCount] = await this.paginate(this.userModel, config);
+    const [items, totalCount] = await this.paginate(this.userModel, config);
     return {
       pagesCount: Math.ceil(totalCount / config.limit),
       page: config.pageNumber,
       pageSize: config.limit,
       totalCount,
-      items: itemsAll,
+      items,
     };
   }
 }
