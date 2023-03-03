@@ -61,7 +61,7 @@ export class BlogsController {
   public async updateBlog(
     @Param('id') blogId: string,
     @Body() updateBlogPOJO: BlogInputModel,
-  ): Promise<BlogPresentationModel> {
+  ): VoidPromise {
     await this.blogService.updateById(blogId, updateBlogPOJO);
     return;
   }
