@@ -43,7 +43,7 @@ export class User {
   @Prop({ required: true, minlength: 5 })
   hash: string;
 
-  get id() {
+  get id(): string {
     return this._id.toHexString();
   }
 }
