@@ -33,7 +33,7 @@ export class BlogsService {
     pojo: BlogInputModel,
   ): Promise<BlogPresentationModel> {
     const blog = new this.blogModel(pojo);
-    const result = await this.commandRepo.saveNewBlog(blog);
+    const result = await this.commandRepo.saveBlog(blog);
     if (!result) {
       throw new BadRequestException();
     }
@@ -71,7 +71,7 @@ export class BlogsService {
       throw new NotFoundException();
     }
     const post = new this.postModel({ ...pojo, blogId, blogName: blog.name });
-    const result = await this.commandRepo.saveNewPost(post);
+    const result = await this.commandRepo.savePost(post);
     if (!result) {
       throw new BadRequestException();
     }

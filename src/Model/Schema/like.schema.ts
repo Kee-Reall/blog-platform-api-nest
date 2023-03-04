@@ -15,7 +15,7 @@ export class Like implements Omit<LikeModel, 'likeStatus'> {
   @Prop({ required: [true, MessageENUM.REQUIRED_FIELD] }) public login: string;
   @Prop({
     required: true,
-    default: new Date(),
+    default: () => new Date(),
     transform: (date: Date): string => date.toISOString(),
   })
   public addedAt: Date;

@@ -42,7 +42,7 @@ export class PostsService {
       throw new BadRequestException();
     }
     const post = new this.postModel({ ...pojo, blogName: blog.name });
-    const isSaved: boolean = await this.commandRepo.saveNewPost(post);
+    const isSaved: boolean = await this.commandRepo.savePost(post);
     if (!isSaved) {
       throw new BadRequestException();
     }

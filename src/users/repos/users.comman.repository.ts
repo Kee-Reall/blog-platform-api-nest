@@ -14,7 +14,7 @@ export class UsersCommandRepository extends Repository {
     return await this.deleteUsingId(this.userModel, id);
   }
 
-  public async saveNewUser(user: UserDocument) {
-    return await this.saveNewEntity(user);
+  public async saveUser(user: UserDocument) {
+    return await this.saveEntity(user);
   }
 }

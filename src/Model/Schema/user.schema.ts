@@ -37,7 +37,7 @@ export class User {
   })
   email: string;
 
-  @Prop({ required: true, default: new Date(), readonly: true })
+  @Prop({ required: true, default: () => new Date(), readonly: true })
   createdAt: Date;
 
   @Prop({ required: true, minlength: 5 })
