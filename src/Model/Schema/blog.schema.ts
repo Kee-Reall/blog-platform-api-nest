@@ -38,7 +38,7 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
   public websiteUrl: string;
   @Prop({
     readOnly: true,
-    default: new Date(),
+    default: () => new Date(),
     transform: (date: Date): string => date.toISOString(),
   })
   public createdAt: Date;

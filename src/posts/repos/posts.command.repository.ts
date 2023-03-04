@@ -10,9 +10,6 @@ export class PostsCommandRepository extends Repository {
     super();
   }
 
-  public async saveNewPost(post: PostDocument): Promise<boolean> {
-    return await this.saveNewEntity(post);
-  }
   public async savePost(post: PostDocument): Promise<boolean> {
     return await this.saveEntity(post);
   }

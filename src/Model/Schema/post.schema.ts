@@ -25,7 +25,7 @@ export class Post implements Omit<PostLogicModel, '_id'> {
   content: string;
 
   @Prop({
-    default: new Date(),
+    default: () => new Date(),
     readOnly: true,
     transform: (date: Date): string => date.toISOString(),
   })
