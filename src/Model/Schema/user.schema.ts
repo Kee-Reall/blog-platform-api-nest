@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
+import { hash as genHash, genSalt } from 'bcrypt';
+import { UserInputModel } from '../Type/users.types';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -49,3 +51,15 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.statics = {
+  async newUser(dto: UserInputModel): Promise<UserDocument> {
+    const { login, email, password } = dto;
+    const hash = await genHash(password, await genSalt(10));
+    return new this({ login, email, hash });
+  },
+};
+
+export interface UserModelStatic {
+  newUser: (dto: UserInputModel) => Promise<UserDocument>;
+}
