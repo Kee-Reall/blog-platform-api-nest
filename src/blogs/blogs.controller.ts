@@ -16,7 +16,6 @@ import {
   BlogPresentationModel,
 } from '../Model/Type/blogs.types';
 import { VoidPromise } from '../Model/Type/promise.types';
-import { BlogFilters, PostFilters } from '../Model/Type/query.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import { PaginatedOutput } from '../Model/Type/pagination.types';
 import {
@@ -24,6 +23,12 @@ import {
   PostPresentationModel,
 } from '../Model/Type/posts.types';
 import { WithExtendedLike } from '../Model/Type/likes.types';
+import {
+  BlogsQueryPipe,
+  PostConfigFabric,
+  PostsByBlogPipe,
+} from './pipes/blogs.query.pipe';
+import { BlogsPagination } from './pipes/blogs.pagination.class';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -35,7 +40,7 @@ export class BlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async getBlogs(
-    @Query() query: BlogFilters,
+    @Query(BlogsQueryPipe) query: BlogsPagination,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
@@ -75,10 +80,12 @@ export class BlogsController {
   @Get(':id/posts')
   @HttpCode(HttpStatus.OK)
   public async getPostsByBlogID(
-    @Query() query: PostFilters,
+    /* post pagination class want an id in constructor argument */
+    @Query(PostsByBlogPipe) configFabric: PostConfigFabric,
+    /* pipe return function, where query params are closured   */
     @Param('id') id: string,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    return await this.queryRepo.getPostsByBlogId(id, query);
+    return await this.queryRepo.getPostsByBlogId(configFabric(id));
   }
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)

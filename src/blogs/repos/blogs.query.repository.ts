@@ -2,10 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
-import { BlogsPaginationConfig } from './blogs.pagination-config';
+import { BlogsPagination } from '../pipes/blogs.pagination.class';
 import { BlogPresentationModel } from '../../Model/Type/blogs.types';
 import { PaginatedOutput } from '../../Model/Type/pagination.types';
-import { BlogFilters, PostFilters } from '../../Model/Type/query.types';
 import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Repository } from '../../helpers/classes/repository.class';
 import { PostsPaginationConfig } from '../../posts/repos/posts.pagination-config';
@@ -24,9 +23,8 @@ export class BlogsQueryRepository extends Repository {
   }
 
   public async getBlogsWithPaginationConfig(
-    query: BlogFilters,
+    config: BlogsPagination,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
-    const config = new BlogsPaginationConfig(query);
     const [items, totalCount] = await this.paginate(this.blogModel, config);
     return {
       pagesCount: Math.ceil(totalCount / config.limit),
@@ -54,16 +52,12 @@ export class BlogsQueryRepository extends Repository {
   }
 
   public async getPostsByBlogId(
-    id: string,
-    query: PostFilters,
+    config: PostsPaginationConfig,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    const blog = await this.findById(this.blogModel, id);
+    const blog = await this.findById(this.blogModel, config.filter.blogId);
     if (!blog) {
       throw new NotFoundException();
     }
-    const config = new PostsPaginationConfig(query, {
-      blogId: blog.id,
-    });
     const [itemsWithoutLike, totalCount] = await this.paginate(
       this.postModel,
       config,

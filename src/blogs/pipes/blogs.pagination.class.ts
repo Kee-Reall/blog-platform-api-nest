@@ -4,7 +4,7 @@ import { PaginationConfigClass } from '../../helpers/classes/pagination-config.c
 import { BlogFilters } from '../../Model/Type/query.types';
 import { FilterQuery } from 'mongoose';
 
-export class BlogsPaginationConfig
+export class BlogsPagination
   extends PaginationConfigClass
   implements IPaginationConfig
 {
