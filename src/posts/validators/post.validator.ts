@@ -1,6 +1,5 @@
 import { PostInputModel } from '../../Model/Type/posts.types';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { Transform } from 'class-transformer';
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
 
 export class PostInput implements PostInputModel {
@@ -12,19 +11,19 @@ export class PostInput implements PostInputModel {
 
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim())
+  @TrimIfString()
   @Length(1, 1000)
   content: string;
 
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim())
+  @TrimIfString()
   @Length(1, 100)
   shortDescription: string;
 
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @TrimIfString()
   @Length(1, 30)
   title: string;
 }

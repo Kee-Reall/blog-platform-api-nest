@@ -10,7 +10,7 @@ async function bootstrap() {
     credentials: true,
     origin: process.env.FRONTEND_DOMAIN ?? 'http//localhost:3000/',
   });
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.listen(port, () => console.log('Application port: ' + port));
 }
 

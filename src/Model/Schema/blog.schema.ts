@@ -20,6 +20,7 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
     required: [true, MessageENUM.REQUIRED_FIELD],
     minlength: [1, MessageENUM.LENGTH],
     maxlength: [15, MessageENUM.LENGTH],
+    trim: true,
   })
   public name: string;
   @Prop({

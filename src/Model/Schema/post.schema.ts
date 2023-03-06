@@ -33,15 +33,17 @@ export class Post implements Omit<PostLogicModel, '_id'> {
 
   @Prop({ trim: true, minLength: 1, maxLength: 100, required: true })
   shortDescription: string;
-  @Prop({ required: true, maxlength: 30, minlength: 1 })
+  @Prop({ required: true, maxlength: 30, minlength: 1, trim: true })
   title: string;
 
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
+    trim: true,
   })
   public blogId: ObjectId;
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
+    trim: true,
   })
   public blogName: string;
 
