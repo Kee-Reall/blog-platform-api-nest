@@ -11,10 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import {
-  PostInputModel,
-  PostPresentationModel,
-} from '../Model/Type/posts.types';
+import { PostPresentationModel } from '../Model/Type/posts.types';
 import { PostsQueryRepository } from './repos/posts.query.repository';
 import { WithExtendedLike } from '../Model/Type/likes.types';
 import {
@@ -27,6 +24,7 @@ import {
   CommentsByPost,
   PostsQueryPipe,
 } from './pipes/posts.query.pipe';
+import { PostInput } from './validators/post.validator';
 
 @Controller('api/posts')
 export class PostsController {
@@ -45,7 +43,7 @@ export class PostsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  public async createPost(@Body() pojo: PostInputModel) {
+  public async createPost(@Body() pojo: PostInput) {
     return await this.postService.createPost(pojo);
   }
 
@@ -61,7 +59,7 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updatePost(
     @Param('id') postId: string,
-    @Body() pojo: PostInputModel,
+    @Body() pojo: PostInput,
   ): VoidPromise {
     return await this.postService.updatePost(postId, pojo);
   }

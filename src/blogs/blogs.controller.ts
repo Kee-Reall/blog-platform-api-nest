@@ -11,27 +11,22 @@ import {
   Query,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
-import {
-  BlogInputModel,
-  BlogPresentationModel,
-} from '../Model/Type/blogs.types';
+import { BlogPresentationModel } from '../Model/Type/blogs.types';
 import { VoidPromise } from '../Model/Type/promise.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import {
   IPaginationConfig,
   PaginatedOutput,
 } from '../Model/Type/pagination.types';
-import {
-  PostInputModel,
-  PostPresentationModel,
-} from '../Model/Type/posts.types';
+import { PostPresentationModel } from '../Model/Type/posts.types';
 import { WithExtendedLike } from '../Model/Type/likes.types';
 import {
   BlogsQueryPipe,
   PostConfigFabric,
   PostsByBlogPipe,
 } from './pipes/blogs.query.pipe';
-import { BlogInput } from './validator/blog.validator';
+import { BlogInput } from './validators/blog.validator';
+import { PostInput } from './validators/post.validator';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -68,9 +63,9 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
     @Param('id') blogId: string,
-    @Body() updateBlogPOJO: BlogInputModel,
+    @Body() pojo: BlogInput,
   ): VoidPromise {
-    await this.blogService.updateById(blogId, updateBlogPOJO);
+    await this.blogService.updateById(blogId, pojo);
     return;
   }
 
@@ -94,8 +89,8 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,
-    @Body() input: Omit<PostInputModel, 'blogId'>,
+    @Body() pojo: PostInput,
   ) {
-    return await this.blogService.createPostWithSpecifiedBlog(blogId, input);
+    return await this.blogService.createPostWithSpecifiedBlog(blogId, pojo);
   }
 }
