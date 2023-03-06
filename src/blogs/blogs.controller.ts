@@ -31,6 +31,7 @@ import {
   PostConfigFabric,
   PostsByBlogPipe,
 } from './pipes/blogs.query.pipe';
+import { BlogInput } from './validator/blog.validator';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -50,9 +51,9 @@ export class BlogsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
-    @Body() crateBlogPOJO: BlogInputModel,
+    @Body() pojo: BlogInput,
   ): Promise<BlogPresentationModel> {
-    return await this.blogService.createBlog(crateBlogPOJO);
+    return await this.blogService.createBlog(pojo);
   }
 
   @Get(':id')
