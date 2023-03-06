@@ -1,7 +1,7 @@
 import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
 import { BlogFilters, PostFilters } from '../../Model/Type/query.types';
 import { BlogsPagination } from './blogs.pagination.class';
-import { PostsPaginationConfig } from '../../posts/repos/posts.pagination-config';
+import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
 
 export class BlogsQueryPipe implements PipeTransform {
   transform(inputQuery: BlogFilters, metadata: ArgumentMetadata) {

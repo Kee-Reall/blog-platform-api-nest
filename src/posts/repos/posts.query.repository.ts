@@ -4,13 +4,14 @@ import { Model } from 'mongoose';
 import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
 import { PostPresentationModel } from '../../Model/Type/posts.types';
-import { CommentsFilter, PostFilters } from '../../Model/Type/query.types';
-import { PostsPaginationConfig } from './posts.pagination-config';
 import { Repository } from '../../helpers/classes/repository.class';
 import { Like, LikeDocument } from '../../Model/Schema/like.schema';
 import { WithExtendedLike } from '../../Model/Type/likes.types';
-import { PaginatedOutput } from '../../Model/Type/pagination.types';
-import { CommentsPaginationConfig } from './comments.pagination-config';
+import {
+  IPaginationConfig,
+  PaginatedOutput,
+} from '../../Model/Type/pagination.types';
+import { CommentsPaginationConfig } from '../pipes/comments.pagination.class';
 import { CommentDocument, Comment } from '../../Model/Schema/comment.schema';
 
 @Injectable()
@@ -48,9 +49,8 @@ export class PostsQueryRepository extends Repository {
   }
 
   public async getPaginatedPosts(
-    query: PostFilters,
+    config: IPaginationConfig,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    const config = new PostsPaginationConfig(query);
     const [itemsWithoutLike, totalCount] = await this.paginate(
       this.postModel,
       config,
@@ -79,8 +79,7 @@ export class PostsQueryRepository extends Repository {
     };
   }
 
-  public async getPaginatedComments(query: CommentsFilter, postId: string) {
-    const config = new CommentsPaginationConfig(query, postId);
+  public async getPaginatedComments(config: CommentsPaginationConfig) {
     const [itemsWithoutLike, totalCount] = await this.paginate<CommentDocument>(
       this.commentModel,
       config,

@@ -16,10 +16,17 @@ import {
   PostPresentationModel,
 } from '../Model/Type/posts.types';
 import { PostsQueryRepository } from './repos/posts.query.repository';
-import { CommentsFilter, PostFilters } from '../Model/Type/query.types';
 import { WithExtendedLike } from '../Model/Type/likes.types';
-import { PaginatedOutput } from '../Model/Type/pagination.types';
+import {
+  IPaginationConfig,
+  PaginatedOutput,
+} from '../Model/Type/pagination.types';
 import { VoidPromise } from '../Model/Type/promise.types';
+import {
+  CommentConfigFabric,
+  CommentsByPost,
+  PostsQueryPipe,
+} from './pipes/posts.query.pipe';
 
 @Controller('api/posts')
 export class PostsController {
@@ -31,9 +38,9 @@ export class PostsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async getAllPosts(
-    @Query() query: PostFilters,
+    @Query(PostsQueryPipe) config: IPaginationConfig,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    return await this.queryRepo.getPaginatedPosts(query);
+    return await this.queryRepo.getPaginatedPosts(config);
   }
 
   @Post()
@@ -68,9 +75,9 @@ export class PostsController {
   @Get(':id/comments')
   @HttpCode(HttpStatus.OK)
   public async getCommentsForPost(
-    @Query() query: CommentsFilter,
+    @Query(CommentsByPost) configFabric: CommentConfigFabric,
     @Param('id') postId: string,
   ) {
-    return await this.queryRepo.getPaginatedComments(query, postId);
+    return await this.queryRepo.getPaginatedComments(configFabric(postId));
   }
 }

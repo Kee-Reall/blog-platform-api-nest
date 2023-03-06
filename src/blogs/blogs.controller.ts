@@ -17,7 +17,10 @@ import {
 } from '../Model/Type/blogs.types';
 import { VoidPromise } from '../Model/Type/promise.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import { PaginatedOutput } from '../Model/Type/pagination.types';
+import {
+  IPaginationConfig,
+  PaginatedOutput,
+} from '../Model/Type/pagination.types';
 import {
   PostInputModel,
   PostPresentationModel,
@@ -28,7 +31,6 @@ import {
   PostConfigFabric,
   PostsByBlogPipe,
 } from './pipes/blogs.query.pipe';
-import { BlogsPagination } from './pipes/blogs.pagination.class';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -40,7 +42,7 @@ export class BlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async getBlogs(
-    @Query(BlogsQueryPipe) query: BlogsPagination,
+    @Query(BlogsQueryPipe) query: IPaginationConfig,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
