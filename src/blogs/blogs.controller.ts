@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogPresentationModel } from '../Model/Type/blogs.types';
@@ -27,6 +28,7 @@ import {
 } from './pipes/blogs.query.pipe';
 import { BlogInput } from './validators/blog.validator';
 import { PostInputWithoutBlogId } from './validators/post.validator';
+import { BasicAuth } from '../helpers/classes/basicAuth.guard';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -69,6 +71,7 @@ export class BlogsController {
     return;
   }
 
+  @UseGuards(BasicAuth)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteBlog(@Param('id') blogId: string): VoidPromise {
