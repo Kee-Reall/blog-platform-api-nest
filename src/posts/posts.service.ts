@@ -1,10 +1,11 @@
 import {
   BadRequestException,
+  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import {
-  PostInputModel,
+  PostCreateModel,
   PostPresentationModel,
 } from '../Model/Type/posts.types';
 import { InjectModel } from '@nestjs/mongoose';
@@ -22,6 +23,7 @@ import {
 import { PostsCommandRepository } from './repos/posts.command.repository';
 import { WithExtendedLike } from '../Model/Type/likes.types';
 import { Nullable, VoidPromise } from '../Model/Type/promise.types';
+import { MessageENUM } from '../helpers/enums/message.enum';
 
 @Injectable()
 export class PostsService {
@@ -33,18 +35,18 @@ export class PostsService {
     private commandRepo: PostsCommandRepository,
   ) {}
   public async createPost(
-    pojo: PostInputModel,
+    pojo: PostCreateModel,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     const blog: Nullable<BlogDocument> = await this.blogModel.NullableFindById(
       pojo.blogId,
     );
     if (!blog) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
     const post = new this.postModel({ ...pojo, blogName: blog.name });
     const isSaved: boolean = await this.commandRepo.savePost(post);
     if (!isSaved) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return {
       ...(post.toJSON() as PostPresentationModel),
@@ -57,7 +59,7 @@ export class PostsService {
     };
   }
 
-  public async updatePost(id: string, pojo: PostInputModel) {
+  public async updatePost(id: string, pojo: PostCreateModel) {
     const post = await this.postModel.NullableFindById(id);
     if (!post) {
       throw new NotFoundException();
@@ -66,7 +68,9 @@ export class PostsService {
       pojo.blogId,
     );
     if (!blog) {
-      throw new BadRequestException();
+      throw new BadRequestException({
+        errorMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
+      });
     }
     for (const key in pojo) {
       post[key] = pojo[key];
@@ -74,8 +78,7 @@ export class PostsService {
     post.blogName = blog.name;
     const isSaved = await this.commandRepo.savePost(post);
     if (!isSaved) {
-      console.log('you are here');
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return;
   }

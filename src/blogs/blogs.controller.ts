@@ -26,7 +26,7 @@ import {
   PostsByBlogPipe,
 } from './pipes/blogs.query.pipe';
 import { BlogInput } from './validators/blog.validator';
-import { PostInput } from './validators/post.validator';
+import { PostInputWithoutBlogId } from './validators/post.validator';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -89,7 +89,7 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,
-    @Body() pojo: PostInput,
+    @Body() pojo: PostInputWithoutBlogId,
   ) {
     return await this.blogService.createPostWithSpecifiedBlog(blogId, pojo);
   }

@@ -2,7 +2,7 @@ import { PostInputModel } from '../../Model/Type/posts.types';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
 
-export class PostInput implements Omit<PostInputModel, 'blogId'> {
+export class PostInputWithoutBlogId implements Omit<PostInputModel, 'blogId'> {
   @IsNotEmpty()
   @IsString()
   @TrimIfString()

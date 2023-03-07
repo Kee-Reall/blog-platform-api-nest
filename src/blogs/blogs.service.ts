@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -35,7 +35,7 @@ export class BlogsService {
     const blog = new this.blogModel(pojo);
     const result = await this.commandRepo.saveBlog(blog);
     if (!result) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return blog;
   }
@@ -50,8 +50,9 @@ export class BlogsService {
     }
     const isSaved: boolean = await this.commandRepo.saveBlog(blog);
     if (!isSaved) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
+    await this.commandRepo.updatePostsName(blog.id, blog.name);
     return;
   }
 
@@ -73,7 +74,7 @@ export class BlogsService {
     const post = new this.postModel({ ...pojo, blogId, blogName: blog.name });
     const result = await this.commandRepo.savePost(post);
     if (!result) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return {
       ...(post.toJSON() as PostPresentationModel),

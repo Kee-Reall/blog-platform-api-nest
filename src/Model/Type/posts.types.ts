@@ -4,7 +4,6 @@ export type PostInputModel = {
   title: string;
   shortDescription: string;
   content: string;
-  blogId: string;
 };
 
 export type PostCreateModel = PostInputModel & { blogId: string };

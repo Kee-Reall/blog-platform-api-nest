@@ -12,12 +12,11 @@ export class GlobalHTTPFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
+    const errorMessages = exception.getResponse();
 
-    console.log(status);
-    response
-      .status(400)
-      .json(
-        status === 404 ? { blogId: 'FUCK YOU LEATHER MAN' } : { teapot: 'WOW' },
-      );
+    if (status === 400) {
+      return response.status(status).json(errorMessages);
+    }
+    response.sendStatus(status);
   }
 }
