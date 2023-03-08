@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -22,10 +23,23 @@ export class UsersService {
   ) {}
 
   public async createUser(dto: UserInputModel) {
-    const user = await this.userModel.newUser(dto);
+    const { login, email, password } = dto;
+    const user = new this.userModel({ login, email });
+    const [isUnique, fieldsArray] = await user.isFieldsUnique();
+    if (!isUnique) {
+      const errorMessages = fieldsArray.map((field) => {
+        return {
+          message: 'already using',
+          field,
+        };
+      });
+      throw new BadRequestException({ errorMessages });
+    }
+    debugger;
+    await user.setHash(password);
     const isSaved: boolean = await this.commandRepo.saveUser(user);
     if (!isSaved) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return user;
   }

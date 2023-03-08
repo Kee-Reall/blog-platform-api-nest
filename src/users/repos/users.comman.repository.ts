@@ -15,6 +15,7 @@ export class UsersCommandRepository extends Repository {
   }
 
   public async saveUser(user: UserDocument) {
+    debugger;
     return await this.saveEntity(user);
   }
 }
