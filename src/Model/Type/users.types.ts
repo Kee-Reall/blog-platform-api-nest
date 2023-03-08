@@ -14,12 +14,22 @@ export type UserInputModel = {
 };
 
 export type UserLogicModel = {
-  id: ObjectId;
+  _id: ObjectId;
   login: string;
   email: string;
   createdAt: Date;
   hash: string;
+  confirmation: Confirmation;
+  recovery: Recovery;
+};
 
-  //  confirmation:Confirmation
-  //  recovery: Recovery
+export type Recovery = {
+  recoveryCode: string;
+  expirationDate: Date;
+};
+
+export type Confirmation = {
+  isConfirmed: boolean;
+  code: string;
+  confirmationDate: Date;
 };

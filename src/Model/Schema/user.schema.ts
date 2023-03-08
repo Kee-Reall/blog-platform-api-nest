@@ -2,9 +2,35 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { hash as genHash, genSalt } from 'bcrypt';
-import { UserInputModel } from '../Type/users.types';
+import {
+  Confirmation,
+  Recovery,
+  UserInputModel,
+  UserLogicModel,
+} from '../Type/users.types';
 
 export type UserDocument = HydratedDocument<User>;
+
+@Schema({ _id: false, versionKey: false })
+export class ConfirmationScheme implements Confirmation {
+  @Prop({ required: true, default: '' })
+  code: string;
+
+  @Prop({ required: true, default: () => new Date() })
+  confirmationDate: Date;
+
+  @Prop({ required: true, default: false })
+  isConfirmed: boolean;
+}
+
+@Schema({ _id: false, versionKey: false })
+export class RecoverySchema implements Recovery {
+  @Prop({ required: true, default: () => new Date() })
+  expirationDate: Date;
+
+  @Prop({ required: true, default: '' })
+  recoveryCode: string;
+}
 
 @Schema({
   toJSON: {
@@ -19,8 +45,9 @@ export type UserDocument = HydratedDocument<User>;
     },
   },
 })
-export class User {
-  private _id: ObjectId;
+export class User implements UserLogicModel {
+  _id: ObjectId;
+
   @Prop({
     required: true,
     trim: true,
@@ -44,6 +71,11 @@ export class User {
 
   @Prop({ required: true, minlength: 5 })
   hash: string;
+
+  @Prop({})
+  confirmation: ConfirmationScheme;
+  @Prop()
+  recovery: RecoverySchema;
 
   get id(): string {
     return this._id.toHexString();
