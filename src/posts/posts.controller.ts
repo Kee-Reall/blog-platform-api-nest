@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostPresentationModel } from '../Model/Type/posts.types';
@@ -25,6 +26,7 @@ import {
   PostsQueryPipe,
 } from './pipes/posts.query.pipe';
 import { PostInput } from './validators/post.validator';
+import { BasicAuth } from '../helpers/classes/basicAuth.guard';
 
 @Controller('api/posts')
 export class PostsController {
@@ -41,6 +43,7 @@ export class PostsController {
     return await this.queryRepo.getPaginatedPosts(config);
   }
 
+  @UseGuards(BasicAuth)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createPost(@Body() pojo: PostInput) {
@@ -55,6 +58,7 @@ export class PostsController {
     return await this.queryRepo.findPostById(postId);
   }
 
+  @UseGuards(BasicAuth)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updatePost(
@@ -63,7 +67,7 @@ export class PostsController {
   ): VoidPromise {
     return await this.postService.updatePost(postId, pojo);
   }
-
+  @UseGuards(BasicAuth)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deletePost(@Param('id') postId: string): VoidPromise {

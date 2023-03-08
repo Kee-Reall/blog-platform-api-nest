@@ -8,11 +8,14 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersQueryRepository } from './repos/users.query.repository';
-import { UsersFilters } from '../Model/Type/query.types';
 import { UserInputModel } from '../Model/Type/users.types';
 import { UsersService } from './users.service';
+import { BasicAuth } from '../helpers/classes/basicAuth.guard';
+import { IPaginationConfig } from '../Model/Type/pagination.types';
+import { UserQueryPipe } from './pipes/users.pipe';
 
 @Controller('api/users')
 export class UsersController {
@@ -20,16 +23,22 @@ export class UsersController {
     private queryRepo: UsersQueryRepository,
     private service: UsersService,
   ) {}
+
+  @UseGuards(BasicAuth)
   @Get()
-  public async getPaginatedUsers(@Query() query: UsersFilters) {
-    return await this.queryRepo.getPaginatedUsers(query);
+  public async getPaginatedUsers(
+    @Query(UserQueryPipe) config: IPaginationConfig,
+  ) {
+    return await this.queryRepo.getPaginatedUsers(config);
   }
 
+  @UseGuards(BasicAuth)
   @Post()
   public async createUser(@Body() dto: UserInputModel) {
     return await this.service.createUser(dto);
   }
 
+  @UseGuards(BasicAuth)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteUser(@Param('id') userId: string) {

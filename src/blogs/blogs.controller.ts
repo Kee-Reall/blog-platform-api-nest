@@ -45,6 +45,7 @@ export class BlogsController {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
 
+  @UseGuards(BasicAuth)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
@@ -61,6 +62,7 @@ export class BlogsController {
     return await this.queryRepo.getBlogById(blogId);
   }
 
+  @UseGuards(BasicAuth)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
@@ -88,6 +90,8 @@ export class BlogsController {
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     return await this.queryRepo.getPostsByBlogId(configFabric(id));
   }
+
+  @UseGuards(BasicAuth)
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
   public async createPost(

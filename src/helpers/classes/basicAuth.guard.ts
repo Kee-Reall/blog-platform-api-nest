@@ -1,20 +1,24 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { Request } from 'express';
 
 export class BasicAuth implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req = context.switchToHttp().getRequest();
-    debugger;
+    const req = context.switchToHttp().getRequest<Request>();
     const authorization = req.headers.authorization;
     if (!authorization) {
-      return false;
+      throw new UnauthorizedException();
     }
 
-    const auth = authorization.split(' ');
+    const auth: Array<unknown> = authorization.split(' ');
     if (!Array.isArray(auth)) {
-      return false;
+      throw new UnauthorizedException();
     }
     const [type, auth64] = auth;
     const [login, password] = Buffer.from(auth64 ?? '', 'base64')
@@ -24,8 +28,11 @@ export class BasicAuth implements CanActivate {
       process.env.LOGIN,
       process.env.PASSWORD,
     ];
-    return (
-      login === adminLogin && password === adminPassword && type === 'Basic'
-    );
+    const isAdmin: boolean =
+      login === adminLogin && password === adminPassword && type === 'Basic';
+    if (!isAdmin) {
+      throw new UnauthorizedException();
+    }
+    return isAdmin;
   }
 }
