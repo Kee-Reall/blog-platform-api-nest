@@ -19,16 +19,16 @@ export type UserLogicModel = {
   email: string;
   createdAt: Date;
   hash: string;
-  confirmation: Confirmation;
-  recovery: Recovery;
+  confirmation: ConfirmationType;
+  recovery: RecoveryType;
 };
 
-export type Recovery = {
+export type RecoveryType = {
   recoveryCode: string;
   expirationDate: Date;
 };
 
-export type Confirmation = {
+export type ConfirmationType = {
   isConfirmed: boolean;
   code: string;
   confirmationDate: Date;

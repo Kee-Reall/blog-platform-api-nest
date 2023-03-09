@@ -2,9 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { hash as genHash, genSalt } from 'bcrypt';
+import { v4 as genUUIDv4 } from 'uuid';
+import addMinutes from 'date-fns/addMinutes';
 import {
-  Confirmation,
-  Recovery,
+  ConfirmationType,
+  RecoveryType,
   UserInputModel,
   UserLogicModel,
 } from '../Type/users.types';
@@ -13,11 +15,11 @@ import { VoidPromise } from '../Type/promise.types';
 export type UserDocument = HydratedDocument<User> & UserMethods;
 
 @Schema({ _id: false, versionKey: false })
-export class ConfirmationScheme implements Confirmation {
-  @Prop({ required: true, default: '' })
-  code: string = '';
+export class ConfirmationScheme implements ConfirmationType {
+  @Prop({ default: () => genUUIDv4() })
+  code: string = genUUIDv4();
 
-  @Prop({ required: true, default: () => new Date() })
+  @Prop({ required: true, default: () => addMinutes(new Date(), 60) })
   confirmationDate: Date = new Date();
 
   @Prop({ required: true, default: false })
@@ -25,11 +27,11 @@ export class ConfirmationScheme implements Confirmation {
 }
 
 @Schema({ _id: false, versionKey: false })
-export class RecoverySchema implements Recovery {
+export class RecoverySchema implements RecoveryType {
   @Prop({ required: true, default: () => new Date() })
   expirationDate: Date = new Date();
 
-  @Prop({ required: true, default: '' })
+  @Prop({ default: '' })
   recoveryCode: string = '';
 }
 
@@ -47,11 +49,6 @@ export class RecoverySchema implements Recovery {
   },
 })
 export class User implements UserLogicModel {
-  constructor(data?: Partial<User>) {
-    Object.assign(this, data);
-    this.confirmation = this.confirmation || new ConfirmationScheme();
-    this.recovery = this.recovery || new RecoverySchema();
-  }
   _id: ObjectId;
 
   @Prop({
@@ -80,17 +77,13 @@ export class User implements UserLogicModel {
 
   @Prop({
     required: true,
-    default: () => {
-      return { code: '', confirmationDate: new Date(), isConfirmed: false };
-    },
+    default: () => new ConfirmationScheme(),
   })
   confirmation: ConfirmationScheme;
 
   @Prop({
     required: true,
-    default: () => {
-      return { expirationDate: new Date(), recoveryCode: '' };
-    },
+    default: () => new RecoverySchema(),
   })
   recovery: RecoverySchema;
 
@@ -106,6 +99,14 @@ UserSchema.statics = {
     const { login, email, password } = dto;
     const hash = await genHash(password, await genSalt(10));
     return new this({ login, email, hash });
+  },
+
+  generateDefaultRecovery(): RecoveryType {
+    return { expirationDate: new Date(), recoveryCode: '' };
+  },
+
+  generateDefaultConfirmation(isAdmin = false): ConfirmationType {
+    return { code: '', confirmationDate: new Date(), isConfirmed: isAdmin };
   },
 };
 
@@ -126,15 +127,23 @@ UserSchema.methods = {
   },
 
   async setHash(password: string) {
-    this.hash = await genHash(password, await genSalt(10));
+    this.hash = await genHash(password, await genSalt(13));
+  },
+
+  confirm() {
+    this.confirmation.isConfirmed = true;
+    this.confirmation.code = '';
   },
 };
 
 export interface UserMethods {
   isFieldsUnique: () => Promise<[boolean, string[]]>;
   setHash: (password: string) => VoidPromise;
+  confirm: () => void;
 }
 
 export interface UserModelStatic {
   newUser: (dto: UserInputModel) => Promise<UserDocument>;
+  generateDefaultRecovery: () => RecoveryType;
+  generateDefaultConfirmation: (isAdmin: boolean) => ConfirmationType;
 }

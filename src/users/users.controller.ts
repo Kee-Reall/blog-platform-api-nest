@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersQueryRepository } from './repos/users.query.repository';
-import { UserInputModel } from '../Model/Type/users.types';
 import { UsersService } from './users.service';
 import { BasicAuth } from '../helpers/classes/basicAuth.guard';
 import { IPaginationConfig } from '../Model/Type/pagination.types';
 import { UserQueryPipe } from './pipes/users.pipe';
+import { UserInput } from './validators/user.validator';
 
 @Controller('api/users')
 export class UsersController {
@@ -34,7 +34,7 @@ export class UsersController {
 
   @UseGuards(BasicAuth)
   @Post()
-  public async createUser(@Body() dto: UserInputModel) {
+  public async createUser(@Body() dto: UserInput) {
     return await this.service.createUser(dto);
   }
 
