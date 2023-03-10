@@ -1,4 +1,4 @@
-import { PostsQueryPipe } from './pipes/posts.query.pipe';
+import { PostsQueryPipe } from '../../src/posts/pipes/posts.query.pipe';
 
 describe('PostsPipe', () => {
   it('should be defined', () => {

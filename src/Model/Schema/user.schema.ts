@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { hash as genHash, genSalt } from 'bcrypt';
 import { v4 as genUUIDv4 } from 'uuid';
-import addMinutes from 'date-fns/addMinutes';
+import { addMinutes } from 'date-fns';
 import {
   ConfirmationType,
   RecoveryType,
@@ -20,7 +20,7 @@ export class ConfirmationScheme implements ConfirmationType {
   code: string = genUUIDv4();
 
   @Prop({ required: true, default: () => addMinutes(new Date(), 60) })
-  confirmationDate: Date = new Date();
+  confirmationDate: Date = addMinutes(new Date(), 60);
 
   @Prop({ required: true, default: false })
   isConfirmed: boolean = false;
@@ -97,7 +97,7 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.statics = {
   async newUser(dto: UserInputModel): Promise<UserDocument> {
     const { login, email, password } = dto;
-    const hash = await genHash(password, await genSalt(10));
+    const hash = await genHash(password, await genSalt(13));
     return new this({ login, email, hash });
   },
 
@@ -134,12 +134,23 @@ UserSchema.methods = {
     this.confirmation.isConfirmed = true;
     this.confirmation.code = '';
   },
+
+  updateConfirmCode() {
+    this.confirmation = genUUIDv4();
+    this.confirmation.confirmationDate = addMinutes(new Date(), 60);
+  },
+
+  async killYourself() {
+    await this.constructor.deleteOne(this);
+  },
 };
 
 export interface UserMethods {
   isFieldsUnique: () => Promise<[boolean, string[]]>;
   setHash: (password: string) => VoidPromise;
   confirm: () => void;
+  updateConfirmCode: () => void;
+  killYourself: () => VoidPromise;
 }
 
 export interface UserModelStatic {

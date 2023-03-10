@@ -49,6 +49,7 @@ export abstract class Repository {
       await entity.save();
       return true;
     } catch (e) {
+      console.log(e);
       return false;
     }
   }

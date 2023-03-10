@@ -57,7 +57,8 @@ export class BlogsService {
   }
 
   public async deleteById(blogId: string): VoidPromise {
-    if (!(await this.commandRepo.deleteBlog(blogId))) {
+    const isDeleted: boolean = await this.commandRepo.deleteBlog(blogId);
+    if (!isDeleted) {
       throw new NotFoundException();
     }
     return;
