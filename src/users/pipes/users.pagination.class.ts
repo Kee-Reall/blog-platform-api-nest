@@ -9,8 +9,8 @@ export class UsersPaginationConfig extends PaginationConfig {
     super(query);
     this.filter = {
       $or: [
-        { login: new RegExp(query.searchLoginTerm, 'ig') },
-        { email: new RegExp(query.searchEmailTerm, 'ig') },
+        { login: new RegExp(query.searchLoginTerm || '[*]*', 'ig') },
+        { email: new RegExp(query.searchEmailTerm || '[*]*', 'ig') },
       ],
     };
   }

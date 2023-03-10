@@ -2,11 +2,15 @@ import {
   BadRequestException,
   ImATeapotException,
   Injectable,
-  NotFoundException,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { EmailService } from './email/email.service';
-import { UserInputModel } from '../Model/Type/users.types';
+import {
+  RecoveryInputModel,
+  UserInputModel,
+  UserLoginModel,
+} from '../Model/Type/users.types';
 import { Model } from 'mongoose';
 import {
   User,
@@ -16,6 +20,7 @@ import {
 import { AuthCommandRepository } from './repos/auth.command.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { VoidPromise } from '../Model/Type/promise.types';
+import { MessageENUM } from '../helpers/enums/message.enum';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +41,7 @@ export class AuthService {
     if (!isUnique) {
       throw new BadRequestException({
         errorMessages: fieldsArray.map((field) => ({
-          message: 'already using',
+          message: MessageENUM.ALREADY_EXISTS,
           field,
         })),
       });
@@ -59,9 +64,9 @@ export class AuthService {
 
   public async resendRegistryCode(email: string): VoidPromise {
     const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new NotFoundException({
-        errorMessages: [{ message: 'already using', field: 'email' }],
+    if (!user || user.confirmation.isConfirmed) {
+      throw new BadRequestException({
+        errorMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'email' }],
       });
     }
     user.updateConfirmCode();
@@ -72,10 +77,82 @@ export class AuthService {
     if (!isMailSent) {
       throw new ServiceUnavailableException();
     }
-    const isSaved = await this.commandRepo.saveAfterCodeChanges(user);
-    if (isSaved) {
+    const isSaved = await this.commandRepo.saveAfterChanges(user);
+    if (!isSaved) {
       throw new ImATeapotException();
     }
     return;
+  }
+
+  public async confirmUser(code: string): VoidPromise {
+    const user = await this.userModel.findOne({ 'confirmation.code': code });
+    if (!user || user.confirmation.isConfirmed) {
+      throw new BadRequestException({
+        errorMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'code' }],
+      });
+    }
+    user.confirm();
+    const isSaved = await this.commandRepo.saveAfterChanges(user);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    return;
+  }
+
+  public async passwordRecoveryAttempt(email: string): VoidPromise {
+    const user = await this.userModel.findOne({ email });
+    if (!user || !user.confirmation.isConfirmed) {
+      console.log('you are here');
+      return; //not found exception, but we shouldn't say it to client
+    }
+    user.setRecoveryMetadata();
+    const isSaved = await this.commandRepo.saveAfterChanges(user);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    this.mailService // don't wait for mail server
+      .sendRecoveryInfo(user.email, user.recovery.recoveryCode)
+      .then((isSent) =>
+        !isSent
+          ? console.error('failed EMAIL sending attempt to: ' + email)
+          : null,
+      );
+    return;
+  }
+
+  public async changePassword({
+    recoveryCode,
+    newPassword,
+  }: RecoveryInputModel): VoidPromise {
+    const user = await this.userModel.findOne({
+      'recovery.recoveryCode': recoveryCode,
+    });
+    const objectError = {
+      errorMessages: [
+        { message: MessageENUM.NOT_ALLOW, field: 'recoveryCode' },
+      ],
+    };
+    if (!user) {
+      throw new BadRequestException(objectError);
+    }
+    const canBeRecovered: boolean = user.isRecoveryCodeActive();
+    if (!canBeRecovered) {
+      console.log('you are here');
+      throw new BadRequestException(objectError);
+    }
+    await user.changePassword(newPassword);
+    await this.commandRepo.saveAfterChanges(user);
+    return;
+  }
+
+  public async loginAttempt({ loginOrEmail, password }: UserLoginModel) {
+    const user = await this.userModel.findByLoginOrEmail(loginOrEmail);
+    if (!user || !user.confirmation.isConfirmed) {
+      throw new UnauthorizedException();
+    }
+    if (!(await user.comparePasswords(password))) {
+      throw new UnauthorizedException();
+    }
+    return user;
   }
 }

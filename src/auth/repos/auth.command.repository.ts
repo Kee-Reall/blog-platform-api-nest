@@ -14,7 +14,7 @@ export class AuthCommandRepository extends Repository {
     return await this.saveEntity(user);
   }
 
-  public async saveAfterCodeChanges(user: UserDocument): Promise<boolean> {
+  public async saveAfterChanges(user: UserDocument): Promise<boolean> {
     return await this.saveEntity(user);
   }
 }

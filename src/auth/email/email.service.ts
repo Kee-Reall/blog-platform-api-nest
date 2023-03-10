@@ -5,13 +5,20 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class EmailService {
   constructor(private readonly mail: MailerService) {}
 
-  public async test() {
-    return await this.mail.sendMail({
-      // test method
-      to: [''],
-      subject: 'test subject',
-      html: '<h1>TEST MESSAGE</h1>',
-    });
+  private generateConfirmHTML(code: string) {
+    return `
+      <h1>Thank for your registration</h1>
+       <p>To finish registration please follow the link below:
+          <a href='https://blog-platform-api-nest.vercel.app/api/auth/confirm-email?code=${code}'>complete registration</a>
+      </p>`;
+  }
+
+  private generateRecoveryHTML(code: string) {
+    return `
+    <h1>Password recovery</h1>
+    <p>To finish password recovery please follow the link below:
+      <a href='https://blog-platform-api-nest.vercel.app/api/auth/password-recovery?recoveryCode=${code}'>recovery password</a>
+    </p>`;
   }
 
   public async sendConfirmationAfterRegistration(
@@ -22,7 +29,20 @@ export class EmailService {
       const { accepted } = await this.mail.sendMail({
         to: email,
         subject: 'Registration conformation',
-        html: `<p>http://google.com/похуй-какой-домен/auth/registration-confirmation?code=${code}</p>`,
+        html: this.generateConfirmHTML(code),
+      });
+      return accepted.length > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  public async sendRecoveryInfo(email: string, code: string): Promise<boolean> {
+    try {
+      const { accepted } = await this.mail.sendMail({
+        to: email,
+        subject: 'Password recovery',
+        html: this.generateRecoveryHTML(code),
       });
       return accepted.length > 0;
     } catch (e) {

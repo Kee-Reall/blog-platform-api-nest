@@ -13,6 +13,11 @@ export type UserInputModel = {
   password: string;
 };
 
+export type UserLoginModel = {
+  loginOrEmail: string;
+  password: string;
+};
+
 export type UserLogicModel = {
   _id: ObjectId;
   login: string;
@@ -26,6 +31,11 @@ export type UserLogicModel = {
 export type RecoveryType = {
   recoveryCode: string;
   expirationDate: Date;
+};
+
+export type RecoveryInputModel = {
+  recoveryCode: string;
+  newPassword: string;
 };
 
 export type ConfirmationType = {
