@@ -16,6 +16,7 @@ import { VoidPromise } from '../Model/Type/promise.types';
 import { RecoveryInput } from './validators/recoveryInput';
 import { LoginInput } from './validators/login';
 import { Cookies } from '../helpers/functions/cookies.decorator';
+import { CookiesInput } from './validators/cookiesInput';
 
 @Controller('api/auth')
 export class AuthController {
@@ -25,10 +26,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async login(
     @Body() dto: LoginInput,
-    @Cookies() cook: any,
+    @Cookies() cook: CookiesInput,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(res);
+    console.log(res.cookie('from', 'to'));
     console.log('----------------------------------------------------------');
     console.log(cook);
     return this.service.loginAttempt(dto);
