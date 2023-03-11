@@ -18,6 +18,8 @@ export type UserLoginModel = {
   password: string;
 };
 
+export type WithIp<T> = T & { ip: string };
+
 export type UserLogicModel = {
   _id: ObjectId;
   login: string;

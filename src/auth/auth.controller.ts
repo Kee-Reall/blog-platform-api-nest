@@ -3,10 +3,11 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Ip,
   Post,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import { EmailService } from './email/email.service';
 import { UserInput } from '../users/validators/user.validator';
 import { AuthService } from './auth.service';
@@ -15,24 +16,31 @@ import { CodeInput } from './validators/code';
 import { VoidPromise } from '../Model/Type/promise.types';
 import { RecoveryInput } from './validators/recoveryInput';
 import { LoginInput } from './validators/login';
-import { Cookies } from '../helpers/functions/cookies.decorator';
-import { CookiesInput } from './validators/cookiesInput';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private mailer: EmailService, private service: AuthService) {}
 
+  private readonly cookiesOptions: CookieOptions = {
+    //domain: 'ht-02-03.vercel.app',
+    sameSite: 'none',
+    //secure: true,
+    httpOnly: true,
+  };
+
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(
-    @Body() dto: LoginInput,
-    @Cookies() cook: CookiesInput,
     @Res({ passthrough: true }) res: Response,
+    @Body() dto: LoginInput,
+    @Ip() ip: string,
   ) {
-    console.log(res.cookie('from', 'to'));
-    console.log('----------------------------------------------------------');
-    console.log(cook);
-    return this.service.loginAttempt(dto);
+    const { accessToken, refreshToken } = await this.service.loginAttempt({
+      ...dto,
+      ip,
+    });
+    res.cookie('refreshToken', refreshToken, this.cookiesOptions);
+    return { accessToken };
   }
 
   @Post('registration')

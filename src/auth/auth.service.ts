@@ -5,13 +5,15 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Model } from 'mongoose';
 import { EmailService } from './email/email.service';
 import {
   RecoveryInputModel,
   UserInputModel,
   UserLoginModel,
+  WithIp,
 } from '../Model/Type/users.types';
-import { Model } from 'mongoose';
 import {
   User,
   UserDocument,
@@ -21,14 +23,18 @@ import { AuthCommandRepository } from './repos/auth.command.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { VoidPromise } from '../Model/Type/promise.types';
 import { MessageENUM } from '../helpers/enums/message.enum';
+import { Session, SessionDocument } from '../Model/Schema/session.schema';
+import { SessionJWTMeta, TokenPair } from '../Model/Type/auth.metadata.types';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument> & UserModelStatic,
+    @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
     private mailService: EmailService,
     private commandRepo: AuthCommandRepository,
+    private jwtService: JwtService,
   ) {}
 
   public async registration({
@@ -137,7 +143,6 @@ export class AuthService {
     }
     const canBeRecovered: boolean = user.isRecoveryCodeActive();
     if (!canBeRecovered) {
-      console.log('you are here');
       throw new BadRequestException(objectError);
     }
     await user.changePassword(newPassword);
@@ -145,14 +150,38 @@ export class AuthService {
     return;
   }
 
-  public async loginAttempt({ loginOrEmail, password }: UserLoginModel) {
+  private generateTokenPair(meta: SessionJWTMeta): TokenPair {
+    const accessToken = this.jwtService.sign(
+      { userId: meta.userId },
+      { expiresIn: '15m', secret: process.env.JWT_SECRET, algorithm: 'HS512' },
+    );
+    const refreshToken = this.jwtService.sign(meta, {
+      expiresIn: '5d',
+      secret: process.env.JWT_SECRET,
+      algorithm: 'HS512',
+    });
+    return { accessToken, refreshToken };
+  }
+
+  public async loginAttempt({
+    loginOrEmail,
+    password,
+    ip,
+  }: WithIp<UserLoginModel>): Promise<TokenPair> {
     const user = await this.userModel.findByLoginOrEmail(loginOrEmail);
     if (!user || !user.confirmation.isConfirmed) {
       throw new UnauthorizedException();
     }
-    if (!(await user.comparePasswords(password))) {
+    const isPasswordValid = await user.comparePasswords(password);
+    if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
-    return user;
+    const session = new this.sessionModel({ userId: user._id, ip: [ip] });
+    const isSaved: boolean = await this.commandRepo.saveSession(session);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    const meta = session.getMetaForToken();
+    return this.generateTokenPair(meta);
   }
 }
