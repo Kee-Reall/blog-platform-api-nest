@@ -43,8 +43,8 @@ export class PostsController {
     return await this.queryRepo.getPaginatedPosts(config);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createPost(@Body() pojo: PostInput) {
     return await this.postService.createPost(pojo);
@@ -58,8 +58,8 @@ export class PostsController {
     return await this.queryRepo.findPostById(postId);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Put(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updatePost(
     @Param('id') postId: string,
@@ -67,8 +67,9 @@ export class PostsController {
   ): VoidPromise {
     return await this.postService.updatePost(postId, pojo);
   }
-  @UseGuards(BasicAuthGuard)
+
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deletePost(@Param('id') postId: string): VoidPromise {
     return await this.postService.deletePost(postId);

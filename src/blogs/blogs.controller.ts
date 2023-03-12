@@ -45,8 +45,8 @@ export class BlogsController {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
     @Body() pojo: BlogInput,
@@ -62,8 +62,8 @@ export class BlogsController {
     return await this.queryRepo.getBlogById(blogId);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Put(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
     @Param('id') blogId: string,
@@ -73,8 +73,8 @@ export class BlogsController {
     return;
   }
 
-  @UseGuards(BasicAuthGuard)
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteBlog(@Param('id') blogId: string): VoidPromise {
     return await this.blogService.deleteById(blogId);
@@ -83,16 +83,14 @@ export class BlogsController {
   @Get(':id/posts')
   @HttpCode(HttpStatus.OK)
   public async getPostsByBlogID(
-    /* post pagination class want an id in constructor argument */
     @Query(PostsByBlogPipe) configFabric: PostConfigFabric,
-    /* pipe return function, where query params are closured   */
     @Param('id') id: string,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     return await this.queryRepo.getPostsByBlogId(configFabric(id));
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post(':id/posts')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,

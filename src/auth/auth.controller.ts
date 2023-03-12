@@ -37,8 +37,8 @@ export class AuthController {
     httpOnly: true,
   };
 
-  @UseGuards(HardJwtAuthGuard)
   @Get('me')
+  @UseGuards(HardJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getInfoByToken(@User() user) {
     console.log(user);
@@ -60,11 +60,11 @@ export class AuthController {
     return { accessToken };
   }
 
-  @UseGuards(RefreshJwtAuthGuard)
   @Post('refresh-token')
+  @UseGuards(RefreshJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async refreshSession() {
-    return { refresh: 'fuck you' };
+    return { refresh: 'you so fresh' };
   }
 
   @Post('registration')
