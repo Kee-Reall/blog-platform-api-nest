@@ -8,23 +8,23 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { EmailService } from './email/email.service';
-import {
-  RecoveryInputModel,
-  UserInputModel,
-  UserLoginModel,
-  WithIp,
-} from '../Model/Type/users.types';
+import { AuthCommandRepository } from './repos/auth.command.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { MessageENUM } from '../helpers/enums/message.enum';
 import {
   User,
   UserDocument,
   UserModelStatic,
-} from '../Model/Schema/user.schema';
-import { AuthCommandRepository } from './repos/auth.command.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { VoidPromise } from '../Model/Type/promise.types';
-import { MessageENUM } from '../helpers/enums/message.enum';
-import { Session, SessionDocument } from '../Model/Schema/session.schema';
-import { SessionJWTMeta, TokenPair } from '../Model/Type/auth.metadata.types';
+  RecoveryInputModel,
+  UserInputModel,
+  UserLoginModel,
+  WithIp,
+  VoidPromise,
+  Session,
+  SessionDocument,
+  SessionJwtMeta,
+  TokenPair,
+} from '../Model';
 
 @Injectable()
 export class AuthService {
@@ -108,7 +108,6 @@ export class AuthService {
   public async passwordRecoveryAttempt(email: string): VoidPromise {
     const user = await this.userModel.findOne({ email });
     if (!user || !user.confirmation.isConfirmed) {
-      console.log('you are here');
       return; //not found exception, but we shouldn't say it to client
     }
     user.setRecoveryMetadata();
@@ -150,10 +149,10 @@ export class AuthService {
     return;
   }
 
-  private generateTokenPair(meta: SessionJWTMeta): TokenPair {
+  private generateTokenPair(meta: SessionJwtMeta): TokenPair {
     const accessToken = this.jwtService.sign(
       { userId: meta.userId },
-      { expiresIn: '15m', secret: process.env.JWT_SECRET, algorithm: 'HS512' },
+      { expiresIn: '2m', secret: process.env.JWT_SECRET, algorithm: 'HS512' },
     );
     const refreshToken = this.jwtService.sign(meta, {
       expiresIn: '5d',

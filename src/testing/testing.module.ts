@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TestingController } from './testing.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Post, PostSchema } from '../Model/Schema/post.schema';
-import { Blog, BlogSchema } from '../Model/Schema/blog.schema';
-import { Like, LikeSchema } from '../Model/Schema/like.schema';
-import { Comment, CommentSchema } from '../Model/Schema/comment.schema';
-import { User, UserSchema } from '../Model/Schema/user.schema';
+import {
+  Blog,
+  BlogSchema,
+  Comment,
+  CommentSchema,
+  Like,
+  LikeSchema,
+  Post,
+  PostSchema,
+  User,
+  UserSchema,
+} from '../Model/';
 
 @Module({
   imports: [

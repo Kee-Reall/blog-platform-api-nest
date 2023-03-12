@@ -1,6 +1,6 @@
-import { CommentInputModel } from '../../Model/Type/comments.types';
 import { Length } from 'class-validator';
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
+import { CommentInputModel } from '../../Model';
 
 export class CommentInput implements CommentInputModel {
   @TrimIfString()

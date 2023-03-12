@@ -1,18 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
-import { BlogPresentationModel } from '../../Model/Type/blogs.types';
-import {
-  IPaginationConfig,
-  PaginatedOutput,
-} from '../../Model/Type/pagination.types';
-import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { Repository } from '../../helpers/classes/repository.class';
 import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
-import { PostPresentationModel } from '../../Model/Type/posts.types';
-import { Like, LikeDocument } from '../../Model/Schema/like.schema';
-import { LikesInfo, WithExtendedLike } from '../../Model/Type/likes.types';
+import {
+  Blog,
+  BlogDocument,
+  BlogPresentationModel,
+  IPaginationConfig,
+  Like,
+  LikeDocument,
+  LikesInfo,
+  PaginatedOutput,
+  Post,
+  PostDocument,
+  PostPresentationModel,
+  WithExtendedLike,
+} from '../../Model';
 
 @Injectable()
 export class BlogsQueryRepository extends Repository {

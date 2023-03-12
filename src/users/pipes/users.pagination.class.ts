@@ -1,7 +1,6 @@
 import { PaginationConfig } from '../../helpers/classes/pagination.config';
 import { FilterQuery } from 'mongoose';
-import { UserPresentationModel } from '../../Model/Type/users.types';
-import { UsersFilters } from '../../Model/Type/query.types';
+import { UserPresentationModel, UsersFilters } from '../../Model';
 
 export class UsersPaginationConfig extends PaginationConfig {
   filter: FilterQuery<UserPresentationModel>;

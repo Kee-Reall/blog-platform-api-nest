@@ -4,26 +4,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  PostCreateModel,
-  PostPresentationModel,
-} from '../Model/Type/posts.types';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PostsCommandRepository } from './repos/posts.command.repository';
+import { MessageENUM } from '../helpers/enums/message.enum';
 import {
   Blog,
   BlogDocument,
   BlogSchemaMethods,
-} from '../Model/Schema/blog.schema';
-import {
+  Nullable,
   Post,
+  PostCreateModel,
   PostDocument,
   PostSchemaMethods,
-} from '../Model/Schema/post.schema';
-import { PostsCommandRepository } from './repos/posts.command.repository';
-import { WithExtendedLike } from '../Model/Type/likes.types';
-import { Nullable, VoidPromise } from '../Model/Type/promise.types';
-import { MessageENUM } from '../helpers/enums/message.enum';
+  PostPresentationModel,
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Injectable()
 export class PostsService {

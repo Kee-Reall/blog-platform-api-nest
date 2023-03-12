@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { UsersQueryRepository } from './repos/users.query.repository';
 import { UsersService } from './users.service';
-import { BasicAuth } from '../helpers/classes/basicAuth.guard';
-import { IPaginationConfig } from '../Model/Type/pagination.types';
+import { BasicAuthGuard } from '../helpers';
+import { IPaginationConfig } from '../Model';
 import { UserQueryPipe } from './pipes/users.pipe';
 import { UserInput } from './validators/user.validator';
 
@@ -24,7 +24,7 @@ export class UsersController {
     private service: UsersService,
   ) {}
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Get()
   public async getPaginatedUsers(
     @Query(UserQueryPipe) config: IPaginationConfig,
@@ -32,13 +32,13 @@ export class UsersController {
     return await this.queryRepo.getPaginatedUsers(config);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Post()
   public async createUser(@Body() dto: UserInput) {
     return await this.service.createUser(dto);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteUser(@Param('id') userId: string) {

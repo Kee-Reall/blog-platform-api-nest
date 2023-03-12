@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from '../../helpers/classes/repository.class';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../../Model/Schema/user.schema';
 import { Model } from 'mongoose';
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
+import { Repository } from '../../helpers/classes/repository.class';
+import { IPaginationConfig, User, UserDocument } from '../../Model';
 
 @Injectable()
 export class UsersQueryRepository extends Repository {

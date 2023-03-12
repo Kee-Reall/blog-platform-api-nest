@@ -1,4 +1,4 @@
-import { UserInputModel } from '../../Model/Type/users.types';
+import { UserInputModel } from '../../Model';
 import { IsEmail, Length, Matches } from 'class-validator';
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
 

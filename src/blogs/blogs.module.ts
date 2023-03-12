@@ -2,11 +2,16 @@ import { Module } from '@nestjs/common';
 import { BlogsController } from './blogs.controller';
 import { BlogsService } from './blogs.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from '../Model/Schema/blog.schema';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
 import { BlogsCommandRepository } from './repos/blogs.command.repository';
-import { Post, PostSchema } from '../Model/Schema/post.schema';
-import { Like, LikeSchema } from '../Model/Schema/like.schema';
+import {
+  Blog,
+  BlogSchema,
+  Post,
+  PostSchema,
+  Like,
+  LikeSchema,
+} from '../Model/';
 
 @Module({
   imports: [

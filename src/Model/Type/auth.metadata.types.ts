@@ -9,13 +9,19 @@ export interface SessionMetadata {
   title?: string;
 }
 
-export interface SessionJWTMeta {
+export interface SessionJwtMeta {
   userId: string;
   deviceId: string;
   updateDate: string;
 }
 
-export interface RefreshTokenPayload extends JwtPayload, SessionJWTMeta {}
+export interface AccessTokenPayload extends JwtPayload {
+  usedId: string;
+}
+
+export type UserAccessDTO = Pick<AccessTokenPayload, 'userId'>;
+
+export interface RefreshTokenPayload extends JwtPayload, SessionJwtMeta {}
 
 export interface SessionFilter {
   userId: string;

@@ -1,7 +1,5 @@
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
-import { BlogLogicModel } from '../../Model/Type/blogs.types';
+import { IPaginationConfig, BlogLogicModel, BlogFilters } from '../../Model';
 import { PaginationConfig } from '../../helpers/classes/pagination.config';
-import { BlogFilters } from '../../Model/Type/query.types';
 import { FilterQuery } from 'mongoose';
 
 export class BlogsPagination

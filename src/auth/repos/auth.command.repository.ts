@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from '../../helpers/classes/repository.class';
 import { Model } from 'mongoose';
-import { User, UserDocument } from '../../Model/Schema/user.schema';
+import { User, UserDocument, SessionDocument } from '../../Model/';
 import { InjectModel } from '@nestjs/mongoose';
-import { SessionDocument } from '../../Model/Schema/session.schema';
 
 @Injectable()
 export class AuthCommandRepository extends Repository {

@@ -12,21 +12,21 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { PostPresentationModel } from '../Model/Type/posts.types';
 import { PostsQueryRepository } from './repos/posts.query.repository';
-import { WithExtendedLike } from '../Model/Type/likes.types';
-import {
-  IPaginationConfig,
-  PaginatedOutput,
-} from '../Model/Type/pagination.types';
-import { VoidPromise } from '../Model/Type/promise.types';
 import {
   CommentConfigFabric,
   CommentsByPost,
   PostsQueryPipe,
 } from './pipes/posts.query.pipe';
 import { PostInput } from './validators/post.validator';
-import { BasicAuth } from '../helpers/classes/basicAuth.guard';
+import { BasicAuthGuard } from '../helpers';
+import {
+  IPaginationConfig,
+  PaginatedOutput,
+  PostPresentationModel,
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Controller('api/posts')
 export class PostsController {
@@ -43,7 +43,7 @@ export class PostsController {
     return await this.queryRepo.getPaginatedPosts(config);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createPost(@Body() pojo: PostInput) {
@@ -58,7 +58,7 @@ export class PostsController {
     return await this.queryRepo.findPostById(postId);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updatePost(
@@ -67,7 +67,7 @@ export class PostsController {
   ): VoidPromise {
     return await this.postService.updatePost(postId, pojo);
   }
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deletePost(@Param('id') postId: string): VoidPromise {

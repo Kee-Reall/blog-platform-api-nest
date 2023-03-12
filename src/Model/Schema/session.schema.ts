@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SessionJWTMeta, SessionMetadata } from '../Type/auth.metadata.types';
+import { SessionJwtMeta, SessionMetadata } from '../Type/auth.metadata.types';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 
@@ -24,9 +24,9 @@ export class Session implements SessionMetadata {
     return this._id.toHexString();
   }
 
-  public getMetaForToken(): SessionJWTMeta {
+  public getMetaForToken(): SessionJwtMeta {
     return {
-      deviceId: this.deviceId,
+      deviceId: this._id.toHexString(),
       updateDate: this.updateDate.toISOString(),
       userId: this.userId.toHexString(),
     };

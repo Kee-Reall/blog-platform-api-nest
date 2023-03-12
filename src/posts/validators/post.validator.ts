@@ -1,6 +1,6 @@
-import { PostInputModel } from '../../Model/Type/posts.types';
 import { Length } from 'class-validator';
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
+import { PostInputModel } from '../../Model';
 
 export class PostInput implements PostInputModel {
   @TrimIfString()

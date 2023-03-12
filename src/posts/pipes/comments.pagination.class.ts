@@ -1,8 +1,10 @@
-import { PaginationConfig } from '../../helpers/classes/pagination.config';
-import { CommentsLogicModel } from '../../Model/Type/comments.types';
 import { FilterQuery } from 'mongoose';
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
-import { CommentsFilter } from '../../Model/Type/query.types';
+import { PaginationConfig } from '../../helpers/classes/pagination.config';
+import {
+  CommentsFilter,
+  CommentsLogicModel,
+  IPaginationConfig,
+} from '../../Model';
 
 export class CommentsPaginationConfig
   extends PaginationConfig

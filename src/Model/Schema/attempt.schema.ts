@@ -5,6 +5,6 @@ export class Attempt {
   @Prop({ required: true })
   endpointAndIp: string;
 
-  @Prop({ default: new Date().toISOString() })
-  date: string;
+  @Prop({ default: () => new Date() })
+  date: Date;
 }

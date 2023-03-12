@@ -12,15 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
-import { BlogPresentationModel } from '../Model/Type/blogs.types';
-import { VoidPromise } from '../Model/Type/promise.types';
 import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import {
-  IPaginationConfig,
-  PaginatedOutput,
-} from '../Model/Type/pagination.types';
-import { PostPresentationModel } from '../Model/Type/posts.types';
-import { WithExtendedLike } from '../Model/Type/likes.types';
 import {
   BlogsQueryPipe,
   PostConfigFabric,
@@ -28,7 +20,15 @@ import {
 } from './pipes/blogs.query.pipe';
 import { BlogInput } from './validators/blog.validator';
 import { PostInputWithoutBlogId } from './validators/post.validator';
-import { BasicAuth } from '../helpers/classes/basicAuth.guard';
+import { BasicAuthGuard } from '../helpers';
+import {
+  BlogPresentationModel,
+  IPaginationConfig,
+  PaginatedOutput,
+  PostPresentationModel,
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -45,7 +45,7 @@ export class BlogsController {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
@@ -62,7 +62,7 @@ export class BlogsController {
     return await this.queryRepo.getBlogById(blogId);
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
@@ -73,7 +73,7 @@ export class BlogsController {
     return;
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteBlog(@Param('id') blogId: string): VoidPromise {
@@ -91,7 +91,7 @@ export class BlogsController {
     return await this.queryRepo.getPostsByBlogId(configFabric(id));
   }
 
-  @UseGuards(BasicAuth)
+  @UseGuards(BasicAuthGuard)
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
   public async createPost(

@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
 import { Repository } from '../../helpers/classes/repository.class';
-import { Post, PostDocument } from '../../Model/Schema/post.schema';
-import { VoidPromise } from '../../Model/Type/promise.types';
+import {
+  Blog,
+  BlogDocument,
+  Post,
+  PostDocument,
+  VoidPromise,
+} from '../../Model';
 
 @Injectable()
 export class BlogsCommandRepository extends Repository {

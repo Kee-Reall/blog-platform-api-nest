@@ -4,13 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserInputModel } from '../Model/Type/users.types';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  User,
-  UserDocument,
-  UserModelStatic,
-} from '../Model/Schema/user.schema';
+import { User, UserDocument, UserModelStatic, UserInputModel } from '../Model';
 import { Model } from 'mongoose';
 import { UsersCommandRepository } from './repos/users.comman.repository';
 

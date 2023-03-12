@@ -1,8 +1,8 @@
-import { Repository } from '../../helpers/classes/repository.class';
-import { Injectable } from '@nestjs/common';
-import { Post, PostDocument } from '../../Model/Schema/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { Repository } from '../../helpers/classes/repository.class';
+import { Post, PostDocument } from '../../Model';
 
 @Injectable()
 export class PostsCommandRepository extends Repository {

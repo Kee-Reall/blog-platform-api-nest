@@ -3,10 +3,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { EmailService } from './email/email.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../Model/Schema/user.schema';
 import { AuthCommandRepository } from './repos/auth.command.repository';
 import { JwtModule } from '@nestjs/jwt';
-import { Session, SessionSchema } from '../Model/Schema/session.schema';
+import { HardJwtAuthStrategy } from '../helpers/strategies/hardJwtAuth.strategy';
+import { AuthQueryRepository } from './repos/auth.query.repository';
+import { RefreshJwtAuthStrategy } from '../helpers/strategies/refreshJwtAuth.strategy';
+import { Session, SessionSchema, User, UserSchema } from '../Model';
 
 @Module({
   imports: [
@@ -17,6 +19,13 @@ import { Session, SessionSchema } from '../Model/Schema/session.schema';
     JwtModule.register({}),
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailService, AuthCommandRepository],
+  providers: [
+    AuthService,
+    EmailService,
+    AuthCommandRepository,
+    AuthQueryRepository,
+    HardJwtAuthStrategy,
+    RefreshJwtAuthStrategy,
+  ],
 })
 export class AuthModule {}

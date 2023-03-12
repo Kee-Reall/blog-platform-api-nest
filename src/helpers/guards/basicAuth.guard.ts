@@ -6,7 +6,7 @@ import {
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 
-export class BasicAuth implements CanActivate {
+export class BasicAuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
