@@ -9,6 +9,7 @@ import { CommentsController } from './comments.controller';
 import {
   Blog,
   BlogSchema,
+  Comment,
   CommentSchema,
   Like,
   LikeSchema,
