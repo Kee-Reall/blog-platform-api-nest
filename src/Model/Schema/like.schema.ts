@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { MessageENUM } from '../../helpers/enums/message.enum';
-import { LikeModel } from '../Type/likes.types';
+import { LikeModel } from '../Type';
 import { HydratedDocument } from 'mongoose';
 import { ObjectId } from 'mongodb';
 

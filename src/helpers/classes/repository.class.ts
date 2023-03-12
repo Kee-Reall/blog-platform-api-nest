@@ -1,20 +1,18 @@
 import { HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
+import { LikeENUM } from '../enums/like.enum';
 import {
-  Nullable,
-  NullablePromise,
-  VoidablePromise,
-  VoidPromise,
-} from '../../Model/Type/promise.types';
-import { LikeDocument } from '../../Model/Schema/like.schema';
-import {
+  IPaginationConfig,
+  LikeDocument,
   LikeMapped,
   LikesInfo,
   LikeStatus,
   NewestLikeArray,
-} from '../../Model/Type/likes.types';
-import { LikeENUM } from '../enums/like.enum';
+  Nullable,
+  NullablePromise,
+  VoidablePromise,
+  VoidPromise,
+} from '../../Model';
 
 export abstract class Repository {
   protected async paginate<T>(

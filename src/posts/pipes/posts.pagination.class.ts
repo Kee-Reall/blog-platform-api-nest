@@ -1,8 +1,6 @@
 import { PaginationConfig } from '../../helpers/classes/pagination.config';
-import { PostLogicModel } from '../../Model/Type/posts.types';
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
 import { FilterQuery } from 'mongoose';
-import { PostFilters } from '../../Model/Type/query.types';
+import { IPaginationConfig, PostFilters, PostLogicModel } from '../../Model';
 
 export class PostsPaginationConfig
   extends PaginationConfig

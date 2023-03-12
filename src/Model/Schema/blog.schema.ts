@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BlogLogicModel, BlogPresentationModel } from '../Type/blogs.types';
+import {
+  BlogLogicModel,
+  BlogPresentationModel,
+  NullablePromise,
+} from '../Type';
 import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
 import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
 import { HydratedDocument } from 'mongoose';
-import { NullablePromise } from '../Type/promise.types';
 
 export type BlogDocument = HydratedDocument<BlogPresentationModel>;
 

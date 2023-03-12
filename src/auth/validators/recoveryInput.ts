@@ -1,6 +1,6 @@
 import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
 import { IsUUID, Length } from 'class-validator';
-import { RecoveryInputModel } from '../../Model/Type/users.types';
+import { RecoveryInputModel } from '../../Model';
 
 export class RecoveryInput implements RecoveryInputModel {
   @TrimIfString()

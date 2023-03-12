@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SessionJwtMeta, SessionMetadata } from '../Type/auth.metadata.types';
+import { SessionJwtMeta, SessionMetadata } from '../Type/';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 
