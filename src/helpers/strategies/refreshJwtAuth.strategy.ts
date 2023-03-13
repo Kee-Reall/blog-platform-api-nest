@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { RefreshTokenPayload, SessionJwtMeta } from '../../Model/';
 import { UnauthorizedException } from '@nestjs/common';
+import { RefreshTokenPayload, SessionJwtMeta } from '../../Model/';
 
 export class RefreshJwtAuthStrategy extends PassportStrategy(
   Strategy,

@@ -1,7 +1,7 @@
-import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AccessTokenPayload, UserAccessDTO } from '../../Model/';
+import { PassportStrategy } from '@nestjs/passport';
 import { UnauthorizedException } from '@nestjs/common';
+import { AccessTokenPayload, UserAccessDTO } from '../../Model/';
 
 export class HardJwtAuthStrategy extends PassportStrategy(Strategy) {
   constructor() {
