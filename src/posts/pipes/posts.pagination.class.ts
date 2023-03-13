@@ -1,5 +1,5 @@
-import { PaginationConfig } from '../../helpers/classes/pagination.config';
 import { FilterQuery } from 'mongoose';
+import { PaginationConfig } from '../../helpers';
 import { IPaginationConfig, PostFilters, PostLogicModel } from '../../Model';
 
 export class PostsPaginationConfig

@@ -1,5 +1,5 @@
 import { FilterQuery } from 'mongoose';
-import { PaginationConfig } from '../../helpers/classes/pagination.config';
+import { PaginationConfig } from '../../helpers';
 import {
   CommentsFilter,
   CommentsLogicModel,

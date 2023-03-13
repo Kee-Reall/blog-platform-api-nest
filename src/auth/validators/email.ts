@@ -1,5 +1,5 @@
 import { IsEmail, Length } from 'class-validator';
-import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
+import { TrimIfString } from '../../helpers';
 
 export class EmailInput {
   @IsEmail()

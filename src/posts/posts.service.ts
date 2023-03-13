@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PostsCommandRepository } from './repos/posts.command.repository';
-import { MessageENUM } from '../helpers/enums/message.enum';
+import { MessageENUM } from '../helpers';
 import {
   Blog,
   BlogDocument,

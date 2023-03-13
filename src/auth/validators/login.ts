@@ -1,6 +1,6 @@
 import { Length } from 'class-validator';
 import { UserLoginModel } from '../../Model/';
-import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
+import { TrimIfString } from '../../helpers';
 
 export class LoginInput implements UserLoginModel {
   @TrimIfString()
