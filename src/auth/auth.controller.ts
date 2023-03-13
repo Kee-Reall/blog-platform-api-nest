@@ -10,17 +10,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CookieOptions, Response } from 'express';
-import { EmailService } from './email/email.service';
-import { UserInput } from '../users/validators/user.validator';
+import { EmailService } from './email';
 import { AuthService } from './auth.service';
-import { EmailInput } from './validators/email';
-import { CodeInput } from './validators/code';
 import { VoidPromise } from '../Model/';
-import { RecoveryInput } from './validators/recoveryInput';
-import { LoginInput } from './validators/login';
-import { HardJwtAuthGuard, RefreshJwtAuthGuard } from '../helpers';
-import { AuthQueryRepository } from './repos/auth.query.repository';
-import { User } from '../helpers/functions/user.decorator';
+import { HardJwtAuthGuard, RefreshJwtAuthGuard, User } from '../helpers';
+import { AuthQueryRepository } from './repos';
+import {
+  CodeInput,
+  EmailInput,
+  LoginInput,
+  RecoveryInput,
+  UserInput,
+} from './validators';
 
 @Controller('api/auth')
 export class AuthController {
@@ -37,14 +38,6 @@ export class AuthController {
     httpOnly: true,
   };
 
-  @Get('me')
-  @UseGuards(HardJwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
-  public async getInfoByToken(@User() user) {
-    console.log(user);
-    return this.queryRepo.getUserInfo(user);
-  }
-
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(
@@ -58,6 +51,14 @@ export class AuthController {
     });
     res.cookie('refreshToken', refreshToken, this.cookiesOptions);
     return { accessToken };
+  }
+
+  @Get('me')
+  @UseGuards(HardJwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  public async getInfoByToken(@User() user) {
+    console.log(user);
+    return this.queryRepo.getUserInfo(user);
   }
 
   @Post('refresh-token')

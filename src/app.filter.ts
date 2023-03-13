@@ -13,8 +13,6 @@ export class GlobalHTTPFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
     const errorMessages = exception.getResponse();
-    debugger;
-
     if (status === 400) {
       return response.status(status).json(errorMessages);
     }

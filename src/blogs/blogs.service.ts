@@ -5,8 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BlogsCommandRepository } from './repos/blogs.command.repository';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
+import { BlogsCommandRepository, BlogsQueryRepository } from './repos';
 import {
   Blog,
   BlogDocument,

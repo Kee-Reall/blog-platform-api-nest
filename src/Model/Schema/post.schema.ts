@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PostLogicModel, PostPresentationModel } from '../Type/posts.types';
 import * as mongoose from 'mongoose';
-import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
-import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
-import { NullablePromise } from '../Type/promise.types';
+import { MessageENUM, deleteHidden } from '../../helpers/';
+import {
+  PostLogicModel,
+  PostPresentationModel,
+  NullablePromise,
+} from '../Type';
 
 export type PostDocument = mongoose.HydratedDocument<PostPresentationModel>;
 

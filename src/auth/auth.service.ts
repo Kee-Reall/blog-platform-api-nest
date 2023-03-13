@@ -6,11 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Model } from 'mongoose';
-import { EmailService } from './email/email.service';
-import { AuthCommandRepository } from './repos/auth.command.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { MessageENUM } from '../helpers/enums/message.enum';
+import { Model } from 'mongoose';
+import { EmailService } from './email/';
+import { AuthCommandRepository } from './repos';
+import { MessageENUM } from '../helpers';
 import {
   User,
   UserDocument,

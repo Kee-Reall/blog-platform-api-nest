@@ -3,7 +3,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { RefreshTokenPayload, SessionJwtMeta } from '../../Model/';
 import { UnauthorizedException } from '@nestjs/common';
 
-export class RefreshJwtAuthStrategy extends PassportStrategy(Strategy) {
+export class RefreshJwtAuthStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([

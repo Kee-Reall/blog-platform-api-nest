@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Repository } from '../../helpers/classes/repository.class';
+import { Repository } from '../../helpers';
 import { CommentsPaginationConfig } from '../pipes/comments.pagination.class';
 import {
   Blog,

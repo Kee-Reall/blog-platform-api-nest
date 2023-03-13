@@ -6,11 +6,12 @@ import { v4 as genUUIDv4 } from 'uuid';
 import { addMinutes, isBefore } from 'date-fns';
 import {
   ConfirmationType,
+  NullablePromise,
   RecoveryType,
   UserInputModel,
   UserLogicModel,
-} from '../Type/users.types';
-import { NullablePromise, VoidPromise } from '../Type/promise.types';
+  VoidPromise,
+} from '../Type/';
 
 export type UserDocument = HydratedDocument<User> & UserMethods;
 
