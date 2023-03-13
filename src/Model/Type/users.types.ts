@@ -18,7 +18,7 @@ export type UserLoginModel = {
   password: string;
 };
 
-export type WithIp<T> = T & { ip: string };
+export type WithClientMeta<T> = T & { ip: string; agent: string };
 
 export type UserLogicModel = {
   _id: ObjectId;

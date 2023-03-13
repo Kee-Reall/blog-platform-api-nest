@@ -7,6 +7,7 @@ import { EmailService } from './email';
 import { AuthCommandRepository, AuthQueryRepository } from './repos';
 import { HardJwtAuthStrategy, RefreshJwtAuthStrategy } from '../helpers';
 import { Session, SessionSchema, User, UserSchema } from '../Model';
+import { DeviceController } from './device.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Session, SessionSchema, User, UserSchema } from '../Model';
     ]),
     JwtModule.register({}),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, DeviceController],
   providers: [
     AuthService,
     EmailService,

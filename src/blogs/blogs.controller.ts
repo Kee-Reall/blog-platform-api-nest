@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
+import { BlogsQueryRepository } from './repos';
 import {
   BlogsQueryPipe,
   PostConfigFabric,

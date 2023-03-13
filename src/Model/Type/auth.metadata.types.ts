@@ -23,9 +23,9 @@ export type UserAccessDTO = Pick<AccessTokenPayload, 'userId'>;
 
 export interface RefreshTokenPayload extends JwtPayload, SessionJwtMeta {}
 
-export interface SessionFilter {
-  userId: string;
-  deviceId: string;
+export interface SessionFilter<T = string> {
+  userId: T;
+  deviceId: T;
 }
 
 export interface RefreshTokenDbResponse {

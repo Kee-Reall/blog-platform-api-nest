@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Ip,
@@ -42,30 +43,48 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async login(
     @Res({ passthrough: true }) res: Response,
+    @Headers('user-agent') agent,
     @Body() dto: LoginInput,
     @Ip() ip: string,
   ) {
-    const { accessToken, refreshToken } = await this.service.loginAttempt({
+    const tokenPair = await this.service.loginAttempt({
       ...dto,
+      agent,
       ip,
     });
-    res.cookie('refreshToken', refreshToken, this.cookiesOptions);
-    return { accessToken };
+    res.cookie('refreshToken', tokenPair.refreshToken, this.cookiesOptions);
+    return { accessToken: tokenPair.accessToken };
   }
 
   @Get('me')
   @UseGuards(HardJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getInfoByToken(@User() user) {
-    console.log(user);
     return this.queryRepo.getUserInfo(user);
   }
 
   @Post('refresh-token')
   @UseGuards(RefreshJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  public async refreshSession() {
-    return { refresh: 'you so fresh' };
+  public async refreshSession(
+    @Res({ passthrough: true }) res,
+    @User() userMeta,
+    @Ip() ip,
+  ) {
+    const tokenPair = await this.service.refreshAttempt(userMeta, ip);
+    res.cookie('refreshToken', tokenPair.refreshToken, this.cookiesOptions);
+    return { accessToken: tokenPair.accessToken };
+  }
+
+  @Post('logout')
+  @UseGuards(RefreshJwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async logout(@Res({ passthrough: true }) res, @User() userMeta) {
+    this.service
+      .logout(userMeta)
+      .catch((e) => console.error('session clean error' + e.message));
+    res.clearCookie('refreshToken');
+    return;
   }
 
   @Post('registration')

@@ -1,12 +1,24 @@
-import { Repository } from '../../helpers/classes/repository.class';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserAccessDTO } from '../../Model';
 import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Repository } from '../../helpers';
+import {
+  User,
+  UserDocument,
+  UserAccessDTO,
+  Session,
+  SessionDocument,
+  NullablePromise,
+  SessionModelStatics,
+} from '../../Model';
 
 @Injectable()
 export class AuthQueryRepository extends Repository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Session.name)
+    private sessionModel: Model<SessionDocument> & SessionModelStatics,
+  ) {
     super();
   }
 
@@ -16,5 +28,13 @@ export class AuthQueryRepository extends Repository {
       throw new UnauthorizedException();
     }
     return user;
+  }
+
+  public async findSession(deviceId: string): NullablePromise<SessionDocument> {
+    return await this.findById(this.sessionModel, deviceId);
+  }
+
+  public async getSessions(userId: string) {
+    return await this.sessionModel.findUsersSessions(userId);
   }
 }

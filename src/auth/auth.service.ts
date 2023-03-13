@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  ForbiddenException,
   ImATeapotException,
   Injectable,
+  NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,31 +11,34 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EmailService } from './email/';
-import { AuthCommandRepository } from './repos';
+import { AuthCommandRepository, AuthQueryRepository } from './repos';
 import { MessageENUM } from '../helpers';
 import {
   User,
   UserDocument,
-  UserModelStatic,
+  UserModelStatics,
   RecoveryInputModel,
   UserInputModel,
   UserLoginModel,
-  WithIp,
+  WithClientMeta,
   VoidPromise,
   Session,
   SessionDocument,
   SessionJwtMeta,
   TokenPair,
+  SessionModelStatics,
 } from '../Model';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<UserDocument> & UserModelStatic,
-    @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
-    private mailService: EmailService,
+    private userModel: Model<UserDocument> & UserModelStatics,
+    @InjectModel(Session.name)
+    private sessionModel: Model<SessionDocument> & SessionModelStatics,
     private commandRepo: AuthCommandRepository,
+    private queryRepo: AuthQueryRepository,
+    private mailService: EmailService,
     private jwtService: JwtService,
   ) {}
 
@@ -163,10 +168,11 @@ export class AuthService {
   }
 
   public async loginAttempt({
-    loginOrEmail,
-    password,
     ip,
-  }: WithIp<UserLoginModel>): Promise<TokenPair> {
+    password,
+    loginOrEmail,
+    agent: title,
+  }: WithClientMeta<UserLoginModel>): Promise<TokenPair> {
     const user = await this.userModel.findByLoginOrEmail(loginOrEmail);
     if (!user || !user.confirmation.isConfirmed) {
       throw new UnauthorizedException();
@@ -175,12 +181,97 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
-    const session = new this.sessionModel({ userId: user._id, ip: [ip] });
+    const session = new this.sessionModel({
+      userId: user._id,
+      title,
+      ip: [ip],
+    });
     const isSaved: boolean = await this.commandRepo.saveSession(session);
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    const meta = session.getMetaForToken();
-    return this.generateTokenPair(meta);
+    return this.generateTokenPair(session.getMetaForToken());
+  }
+
+  private checkValidMeta(
+    meta: SessionJwtMeta,
+    session: SessionDocument,
+  ): boolean {
+    const isSameUser = session.userId.toHexString() === meta.userId;
+    const isSameDate = meta.updateDate === session.updateDate.toISOString();
+    return isSameUser && isSameDate;
+  }
+
+  public async refreshAttempt(
+    meta: SessionJwtMeta,
+    ip: string = null,
+  ): Promise<TokenPair> {
+    const session = await this.queryRepo.findSession(meta.deviceId);
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+    if (!this.checkValidMeta(meta, session)) {
+      throw new UnauthorizedException();
+    }
+    session.setNewUpdateDate();
+    if (ip) {
+      session.setLastIp(ip);
+    }
+    const isSaved: boolean = await this.commandRepo.saveSession(session);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    return this.generateTokenPair(session.getMetaForToken());
+  }
+
+  public async logout(meta: SessionJwtMeta): VoidPromise {
+    const session = await this.queryRepo.findSession(meta.deviceId);
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+    if (!this.checkValidMeta(meta, session)) {
+      throw new UnauthorizedException();
+    }
+    return await session.killYourself();
+  }
+
+  public async killSessionsExcludeCurrent(meta: SessionJwtMeta) {
+    const session = await this.queryRepo.findSession(meta.deviceId);
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+    if (!this.checkValidMeta(meta, session)) {
+      throw new UnauthorizedException();
+    }
+    return await this.sessionModel.killAllSessionsExcludeCurrent(meta);
+  }
+
+  public async killSession(meta: SessionJwtMeta, deviceId: string) {
+    const currentSession = await this.queryRepo.findSession(meta.deviceId);
+    if (!currentSession) {
+      throw new UnauthorizedException();
+    }
+    if (!this.checkValidMeta(meta, currentSession)) {
+      throw new UnauthorizedException();
+    }
+    const session = await this.queryRepo.findSession(deviceId);
+    if (!session) {
+      throw new NotFoundException();
+    }
+    if (session.userId.toHexString() !== currentSession.userId.toHexString()) {
+      throw new ForbiddenException();
+    }
+    await session.killYourself();
+  }
+
+  async getSessions(meta: SessionJwtMeta) {
+    const session = await this.queryRepo.findSession(meta.deviceId);
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+    if (!this.checkValidMeta(meta, session)) {
+      throw new UnauthorizedException();
+    }
+    return await this.queryRepo.getSessions(meta.userId);
   }
 }

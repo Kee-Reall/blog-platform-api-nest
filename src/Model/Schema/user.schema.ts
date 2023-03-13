@@ -194,7 +194,7 @@ export interface UserMethods {
   comparePasswords: (password: string) => Promise<boolean>;
 }
 
-export interface UserModelStatic {
+export interface UserModelStatics {
   findByLoginOrEmail: (loginOrEmail: string) => NullablePromise<UserDocument>;
   newUser: (dto: UserInputModel) => Promise<UserDocument>;
   generateDefaultRecovery: () => RecoveryType;

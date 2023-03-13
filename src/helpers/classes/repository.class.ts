@@ -1,4 +1,4 @@
-import { HydratedDocument, Model } from 'mongoose';
+import { FilterQuery, HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { LikeENUM } from '../enums';
 import {
@@ -137,6 +137,29 @@ export abstract class Repository {
       return deletedCount > 0;
     } catch (e) {
       return false;
+    }
+  }
+
+  protected async findManyWithFilter<Doc>(
+    model: Model<Doc>,
+    filter: FilterQuery<unknown>,
+  ): NullablePromise<Doc[]> {
+    try {
+      console.log(filter);
+      return await model.find(filter);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  protected async findOneWithFilter<Doc>(
+    model: Model<Doc>,
+    filter: FilterQuery<unknown>,
+  ): NullablePromise<Doc> {
+    try {
+      return await model.findOne(filter);
+    } catch (e) {
+      return null;
     }
   }
 }

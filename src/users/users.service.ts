@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelStatic, UserInputModel } from '../Model';
+import { User, UserDocument, UserModelStatics, UserInputModel } from '../Model';
 import { Model } from 'mongoose';
 import { UsersCommandRepository } from './repos/users.comman.repository';
 
@@ -13,7 +13,7 @@ import { UsersCommandRepository } from './repos/users.comman.repository';
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<UserDocument> & UserModelStatic,
+    private userModel: Model<UserDocument> & UserModelStatics,
     private commandRepo: UsersCommandRepository,
   ) {}
 
