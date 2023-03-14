@@ -55,7 +55,7 @@ export abstract class Repository {
   protected async countLikesInfo<T extends HydratedDocument<unknown>>(
     model: Model<LikeDocument>,
     items: Array<T>,
-    userId: Nullable<ObjectId> = null,
+    userId: Nullable<string> = null,
   ) {
     async function incrementLikeReducer(reducer: LikesInfo): VoidPromise {
       reducer.likesCount += 1;
@@ -73,7 +73,7 @@ export abstract class Repository {
     }
 
     try {
-      const userIdCompare = userId ? userId.toHexString() : null;
+      const userIdCompare = userId ? userId : null;
       const targetIds: ObjectId[] = items.map((el) => el._id as ObjectId);
       const likes: LikeMapped[] = await model
         .find({
@@ -137,6 +137,22 @@ export abstract class Repository {
       return deletedCount > 0;
     } catch (e) {
       return false;
+    }
+  }
+
+  protected async getLikeForTarget(
+    model: Model<LikeDocument>,
+    userIdStr: string,
+    targetStr: string,
+  ): NullablePromise<LikeDocument> {
+    try {
+      const [userId, target] = [
+        new ObjectId(userIdStr),
+        new ObjectId(targetStr),
+      ];
+      return (await model.findOne({ userId, target })) ?? null;
+    } catch (e) {
+      return null;
     }
   }
 

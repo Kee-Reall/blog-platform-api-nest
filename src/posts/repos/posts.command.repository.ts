@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { Repository } from '../../helpers/classes/repository.class';
-import { Post, PostDocument } from '../../Model';
+import { Repository } from '../../helpers';
+import { LikeDocument, Post, PostDocument } from '../../Model';
 
 @Injectable()
 export class PostsCommandRepository extends Repository {
@@ -16,5 +16,9 @@ export class PostsCommandRepository extends Repository {
 
   public async deletePost(id: string) {
     return await this.deleteUsingId(this.postModel, id);
+  }
+
+  public async saveLike(like: LikeDocument): Promise<boolean> {
+    return await this.saveEntity(like);
   }
 }

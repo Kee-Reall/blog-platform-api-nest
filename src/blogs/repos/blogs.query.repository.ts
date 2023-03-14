@@ -11,6 +11,7 @@ import {
   Like,
   LikeDocument,
   LikesInfo,
+  Nullable,
   PaginatedOutput,
   Post,
   PostDocument,
@@ -59,6 +60,7 @@ export class BlogsQueryRepository extends Repository {
 
   public async getPostsByBlogId(
     config: PostsPaginationConfig,
+    userId: Nullable<string>,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     const blog = await this.findById(this.blogModel, config.filter.blogId);
     if (!blog) {
@@ -71,6 +73,7 @@ export class BlogsQueryRepository extends Repository {
     const likesInfo: LikesInfo[] = await this.countLikesInfo(
       this.likeModel,
       itemsWithoutLike,
+      userId,
     );
     const items = await Promise.all(
       itemsWithoutLike.map(async (item, idx) => {

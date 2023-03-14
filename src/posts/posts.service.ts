@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PostsCommandRepository } from './repos/posts.command.repository';
+import { PostsCommandRepository, PostsQueryRepository } from './repos';
 import { MessageENUM } from '../helpers';
 import {
   Blog,
@@ -20,6 +20,9 @@ import {
   PostPresentationModel,
   VoidPromise,
   WithExtendedLike,
+  LikeStatus,
+  LikeDocument,
+  Like,
 } from '../Model';
 
 @Injectable()
@@ -29,7 +32,9 @@ export class PostsService {
     private blogModel: Model<BlogDocument> & BlogSchemaMethods,
     @InjectModel(Post.name)
     private postModel: Model<PostDocument> & PostSchemaMethods,
+    @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
     private commandRepo: PostsCommandRepository,
+    private queryRepo: PostsQueryRepository,
   ) {}
   public async createPost(
     pojo: PostCreateModel,
@@ -84,6 +89,45 @@ export class PostsService {
     const isDeleted: boolean = await this.commandRepo.deletePost(id);
     if (!isDeleted) {
       throw new NotFoundException();
+    }
+    return;
+  }
+
+  public async likePost(
+    postId: string,
+    likeStatus: LikeStatus,
+    userId: string,
+  ) {
+    const like = await this.queryRepo.getLikeForPost(postId, userId);
+    if (!like) {
+      await this.createLikePost(postId, likeStatus, userId);
+      return;
+    }
+    await like.setLikeStatus(likeStatus);
+    return;
+  }
+
+  private async createLikePost(
+    postId: string,
+    likeStatus: LikeStatus,
+    userId: string,
+  ) {
+    const [post, user] = await Promise.all([
+      this.queryRepo.findPostById(postId),
+      this.queryRepo.getUser(userId),
+    ]);
+    if (!post || !user) {
+      throw new NotFoundException();
+    }
+    const like = new this.likeModel({
+      likeStatus,
+      userId: user._id,
+      target: post._id,
+      login: user.login,
+    });
+    const isSaved = await this.commandRepo.saveLike(like);
+    if (!isSaved) {
+      throw new ImATeapotException();
     }
     return;
   }

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
 import { BlogsController } from './blogs.controller';
 import { BlogsService } from './blogs.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import { BlogsCommandRepository } from './repos/blogs.command.repository';
+import { BlogsQueryRepository, BlogsCommandRepository } from './repos';
+import { SoftJwtAuthGuard } from '../helpers';
 import {
   Blog,
   BlogSchema,
@@ -20,8 +21,14 @@ import {
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },
     ]),
+    JwtModule.register({}),
   ],
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsQueryRepository, BlogsCommandRepository],
+  providers: [
+    BlogsService,
+    BlogsQueryRepository,
+    BlogsCommandRepository,
+    SoftJwtAuthGuard,
+  ],
 })
 export class BlogsModule {}

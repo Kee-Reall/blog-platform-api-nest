@@ -15,9 +15,11 @@ export interface SessionJwtMeta {
   updateDate: string;
 }
 
-export interface AccessTokenPayload extends JwtPayload {
-  usedId: string;
+export interface AccessTokenMeta {
+  userId: string;
 }
+
+export interface AccessTokenPayload extends JwtPayload, AccessTokenMeta {}
 
 export type UserAccessDTO = Pick<AccessTokenPayload, 'userId'>;
 

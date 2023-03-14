@@ -1,8 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MessageENUM } from '../../helpers/enums/message.enum';
-import { LikeModel } from '../Type';
-import { HydratedDocument } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { MessageENUM } from '../../helpers';
+import { LikeModel, LikeStatus } from '../Type';
 
 export type LikeDocument = HydratedDocument<Like>;
 
@@ -21,6 +21,20 @@ export class Like implements Omit<LikeModel, 'likeStatus'> {
   public addedAt: Date;
   @Prop({ default: 'None', enum: ['Like', 'Dislike', 'None'] })
   public likeStatus: string;
+
+  public async setLikeStatus(likeStatus: LikeStatus) {
+    if (this.likeStatus === likeStatus) {
+      return;
+    }
+    this.likeStatus = likeStatus;
+    const that = this as unknown as LikeDocument;
+    await that.save();
+    return;
+  }
 }
 
 export const LikeSchema = SchemaFactory.createForClass(Like);
+
+LikeSchema.methods = {
+  setLikeStatus: Like.prototype.setLikeStatus,
+};

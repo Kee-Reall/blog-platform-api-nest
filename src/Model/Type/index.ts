@@ -1,4 +1,4 @@
-export * from './promise.types';
+export * from './helpers.types';
 export * from './likes.types';
 export * from './pagination.types';
 export * from './mongo.types';
