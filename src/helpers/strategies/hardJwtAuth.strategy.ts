@@ -14,7 +14,6 @@ export class HardJwtAuthStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload: object): Promise<UserAccessDTO> {
-    console.log('inside Hard JWT strategy');
     if (payload.hasOwnProperty('userId')) {
       const { userId } = payload as AccessTokenPayload;
       return { userId };

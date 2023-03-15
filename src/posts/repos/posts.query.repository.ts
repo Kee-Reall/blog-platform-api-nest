@@ -8,6 +8,7 @@ import {
   BlogDocument,
   Comment,
   CommentDocument,
+  CommentPresentationModel,
   IPaginationConfig,
   Like,
   LikeDocument,
@@ -19,6 +20,7 @@ import {
   User,
   UserDocument,
   WithExtendedLike,
+  WithLike,
 } from '../../Model';
 
 @Injectable()
@@ -94,7 +96,16 @@ export class PostsQueryRepository extends Repository {
     };
   }
 
-  public async getPaginatedComments(config: CommentsPaginationConfig) {
+  public async getPaginatedComments(
+    inputQuery: CommentsPaginationConfig,
+    postId: string,
+    userId: string,
+  ) {
+    const post = await this.findPostById(postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
+    const config = new CommentsPaginationConfig(inputQuery, post._id);
     const [itemsWithoutLike, totalCount] = await this.paginate<CommentDocument>(
       this.commentModel,
       config,
@@ -102,6 +113,7 @@ export class PostsQueryRepository extends Repository {
     const likesInfo = await this.countLikesInfo<CommentDocument>(
       this.likeModel,
       itemsWithoutLike,
+      userId,
     );
     const items = itemsWithoutLike.map((item, idx) => {
       return {
@@ -118,11 +130,42 @@ export class PostsQueryRepository extends Repository {
     };
   }
 
+  public async getCommentWithLike(
+    commentId: string,
+    userId: Nullable<string>,
+  ): Promise<WithLike<CommentPresentationModel>> {
+    const comment = await this.findById(this.commentModel, commentId);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    const [{ likesCount, dislikesCount, myStatus }] = await this.countLikesInfo(
+      this.likeModel,
+      [comment],
+      userId,
+    );
+    return {
+      ...(comment.toJSON() as CommentPresentationModel),
+      likesInfo: {
+        likesCount,
+        dislikesCount,
+        myStatus,
+      },
+    };
+  }
+
   public async getUser(userId: string) {
     return await this.findById(this.userModel, userId);
   }
 
   public async getLikeForPost(postId: string, userId: string) {
     return await super.getLikeForTarget(this.likeModel, userId, postId);
+  }
+
+  public async getLikeForComment(commentId: string, userId: string) {
+    return await super.getLikeForTarget(this.likeModel, userId, commentId);
+  }
+
+  public async getComment(commentId: string) {
+    return await this.findById(this.commentModel, commentId);
   }
 }

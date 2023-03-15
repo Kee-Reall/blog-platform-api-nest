@@ -13,12 +13,8 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsQueryRepository } from './repos';
-import {
-  CommentConfigFabric,
-  CommentsByPost,
-  PostsQueryPipe,
-} from './pipes/posts.query.pipe';
-import { PostInput, LikeInput } from './validators/';
+import { PostsQueryPipe } from './pipes/posts.query.pipe';
+import { PostInput, LikeInput, CommentInput } from './validators/';
 import {
   BasicAuthGuard,
   HardJwtAuthGuard,
@@ -31,6 +27,7 @@ import {
   NullableKey,
   PaginatedOutput,
   PostPresentationModel,
+  SoftGuardMeta,
   VoidPromise,
   WithExtendedLike,
 } from '../Model';
@@ -99,11 +96,28 @@ export class PostsController {
   }
 
   @Get(':id/comments')
+  @UseGuards(SoftJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getCommentsForPost(
-    @Query(CommentsByPost) configFabric: CommentConfigFabric,
     @Param('id') postId: string,
+    @User() meta: SoftGuardMeta,
+    @Query() inputQuery,
   ) {
-    return await this.queryRepo.getPaginatedComments(configFabric(postId));
+    return await this.queryRepo.getPaginatedComments(
+      inputQuery,
+      postId,
+      meta.userId,
+    );
+  }
+
+  @Post(':id/comments')
+  @UseGuards(HardJwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  public async createCommentForPost(
+    @Param('id') postId: string,
+    @User() meta: AccessTokenMeta,
+    @Body() dto: CommentInput,
+  ) {
+    return await this.service.createComment(postId, dto.content, meta.userId);
   }
 }

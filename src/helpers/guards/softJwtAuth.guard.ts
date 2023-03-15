@@ -9,7 +9,6 @@ export class SoftJwtAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
-    console.log('ctx');
     req.user = { userId: null };
     try {
       const [type, token] = req.headers.authorization.split(' ');

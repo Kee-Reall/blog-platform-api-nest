@@ -23,6 +23,7 @@ import {
   RecoveryInput,
   UserInput,
 } from './validators';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('api/auth')
 export class AuthController {
@@ -40,6 +41,7 @@ export class AuthController {
   };
 
   @Post('login')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.OK)
   public async login(
     @Res({ passthrough: true }) res: Response,
@@ -88,6 +90,7 @@ export class AuthController {
   }
 
   @Post('registration')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async registration(@Body() dto: UserInput): VoidPromise {
     await this.service.registration(dto);
@@ -95,24 +98,28 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async resendConfirmCode(@Body() dto: EmailInput): VoidPromise {
     return await this.service.resendRegistryCode(dto.email);
   }
 
   @Post('registration-confirmation')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async confirm(@Body() dto: CodeInput): VoidPromise {
     return await this.service.confirmUser(dto.code);
   }
 
   @Post('password-recovery')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async recoveryPassword(@Body() dto: EmailInput): VoidPromise {
     return await this.service.passwordRecoveryAttempt(dto.email);
   }
 
   @Post('new-password')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async changePassword(@Body() dto: RecoveryInput): VoidPromise {
     return await this.service.changePassword(dto);

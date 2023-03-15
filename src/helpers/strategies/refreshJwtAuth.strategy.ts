@@ -23,7 +23,6 @@ export class RefreshJwtAuthStrategy extends PassportStrategy(
     });
   }
   public async validate(payload: object): Promise<SessionJwtMeta> {
-    console.log('Refresh strategy');
     const requiredProperty = ['deviceId', 'userId', 'updateDate'];
     const hasAllProperty = requiredProperty.every((el) =>
       payload.hasOwnProperty(el),

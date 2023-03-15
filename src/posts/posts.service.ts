@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   ImATeapotException,
   Injectable,
   NotFoundException,
@@ -12,6 +13,7 @@ import {
   Blog,
   BlogDocument,
   BlogSchemaMethods,
+  Comment,
   Nullable,
   Post,
   PostCreateModel,
@@ -23,6 +25,7 @@ import {
   LikeStatus,
   LikeDocument,
   Like,
+  CommentDocument,
 } from '../Model';
 
 @Injectable()
@@ -33,6 +36,7 @@ export class PostsService {
     @InjectModel(Post.name)
     private postModel: Model<PostDocument> & PostSchemaMethods,
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     private commandRepo: PostsCommandRepository,
     private queryRepo: PostsQueryRepository,
   ) {}
@@ -129,6 +133,96 @@ export class PostsService {
     if (!isSaved) {
       throw new ImATeapotException();
     }
+    return;
+  }
+
+  private async createLikeComment(
+    commentId: string,
+    likeStatus: LikeStatus,
+    userId: string,
+  ) {
+    const [comment, user] = await Promise.all([
+      this.queryRepo.getComment(commentId),
+      this.queryRepo.getUser(userId),
+    ]);
+    if (!comment || !user) {
+      throw new NotFoundException();
+    }
+    const like = new this.likeModel({
+      likeStatus,
+      userId: user._id,
+      target: comment._id,
+      login: user.login,
+    });
+    const isSaved = await this.commandRepo.saveLike(like);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    return;
+  }
+
+  public async createComment(postId: string, content: string, userId: string) {
+    const [post, user] = await Promise.all([
+      this.queryRepo.findPostById(postId),
+      this.queryRepo.getUser(userId),
+    ]);
+    if (!post || !user) {
+      throw new NotFoundException();
+    }
+    const comment = new this.commentModel({
+      postId: post._id,
+      content,
+      commentatorInfo: {
+        userId: user._id,
+        userLogin: user.login,
+      },
+    });
+    const isSaved = await this.commandRepo.saveComment(comment);
+    if (!isSaved) {
+      throw new ImATeapotException();
+    }
+    return comment;
+  }
+
+  public async updateComment(
+    commentId: string,
+    content: string,
+    userId: string,
+  ): VoidPromise {
+    const comment = await this.queryRepo.getComment(commentId);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    if (!comment.isOwner(userId)) {
+      throw new ForbiddenException();
+    }
+    await comment.changeContent(content);
+    return;
+  }
+
+  async deleteComment(commentId: string, userId: string) {
+    const comment = await this.queryRepo.getComment(commentId);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    if (!comment.isOwner(userId)) {
+      throw new ForbiddenException();
+    }
+    await this.commandRepo.deleteComment(comment);
+    return;
+  }
+
+  public async likeComment(
+    commentId: string,
+    userId: string,
+    likeStatus: LikeStatus,
+  ) {
+    const like = await this.queryRepo.getLikeForComment(commentId, userId);
+    if (!like) {
+      await this.createLikeComment(commentId, likeStatus, userId);
+      return;
+    }
+    await like.setLikeStatus(likeStatus);
     return;
   }
 }

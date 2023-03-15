@@ -19,6 +19,10 @@ export interface AccessTokenMeta {
   userId: string;
 }
 
+export interface SoftGuardMeta extends AccessTokenMeta {
+  userId: string | null;
+}
+
 export interface AccessTokenPayload extends JwtPayload, AccessTokenMeta {}
 
 export type UserAccessDTO = Pick<AccessTokenPayload, 'userId'>;

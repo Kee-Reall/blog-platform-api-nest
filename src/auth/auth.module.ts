@@ -8,6 +8,7 @@ import { AuthCommandRepository, AuthQueryRepository } from './repos';
 import { HardJwtAuthStrategy, RefreshJwtAuthStrategy } from '../helpers';
 import { Session, SessionSchema, User, UserSchema } from '../Model';
 import { DeviceController } from './device.controller';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -16,6 +17,10 @@ import { DeviceController } from './device.controller';
       { name: Session.name, schema: SessionSchema },
     ]),
     JwtModule.register({}),
+    ThrottlerModule.forRoot({
+      limit: +process.env.IP_RESTRICTION_LIMIT || 5,
+      ttl: +process.env.IP_RESTRICTION_LIMIT || 10,
+    }),
   ],
   controllers: [AuthController, DeviceController],
   providers: [

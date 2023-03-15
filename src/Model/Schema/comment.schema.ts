@@ -1,10 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { MessageENUM } from '../../helpers/enums/message.enum';
-import {
-  CommentatorInfoType,
-  CommentsLogicModel,
-} from '../Type/comments.types';
+import { deleteHidden, MessageENUM } from '../../helpers';
+import { CommentatorInfoType, CommentsLogicModel, VoidPromise } from '../Type';
 import mongoose from 'mongoose';
 
 export type CommentDocument = mongoose.HydratedDocument<Comment>;
@@ -21,18 +18,18 @@ export class CommentatorInfo implements CommentatorInfoType {
   userLogin: string;
 }
 
-@Schema()
+@Schema({ toJSON: { getters: true, transform: deleteHidden } })
 export class Comment implements Omit<CommentsLogicModel, '_id'> {
   _id: ObjectId;
 
-  @Prop()
+  @Prop({ required: true, readonly: true, default: () => ({}) })
   commentatorInfo: CommentatorInfo;
 
   @Prop({
     trim: true,
     required: [true, MessageENUM.REQUIRED_FIELD],
     maxLength: [300, MessageENUM.LENGTH],
-    minLength: [3, MessageENUM.LENGTH],
+    minLength: [20, MessageENUM.LENGTH],
   })
   content: string;
 
@@ -45,6 +42,24 @@ export class Comment implements Omit<CommentsLogicModel, '_id'> {
   get id() {
     return this._id.toHexString();
   }
+
+  public async changeContent(content: string): VoidPromise {
+    if (this.content === content) {
+      return;
+    }
+    this.content = content;
+    const that = this as CommentDocument;
+    await that.save();
+  }
+
+  public isOwner(userId: string): boolean {
+    return this.commentatorInfo.userId.toHexString() === userId;
+  }
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
+
+CommentSchema.methods = {
+  changeContent: Comment.prototype.changeContent,
+  isOwner: Comment.prototype.isOwner,
+};
