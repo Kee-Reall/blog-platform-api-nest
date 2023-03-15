@@ -5,14 +5,14 @@ export function exceptionFactory(errors: Array<ValidationError>) {
   throw new BadRequestException({
     errorMessages: errors
       .map(({ constraints, property }) => {
-        const errorMessages = [];
+        const errorsMessages = [];
         for (const message of Object.values(constraints)) {
-          errorMessages.push({
+          errorsMessages.push({
             message,
             field: property,
           });
         }
-        return errorMessages;
+        return errorsMessages;
       })
       .flat(),
   });
