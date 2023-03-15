@@ -5,6 +5,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ObjectId } from 'mongodb';
+import { MessageENUM } from '../enums';
 
 @ValidatorConstraint({ name: 'isValidObjectId', async: false })
 export class IsValidObjectIdConstraint implements ValidatorConstraintInterface {
@@ -14,6 +15,12 @@ export class IsValidObjectIdConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsValidObjectId(validationOptions?: ValidationOptions) {
+  if (!validationOptions) {
+    validationOptions = {};
+  }
+  if (!validationOptions.message) {
+    validationOptions.message = MessageENUM.FORBIDDEN_VALUE;
+  }
   return function (object: any, propertyName: string) {
     registerDecorator({
       name: 'isValidObjectId',
