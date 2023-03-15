@@ -1,4 +1,3 @@
-export * from './attempt.schema';
 export * from './blog.schema';
 export * from './comment.schema';
 export * from './like.schema';

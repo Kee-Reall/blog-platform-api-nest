@@ -7,7 +7,7 @@ import { exceptionFactory } from './helpers';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser(process.env.COOKIES_SECRET));
+  app.use(cookieParser());
   app.enableCors({
     credentials: true,
     origin: process.env.FRONTEND_DOMAIN ?? 'http//localhost:3000/',
