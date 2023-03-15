@@ -28,7 +28,7 @@ export class UsersService {
           field,
         };
       });
-      throw new BadRequestException({ errorsMessages: errorsMessages });
+      throw new BadRequestException({ errorsMessages });
     }
     await user.setHash(password);
     user.confirm();

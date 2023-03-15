@@ -155,12 +155,20 @@ export class AuthService {
   }
 
   private generateTokenPair(meta: SessionJwtMeta): TokenPair {
+    const [accessTokenLiveTime, refreshTokenLiveTime] = [
+      process.env.JWT_ACCESS_LIFETIME,
+      process.env.JWT_REFRESH_LIFETIME,
+    ];
     const accessToken = this.jwtService.sign(
       { userId: meta.userId },
-      { expiresIn: '2m', secret: process.env.JWT_SECRET, algorithm: 'HS512' },
+      {
+        expiresIn: accessTokenLiveTime,
+        secret: process.env.JWT_SECRET,
+        algorithm: 'HS512',
+      },
     );
     const refreshToken = this.jwtService.sign(meta, {
-      expiresIn: '5d',
+      expiresIn: refreshTokenLiveTime,
       secret: process.env.JWT_SECRET,
       algorithm: 'HS512',
     });

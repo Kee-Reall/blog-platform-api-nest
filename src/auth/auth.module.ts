@@ -19,7 +19,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     JwtModule.register({}),
     ThrottlerModule.forRoot({
       limit: +process.env.IP_RESTRICTION_LIMIT || 5,
-      ttl: +process.env.IP_RESTRICTION_LIMIT || 10,
+      ttl: +process.env.IP_RESTRICTION_TTL || 10,
     }),
   ],
   controllers: [AuthController, DeviceController],

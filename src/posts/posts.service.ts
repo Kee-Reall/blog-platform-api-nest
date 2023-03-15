@@ -181,7 +181,7 @@ export class PostsService {
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    return comment;
+    return await this.queryRepo.getCommentWithLike(comment.id, user.id);
   }
 
   public async updateComment(
