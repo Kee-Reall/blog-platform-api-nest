@@ -1,10 +1,11 @@
 import { Length } from 'class-validator';
-import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
 import { PostInputModel } from '../../Model';
+import { TrimIfString, IsValidObjectId } from '../../helpers';
 
 export class PostInput implements PostInputModel {
   @TrimIfString()
   @Length(1, 100)
+  @IsValidObjectId()
   blogId: string;
 
   @TrimIfString()

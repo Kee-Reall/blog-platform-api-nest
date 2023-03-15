@@ -1,8 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId } from 'mongodb';
-import { deleteHidden, MessageENUM } from '../../helpers';
-import { CommentatorInfoType, CommentsLogicModel, VoidPromise } from '../Type';
 import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { deleteHiddenAndPostId, MessageENUM } from '../../helpers';
+import { CommentatorInfoType, CommentsLogicModel, VoidPromise } from '../Type';
 
 export type CommentDocument = mongoose.HydratedDocument<Comment>;
 
@@ -18,7 +18,7 @@ export class CommentatorInfo implements CommentatorInfoType {
   userLogin: string;
 }
 
-@Schema({ toJSON: { getters: true, transform: deleteHidden } })
+@Schema({ toJSON: { getters: true, transform: deleteHiddenAndPostId } })
 export class Comment implements Omit<CommentsLogicModel, '_id'> {
   _id: ObjectId;
 
