@@ -34,9 +34,9 @@ export class AuthController {
   ) {}
 
   private readonly cookiesOptions: CookieOptions = {
-    //domain: 'ht-02-03.vercel.app',
+    //domain: process.env.DOMAIN,
     sameSite: 'none',
-    //secure: true,
+    secure: true,
     httpOnly: true,
   };
 
