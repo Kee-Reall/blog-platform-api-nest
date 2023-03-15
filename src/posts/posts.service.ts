@@ -47,7 +47,9 @@ export class PostsService {
       pojo.blogId,
     );
     if (!blog) {
-      throw new NotFoundException();
+      throw new BadRequestException({
+        errorsMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
+      });
     }
     const post = new this.postModel({ ...pojo, blogName: blog.name });
     const isSaved: boolean = await this.commandRepo.savePost(post);
