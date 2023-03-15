@@ -12,9 +12,9 @@ export class GlobalHTTPFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
-    const errorMessages = exception.getResponse();
+    const errorsMessages = exception.getResponse();
     if (status === 400) {
-      return response.status(status).json(errorMessages);
+      return response.status(status).json(errorsMessages);
     }
     response.sendStatus(status);
   }
