@@ -75,7 +75,7 @@ export class PostsService {
     );
     if (!blog) {
       throw new BadRequestException({
-        errorMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
+        errorsMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
       });
     }
     for (const key in pojo) {

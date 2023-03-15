@@ -51,7 +51,7 @@ export class AuthService {
     const [isUnique, fieldsArray] = await user.isFieldsUnique();
     if (!isUnique) {
       throw new BadRequestException({
-        errorMessages: fieldsArray.map((field) => ({
+        errorsMessages: fieldsArray.map((field) => ({
           message: MessageENUM.ALREADY_EXISTS,
           field,
         })),
@@ -77,7 +77,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ email });
     if (!user || user.confirmation.isConfirmed) {
       throw new BadRequestException({
-        errorMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'email' }],
+        errorsMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'email' }],
       });
     }
     user.updateConfirmCode();
@@ -99,7 +99,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ 'confirmation.code': code });
     if (!user || user.confirmation.isConfirmed) {
       throw new BadRequestException({
-        errorMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'code' }],
+        errorsMessages: [{ message: MessageENUM.NOT_ALLOW, field: 'code' }],
       });
     }
     user.confirm();
@@ -138,7 +138,7 @@ export class AuthService {
       'recovery.recoveryCode': recoveryCode,
     });
     const objectError = {
-      errorMessages: [
+      errorsMessages: [
         { message: MessageENUM.NOT_ALLOW, field: 'recoveryCode' },
       ],
     };

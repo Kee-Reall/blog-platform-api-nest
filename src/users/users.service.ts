@@ -22,13 +22,13 @@ export class UsersService {
     const user = new this.userModel({ login, email });
     const [isUnique, fieldsArray] = await user.isFieldsUnique();
     if (!isUnique) {
-      const errorMessages = fieldsArray.map((field) => {
+      const errorsMessages = fieldsArray.map((field) => {
         return {
           message: 'already using',
           field,
         };
       });
-      throw new BadRequestException({ errorMessages });
+      throw new BadRequestException({ errorsMessages: errorsMessages });
     }
     await user.setHash(password);
     user.confirm();

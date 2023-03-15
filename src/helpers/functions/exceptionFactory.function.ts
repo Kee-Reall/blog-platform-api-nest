@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 
 export function exceptionFactory(errors: Array<ValidationError>) {
   throw new BadRequestException({
-    errorMessages: errors
+    errorsMessages: errors
       .map(({ constraints, property }) => {
         const errorsMessages = [];
         for (const message of Object.values(constraints)) {
