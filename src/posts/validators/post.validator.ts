@@ -1,11 +1,11 @@
-import { Length } from 'class-validator';
+import { Length, Matches } from 'class-validator';
 import { PostInputModel } from '../../Model';
-import { TrimIfString, IsValidObjectId } from '../../helpers';
+import { TrimIfString } from '../../helpers';
 
 export class PostInput implements PostInputModel {
   @TrimIfString()
   @Length(1, 100)
-  @IsValidObjectId()
+  @Matches(/^[0-9a-fA-F]{24}$/)
   blogId: string;
 
   @TrimIfString()
