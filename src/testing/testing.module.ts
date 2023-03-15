@@ -10,8 +10,6 @@ import {
   LikeSchema,
   Post,
   PostSchema,
-  Session,
-  SessionSchema,
   User,
   UserSchema,
 } from '../Model/';
@@ -24,7 +22,6 @@ import {
       { name: Like.name, schema: LikeSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: User.name, schema: UserSchema },
-      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [TestingController],
