@@ -168,4 +168,8 @@ export class PostsQueryRepository extends Repository {
   public async getComment(commentId: string) {
     return await this.findById(this.commentModel, commentId);
   }
+
+  public async isBlogExist(blogId: string): Promise<boolean> {
+    return !!(await this.findById(this.blogModel, blogId));
+  }
 }

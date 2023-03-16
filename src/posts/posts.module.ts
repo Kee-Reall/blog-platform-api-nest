@@ -18,6 +18,7 @@ import {
   User,
   UserSchema,
 } from '../Model';
+import { IsBlogExistConstraint } from './validators/isBlogExist';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import {
     PostsQueryRepository,
     PostsCommandRepository,
     SoftJwtAuthGuard,
+    IsBlogExistConstraint,
   ],
 })
 export class PostsModule {}
