@@ -82,9 +82,7 @@ export class AuthController {
   @UseGuards(RefreshJwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(@Res({ passthrough: true }) res, @User() userMeta) {
-    this.service
-      .logout(userMeta)
-      .catch((e) => console.error('session clean error' + e.message));
+    await this.service.logout(userMeta);
     res.clearCookie('refreshToken');
     return;
   }
