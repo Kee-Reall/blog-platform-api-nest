@@ -23,11 +23,11 @@ export class AuthQueryRepository extends Repository {
   }
 
   public async getUserInfo({ userId }: UserAccessDTO) {
-    const user = await this.findById(this.userModel, userId);
+    const user = await this.findById<UserDocument>(this.userModel, userId);
     if (!user) {
       throw new UnauthorizedException();
     }
-    return user;
+    return { email: user.email, login: user.login, userId: user.id };
   }
 
   public async findSession(deviceId: string): NullablePromise<SessionDocument> {
