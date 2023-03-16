@@ -22,3 +22,5 @@ export type CommentPresentationModel = Pick<CommentsLogicModel, 'content'> & {
     userLogin: string;
   };
 };
+
+export type CommentInputModel = Pick<CommentsLogicModel, 'content'>;

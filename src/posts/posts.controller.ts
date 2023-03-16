@@ -9,68 +9,115 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
+import { PostsQueryRepository } from './repos';
+import { PostsQueryPipe } from './pipes/posts.query.pipe';
+import { PostInput, LikeInput, CommentInput } from './validators/';
 import {
-  PostInputModel,
+  BasicAuthGuard,
+  HardJwtAuthGuard,
+  SoftJwtAuthGuard,
+  User,
+} from '../helpers';
+import {
+  AccessTokenMeta,
+  IPaginationConfig,
+  NullableKey,
+  PaginatedOutput,
   PostPresentationModel,
-} from '../Model/Type/posts.types';
-import { PostsQueryRepository } from './repos/posts.query.repository';
-import { CommentsFilter, PostFilters } from '../Model/Type/query.types';
-import { WithExtendedLike } from '../Model/Type/likes.types';
-import { PaginatedOutput } from '../Model/Type/pagination.types';
-import { VoidPromise } from '../Model/Type/promise.types';
+  SoftGuardMeta,
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Controller('api/posts')
 export class PostsController {
   constructor(
-    private postService: PostsService,
+    private service: PostsService,
     private queryRepo: PostsQueryRepository,
   ) {}
 
   @Get()
+  @UseGuards(SoftJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getAllPosts(
-    @Query() query: PostFilters,
+    @Query(PostsQueryPipe) config: IPaginationConfig,
+    @User() user: NullableKey<AccessTokenMeta>,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    return await this.queryRepo.getPaginatedPosts(query);
+    console.log('user id: ', user);
+    return await this.queryRepo.getPaginatedPosts(config, user.userId);
   }
 
   @Post()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  public async createPost(@Body() pojo: PostInputModel) {
-    return await this.postService.createPost(pojo);
+  public async createPost(@Body() pojo: PostInput) {
+    return await this.service.createPost(pojo);
   }
 
   @Get(':id')
+  @UseGuards(SoftJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getPostById(
     @Param('id') postId: string,
+    @User() meta: AccessTokenMeta,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
-    return await this.queryRepo.findPostById(postId);
+    return await this.queryRepo.findPostByIdWithLike(postId, meta.userId);
   }
 
   @Put(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updatePost(
     @Param('id') postId: string,
-    @Body() pojo: PostInputModel,
+    @Body() dto: PostInput,
   ): VoidPromise {
-    return await this.postService.updatePost(postId, pojo);
+    return await this.service.updatePost(postId, dto);
+  }
+
+  @Put(':id/like-status')
+  @UseGuards(HardJwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async likePost(
+    @Param('id') postId: string,
+    @User() meta: AccessTokenMeta,
+    @Body() dto: LikeInput,
+  ) {
+    return this.service.likePost(postId, dto.likeStatus, meta.userId);
   }
 
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deletePost(@Param('id') postId: string): VoidPromise {
-    return await this.postService.deletePost(postId);
+    return await this.service.deletePost(postId);
   }
 
   @Get(':id/comments')
+  @UseGuards(SoftJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getCommentsForPost(
-    @Query() query: CommentsFilter,
     @Param('id') postId: string,
+    @User() meta: SoftGuardMeta,
+    @Query() inputQuery,
   ) {
-    return await this.queryRepo.getPaginatedComments(query, postId);
+    return await this.queryRepo.getPaginatedComments(
+      inputQuery,
+      postId,
+      meta.userId,
+    );
+  }
+
+  @Post(':id/comments')
+  @UseGuards(HardJwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  public async createCommentForPost(
+    @Param('id') postId: string,
+    @User() meta: AccessTokenMeta,
+    @Body() dto: CommentInput,
+  ) {
+    return await this.service.createComment(postId, dto.content, meta.userId);
   }
 }

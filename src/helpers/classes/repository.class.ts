@@ -1,20 +1,18 @@
-import { HydratedDocument, Model } from 'mongoose';
+import { FilterQuery, HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { IPaginationConfig } from '../../Model/Type/pagination.types';
+import { LikeENUM } from '../enums';
 import {
-  Nullable,
-  NullablePromise,
-  VoidablePromise,
-  VoidPromise,
-} from '../../Model/Type/promise.types';
-import { LikeDocument } from '../../Model/Schema/like.schema';
-import {
+  IPaginationConfig,
+  LikeDocument,
   LikeMapped,
   LikesInfo,
   LikeStatus,
   NewestLikeArray,
-} from '../../Model/Type/likes.types';
-import { LikeENUM } from '../enums/like.enum';
+  Nullable,
+  NullablePromise,
+  VoidablePromise,
+  VoidPromise,
+} from '../../Model';
 
 export abstract class Repository {
   protected async paginate<T>(
@@ -42,13 +40,14 @@ export abstract class Repository {
     }
   }
 
-  protected async saveEntity<
-    T extends { save: () => VoidablePromise<T>; createdAt?: Date },
-  >(entity: T): Promise<boolean> {
+  protected async saveEntity<T extends { save: () => VoidablePromise<T> }>(
+    entity: T,
+  ): Promise<boolean> {
     try {
       await entity.save();
       return true;
     } catch (e) {
+      console.log(e);
       return false;
     }
   }
@@ -56,7 +55,7 @@ export abstract class Repository {
   protected async countLikesInfo<T extends HydratedDocument<unknown>>(
     model: Model<LikeDocument>,
     items: Array<T>,
-    userId: Nullable<ObjectId> = null,
+    userId: Nullable<string> = null,
   ) {
     async function incrementLikeReducer(reducer: LikesInfo): VoidPromise {
       reducer.likesCount += 1;
@@ -74,7 +73,7 @@ export abstract class Repository {
     }
 
     try {
-      const userIdCompare = userId ? userId.toHexString() : null;
+      const userIdCompare = userId ? userId : null;
       const targetIds: ObjectId[] = items.map((el) => el._id as ObjectId);
       const likes: LikeMapped[] = await model
         .find({
@@ -138,6 +137,45 @@ export abstract class Repository {
       return deletedCount > 0;
     } catch (e) {
       return false;
+    }
+  }
+
+  protected async getLikeForTarget(
+    model: Model<LikeDocument>,
+    userIdStr: string,
+    targetStr: string,
+  ): NullablePromise<LikeDocument> {
+    try {
+      const [userId, target] = [
+        new ObjectId(userIdStr),
+        new ObjectId(targetStr),
+      ];
+      return (await model.findOne({ userId, target })) ?? null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  protected async findManyWithFilter<Doc>(
+    model: Model<Doc>,
+    filter: FilterQuery<unknown>,
+  ): NullablePromise<Doc[]> {
+    try {
+      console.log(filter);
+      return await model.find(filter);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  protected async findOneWithFilter<Doc>(
+    model: Model<Doc>,
+    filter: FilterQuery<unknown>,
+  ): NullablePromise<Doc> {
+    try {
+      return await model.findOne(filter);
+    } catch (e) {
+      return null;
     }
   }
 }

@@ -7,6 +7,7 @@ export interface IPaginationConfig {
   shouldSkip: number;
   limit: number;
   sortDirection: SortDirection;
+  pageNumber?: number;
 }
 
 export type PaginatedOutput<Data> = {

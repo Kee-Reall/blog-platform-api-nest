@@ -1,12 +1,18 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
 import { BlogsController } from './blogs.controller';
 import { BlogsService } from './blogs.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from '../Model/Schema/blog.schema';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import { BlogsCommandRepository } from './repos/blogs.command.repository';
-import { Post, PostSchema } from '../Model/Schema/post.schema';
-import { Like, LikeSchema } from '../Model/Schema/like.schema';
+import { BlogsQueryRepository, BlogsCommandRepository } from './repos';
+import { SoftJwtAuthGuard } from '../helpers';
+import {
+  Blog,
+  BlogSchema,
+  Post,
+  PostSchema,
+  Like,
+  LikeSchema,
+} from '../Model/';
 
 @Module({
   imports: [
@@ -15,8 +21,14 @@ import { Like, LikeSchema } from '../Model/Schema/like.schema';
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },
     ]),
+    JwtModule.register({}),
   ],
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsQueryRepository, BlogsCommandRepository],
+  providers: [
+    BlogsService,
+    BlogsQueryRepository,
+    BlogsCommandRepository,
+    SoftJwtAuthGuard,
+  ],
 })
 export class BlogsModule {}

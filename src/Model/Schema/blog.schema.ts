@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BlogLogicModel, BlogPresentationModel } from '../Type/blogs.types';
-import { MessageENUM } from '../../helpers/enums/message.enum';
 import { ObjectId } from 'mongodb';
-import { deleteHidden } from '../../helpers/functions/deleteHidden.function';
 import { HydratedDocument } from 'mongoose';
-import { NullablePromise } from '../Type/promise.types';
+import { MessageENUM, deleteHidden } from '../../helpers';
+import {
+  BlogLogicModel,
+  BlogPresentationModel,
+  NullablePromise,
+} from '../Type';
 
 export type BlogDocument = HydratedDocument<BlogPresentationModel>;
 
@@ -20,6 +22,7 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
     required: [true, MessageENUM.REQUIRED_FIELD],
     minlength: [1, MessageENUM.LENGTH],
     maxlength: [15, MessageENUM.LENGTH],
+    trim: true,
   })
   public name: string;
   @Prop({

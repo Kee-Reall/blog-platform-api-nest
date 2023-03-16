@@ -1,24 +1,23 @@
 import {
-  BadRequestException,
+  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Blog, BlogDocument } from '../Model/Schema/blog.schema';
+import { BlogsCommandRepository, BlogsQueryRepository } from './repos';
 import {
+  Blog,
+  BlogDocument,
   BlogInputModel,
   BlogPresentationModel,
-} from '../Model/Type/blogs.types';
-import { BlogsCommandRepository } from './repos/blogs.command.repository';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import { VoidPromise } from '../Model/Type/promise.types';
-import {
+  Post,
+  PostDocument,
   PostInputModel,
   PostPresentationModel,
-} from '../Model/Type/posts.types';
-import { Post, PostDocument } from '../Model/Schema/post.schema';
-import { WithExtendedLike } from '../Model/Type/likes.types';
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Injectable()
 export class BlogsService {
@@ -35,7 +34,7 @@ export class BlogsService {
     const blog = new this.blogModel(pojo);
     const result = await this.commandRepo.saveBlog(blog);
     if (!result) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return blog;
   }
@@ -50,13 +49,15 @@ export class BlogsService {
     }
     const isSaved: boolean = await this.commandRepo.saveBlog(blog);
     if (!isSaved) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
+    await this.commandRepo.updatePostsName(blog.id, blog.name);
     return;
   }
 
   public async deleteById(blogId: string): VoidPromise {
-    if (!(await this.commandRepo.deleteBlog(blogId))) {
+    const isDeleted: boolean = await this.commandRepo.deleteBlog(blogId);
+    if (!isDeleted) {
       throw new NotFoundException();
     }
     return;
@@ -73,7 +74,7 @@ export class BlogsService {
     const post = new this.postModel({ ...pojo, blogId, blogName: blog.name });
     const result = await this.commandRepo.savePost(post);
     if (!result) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return {
       ...(post.toJSON() as PostPresentationModel),

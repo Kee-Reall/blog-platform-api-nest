@@ -1,10 +1,10 @@
 import { FilterQuery, PipelineStage } from 'mongoose';
-import { Nullable } from '../../Model/Type/promise.types';
-import { PaginationConfigClass } from '../classes/pagination-config.class';
+import { Nullable } from '../../Model';
+import { PaginationConfig } from '../classes';
 import { ObjectId } from 'mongodb';
 
 export function generateLikeInfo<
-  T extends PaginationConfigClass & { filter: FilterQuery<T> },
+  T extends PaginationConfig & { filter: FilterQuery<T> },
 >(config: T, userId: Nullable<ObjectId>): PipelineStage[] {
   const filter = config.filter || {};
   return [

@@ -1,7 +1,7 @@
 import { BlogPresentationModel } from './blogs.types';
 import { PostPresentationModel } from './posts.types';
-import { CommentsLogicModel } from './comments.types';
 import { UserPresentationModel } from './users.types';
+import { CommentsLogicModel } from './comments.types';
 
 export interface AbstractFilter<T> {
   pageNumber?: number;

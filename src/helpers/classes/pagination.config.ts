@@ -1,8 +1,7 @@
-import { SortDirection } from '../../Model/Type/pagination.types';
-import { AbstractFilter } from '../../Model/Type/query.types';
 import { FilterQuery } from 'mongoose';
+import { AbstractFilter, SortDirection } from '../../Model';
 
-export abstract class PaginationConfigClass {
+export abstract class PaginationConfig {
   limit: number;
   shouldSkip: number;
   sortDirection: SortDirection = 'desc';

@@ -9,21 +9,27 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
+import { BlogsQueryRepository } from './repos';
 import {
-  BlogInputModel,
+  BlogsQueryPipe,
+  PostConfigFabric,
+  PostsByBlogPipe,
+} from './pipes/blogs.query.pipe';
+import { BlogInput } from './validators/blog.validator';
+import { PostInputWithoutBlogId } from './validators/post.validator';
+import { BasicAuthGuard, SoftJwtAuthGuard, User } from '../helpers';
+import {
+  AccessTokenMeta,
   BlogPresentationModel,
-} from '../Model/Type/blogs.types';
-import { VoidPromise } from '../Model/Type/promise.types';
-import { BlogFilters, PostFilters } from '../Model/Type/query.types';
-import { BlogsQueryRepository } from './repos/blogs.query.repository';
-import { PaginatedOutput } from '../Model/Type/pagination.types';
-import {
-  PostInputModel,
+  IPaginationConfig,
+  PaginatedOutput,
   PostPresentationModel,
-} from '../Model/Type/posts.types';
-import { WithExtendedLike } from '../Model/Type/likes.types';
+  VoidPromise,
+  WithExtendedLike,
+} from '../Model';
 
 @Controller('api/blogs')
 export class BlogsController {
@@ -35,17 +41,18 @@ export class BlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async getBlogs(
-    @Query() query: BlogFilters,
+    @Query(BlogsQueryPipe) query: IPaginationConfig,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryRepo.getBlogsWithPaginationConfig(query);
   }
 
   @Post()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
-    @Body() crateBlogPOJO: BlogInputModel,
+    @Body() pojo: BlogInput,
   ): Promise<BlogPresentationModel> {
-    return await this.blogService.createBlog(crateBlogPOJO);
+    return await this.blogService.createBlog(pojo);
   }
 
   @Get(':id')
@@ -57,35 +64,41 @@ export class BlogsController {
   }
 
   @Put(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
     @Param('id') blogId: string,
-    @Body() updateBlogPOJO: BlogInputModel,
+    @Body() pojo: BlogInput,
   ): VoidPromise {
-    await this.blogService.updateById(blogId, updateBlogPOJO);
+    await this.blogService.updateById(blogId, pojo);
     return;
   }
 
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteBlog(@Param('id') blogId: string): VoidPromise {
     return await this.blogService.deleteById(blogId);
   }
 
   @Get(':id/posts')
+  @UseGuards(SoftJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getPostsByBlogID(
-    @Query() query: PostFilters,
+    @Query(PostsByBlogPipe) configFabric: PostConfigFabric,
     @Param('id') id: string,
+    @User() meta: AccessTokenMeta,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    return await this.queryRepo.getPostsByBlogId(id, query);
+    return await this.queryRepo.getPostsByBlogId(configFabric(id), meta.userId);
   }
+
   @Post(':id/posts')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,
-    @Body() input: Omit<PostInputModel, 'blogId'>,
+    @Body() pojo: PostInputWithoutBlogId,
   ) {
-    return await this.blogService.createPostWithSpecifiedBlog(blogId, input);
+    return await this.blogService.createPostWithSpecifiedBlog(blogId, pojo);
   }
 }

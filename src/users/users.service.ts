@@ -1,15 +1,11 @@
 import {
   BadRequestException,
+  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserInputModel } from '../Model/Type/users.types';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  User,
-  UserDocument,
-  UserModelStatic,
-} from '../Model/Schema/user.schema';
+import { User, UserDocument, UserModelStatics, UserInputModel } from '../Model';
 import { Model } from 'mongoose';
 import { UsersCommandRepository } from './repos/users.comman.repository';
 
@@ -17,15 +13,29 @@ import { UsersCommandRepository } from './repos/users.comman.repository';
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<UserDocument> & UserModelStatic,
+    private userModel: Model<UserDocument> & UserModelStatics,
     private commandRepo: UsersCommandRepository,
   ) {}
 
   public async createUser(dto: UserInputModel) {
-    const user = await this.userModel.newUser(dto);
+    const { login, email, password } = dto;
+    const user = new this.userModel({ login, email });
+    const [isUnique, fieldsArray] = await user.isFieldsUnique();
+    if (!isUnique) {
+      const errorsMessages = fieldsArray.map((field) => {
+        return {
+          message: 'already using',
+          field,
+        };
+      });
+      throw new BadRequestException({ errorsMessages });
+    }
+    await user.setHash(password);
+    user.confirm();
+    console.log(user.confirmation, user.recovery);
     const isSaved: boolean = await this.commandRepo.saveUser(user);
     if (!isSaved) {
-      throw new BadRequestException();
+      throw new ImATeapotException();
     }
     return user;
   }

@@ -1,15 +1,24 @@
 import { Module } from '@nestjs/common';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Post, PostSchema } from '../Model/Schema/post.schema';
-import { Blog, BlogSchema } from '../Model/Schema/blog.schema';
-import { PostsQueryRepository } from './repos/posts.query.repository';
-import { Like, LikeSchema } from '../Model/Schema/like.schema';
-import { PostsCommandRepository } from './repos/posts.command.repository';
-import { CommentSchema } from '../Model/Schema/comment.schema';
+import { SoftJwtAuthGuard } from '../helpers';
+import { PostsService } from './posts.service';
+import { PostsController } from './posts.controller';
 import { CommentsController } from './comments.controller';
-import { Comment } from '../Model/Schema/comment.schema';
+import { PostsQueryRepository, PostsCommandRepository } from './repos';
+import {
+  Blog,
+  BlogSchema,
+  Comment,
+  CommentSchema,
+  Like,
+  LikeSchema,
+  Post,
+  PostSchema,
+  User,
+  UserSchema,
+} from '../Model';
+import { IsBlogExistConstraint } from './validators/isBlogExist';
 
 @Module({
   imports: [
@@ -18,9 +27,17 @@ import { Comment } from '../Model/Schema/comment.schema';
       { name: Blog.name, schema: BlogSchema },
       { name: Like.name, schema: LikeSchema },
       { name: Comment.name, schema: CommentSchema },
+      { name: User.name, schema: UserSchema },
     ]),
+    JwtModule.register({}),
   ],
   controllers: [PostsController, CommentsController],
-  providers: [PostsService, PostsQueryRepository, PostsCommandRepository],
+  providers: [
+    PostsService,
+    PostsQueryRepository,
+    PostsCommandRepository,
+    SoftJwtAuthGuard,
+    IsBlogExistConstraint,
+  ],
 })
 export class PostsModule {}

@@ -1,11 +1,18 @@
 import { Controller, Delete, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from '../Model/Schema/post.schema';
 import { Model } from 'mongoose';
-import { Blog, BlogDocument } from '../Model/Schema/blog.schema';
-import { Like, LikeDocument } from '../Model/Schema/like.schema';
-import { Comment, CommentDocument } from '../Model/Schema/comment.schema';
-import { User, UserDocument } from '../Model/Schema/user.schema';
+import {
+  Blog,
+  BlogDocument,
+  CommentDocument,
+  Comment,
+  Like,
+  LikeDocument,
+  Post,
+  PostDocument,
+  User,
+  UserDocument,
+} from '../Model';
 
 @Controller('api/testing')
 export class TestingController {

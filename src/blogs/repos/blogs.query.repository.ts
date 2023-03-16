@@ -1,17 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from '../../Model/Schema/blog.schema';
-import { BlogsPaginationConfig } from './blogs.pagination-config';
-import { BlogPresentationModel } from '../../Model/Type/blogs.types';
-import { PaginatedOutput } from '../../Model/Type/pagination.types';
-import { BlogFilters, PostFilters } from '../../Model/Type/query.types';
-import { Post, PostDocument } from '../../Model/Schema/post.schema';
-import { Repository } from '../../helpers/classes/repository.class';
-import { PostsPaginationConfig } from '../../posts/repos/posts.pagination-config';
-import { PostPresentationModel } from '../../Model/Type/posts.types';
-import { Like, LikeDocument } from '../../Model/Schema/like.schema';
-import { LikesInfo, WithExtendedLike } from '../../Model/Type/likes.types';
+import { Repository } from '../../helpers';
+import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
+import {
+  Blog,
+  BlogDocument,
+  BlogPresentationModel,
+  IPaginationConfig,
+  Like,
+  LikeDocument,
+  LikesInfo,
+  Nullable,
+  PaginatedOutput,
+  Post,
+  PostDocument,
+  PostPresentationModel,
+  WithExtendedLike,
+} from '../../Model';
 
 @Injectable()
 export class BlogsQueryRepository extends Repository {
@@ -24,9 +30,8 @@ export class BlogsQueryRepository extends Repository {
   }
 
   public async getBlogsWithPaginationConfig(
-    query: BlogFilters,
+    config: IPaginationConfig,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
-    const config = new BlogsPaginationConfig(query);
     const [items, totalCount] = await this.paginate(this.blogModel, config);
     return {
       pagesCount: Math.ceil(totalCount / config.limit),
@@ -54,16 +59,13 @@ export class BlogsQueryRepository extends Repository {
   }
 
   public async getPostsByBlogId(
-    id: string,
-    query: PostFilters,
+    config: PostsPaginationConfig,
+    userId: Nullable<string>,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
-    const blog = await this.findById(this.blogModel, id);
+    const blog = await this.findById(this.blogModel, config.filter.blogId);
     if (!blog) {
       throw new NotFoundException();
     }
-    const config = new PostsPaginationConfig(query, {
-      blogId: blog.id,
-    });
     const [itemsWithoutLike, totalCount] = await this.paginate(
       this.postModel,
       config,
@@ -71,6 +73,7 @@ export class BlogsQueryRepository extends Repository {
     const likesInfo: LikesInfo[] = await this.countLikesInfo(
       this.likeModel,
       itemsWithoutLike,
+      userId,
     );
     const items = await Promise.all(
       itemsWithoutLike.map(async (item, idx) => {

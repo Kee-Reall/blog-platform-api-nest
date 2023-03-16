@@ -13,13 +13,35 @@ export type UserInputModel = {
   password: string;
 };
 
+export type UserLoginModel = {
+  loginOrEmail: string;
+  password: string;
+};
+
+export type WithClientMeta<T> = T & { ip: string; agent: string };
+
 export type UserLogicModel = {
-  id: ObjectId;
+  _id: ObjectId;
   login: string;
   email: string;
   createdAt: Date;
   hash: string;
+  confirmation: ConfirmationType;
+  recovery: RecoveryType;
+};
 
-  //  confirmation:Confirmation
-  //  recovery: Recovery
+export type RecoveryType = {
+  recoveryCode: string;
+  expirationDate: Date;
+};
+
+export type RecoveryInputModel = {
+  recoveryCode: string;
+  newPassword: string;
+};
+
+export type ConfirmationType = {
+  isConfirmed: boolean;
+  code: string;
+  confirmationDate: Date;
 };
