@@ -65,13 +65,17 @@ export class BlogsService {
 
   public async createPostWithSpecifiedBlog(
     blogId: string,
-    pojo: Omit<PostInputModel, 'blogId'>,
+    dto: Omit<PostInputModel, 'blogId'>,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
-    const blog = await this.queryRepo.getBlogById(blogId);
+    const blog = await this.queryRepo.getBlogEntityById(blogId);
     if (!blog) {
       throw new NotFoundException();
     }
-    const post = new this.postModel({ ...pojo, blogId, blogName: blog.name });
+    const post = new this.postModel({
+      ...dto,
+      blogId: blog._id,
+      blogName: blog.name,
+    });
     const result = await this.commandRepo.savePost(post);
     if (!result) {
       throw new ImATeapotException();

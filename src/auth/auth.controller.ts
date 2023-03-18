@@ -34,7 +34,7 @@ export class AuthController {
   ) {}
 
   private readonly cookiesOptions: CookieOptions = {
-    //domain: process.env.DOMAIN,
+    domain: process.env.DOMAIN,
     sameSite: 'none',
     secure: true,
     httpOnly: true,
