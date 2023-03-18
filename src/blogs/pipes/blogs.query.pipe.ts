@@ -1,7 +1,12 @@
-import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  NotFoundException,
+  PipeTransform,
+} from '@nestjs/common';
 import { BlogFilters, PostFilters } from '../../Model';
 import { BlogsPagination } from './blogs.pagination.class';
 import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
+import { ObjectId } from 'mongodb';
 
 export class BlogsQueryPipe implements PipeTransform {
   transform(inputQuery: BlogFilters, metadata: ArgumentMetadata) {
@@ -11,8 +16,13 @@ export class BlogsQueryPipe implements PipeTransform {
 
 export class PostsByBlogPipe implements PipeTransform {
   transform(inputQuery: PostFilters, metadata: ArgumentMetadata) {
-    return function (blogId: string) {
-      return new PostsPaginationConfig(inputQuery, { blogId });
+    return function (blogIdStr: string) {
+      try {
+        const blogId = new ObjectId(blogIdStr);
+        return new PostsPaginationConfig(inputQuery, { blogId });
+      } catch (e) {
+        throw new NotFoundException();
+      }
     };
   }
 }
