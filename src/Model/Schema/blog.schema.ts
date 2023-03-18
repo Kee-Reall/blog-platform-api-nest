@@ -8,7 +8,9 @@ import {
   NullablePromise,
 } from '../Type';
 
-export type BlogDocument = HydratedDocument<BlogPresentationModel>;
+export type BlogDocument = HydratedDocument<BlogPresentationModel> & {
+  _id: ObjectId;
+};
 
 @Schema({
   toJSON: {
@@ -17,7 +19,7 @@ export type BlogDocument = HydratedDocument<BlogPresentationModel>;
   },
 })
 export class Blog implements Omit<BlogLogicModel, '_id'> {
-  private _id: ObjectId;
+  _id: ObjectId;
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
     minlength: [1, MessageENUM.LENGTH],

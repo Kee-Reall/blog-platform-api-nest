@@ -41,17 +41,21 @@ export class PostsService {
     private queryRepo: PostsQueryRepository,
   ) {}
   public async createPost(
-    pojo: PostCreateModel,
+    dto: PostCreateModel,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     const blog: Nullable<BlogDocument> = await this.blogModel.NullableFindById(
-      pojo.blogId,
+      dto.blogId,
     );
     if (!blog) {
       throw new BadRequestException({
         errorsMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
       });
     }
-    const post = new this.postModel({ ...pojo, blogName: blog.name });
+    const post: PostDocument = new this.postModel({
+      ...dto,
+      blogName: blog.name,
+      blogId: blog._id,
+    });
     const isSaved: boolean = await this.commandRepo.savePost(post);
     if (!isSaved) {
       throw new ImATeapotException();
@@ -67,23 +71,26 @@ export class PostsService {
     };
   }
 
-  public async updatePost(id: string, pojo: PostCreateModel) {
-    const post = await this.postModel.NullableFindById(id);
+  public async updatePost(id: string, dto: PostCreateModel) {
+    const post: PostDocument = await this.postModel.NullableFindById(id);
     if (!post) {
       throw new NotFoundException();
     }
     const blog: Nullable<BlogDocument> = await this.blogModel.NullableFindById(
-      pojo.blogId,
+      dto.blogId,
     );
     if (!blog) {
       throw new BadRequestException({
         errorsMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
       });
     }
-    for (const key in pojo) {
-      post[key] = pojo[key];
+    for (const key in dto) {
+      post[key] = dto[key];
     }
     post.blogName = blog.name;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    post.blogId = blog._id;
     const isSaved = await this.commandRepo.savePost(post);
     if (!isSaved) {
       throw new ImATeapotException();

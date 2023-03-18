@@ -28,10 +28,8 @@ export class BlogsService {
     private queryRepo: BlogsQueryRepository,
   ) {}
 
-  public async createBlog(
-    pojo: BlogInputModel,
-  ): Promise<BlogPresentationModel> {
-    const blog = new this.blogModel(pojo);
+  public async createBlog(dto: BlogInputModel): Promise<BlogPresentationModel> {
+    const blog = new this.blogModel(dto);
     const result = await this.commandRepo.saveBlog(blog);
     if (!result) {
       throw new ImATeapotException();
@@ -39,13 +37,13 @@ export class BlogsService {
     return blog;
   }
 
-  public async updateById(id: string, pojo: BlogInputModel): VoidPromise {
+  public async updateById(id: string, dto: BlogInputModel): VoidPromise {
     const blog = await this.queryRepo.getBlogEntityById(id);
     if (!blog) {
       throw new NotFoundException();
     }
-    for (const key in pojo) {
-      blog[key] = pojo[key];
+    for (const key in dto) {
+      blog[key] = dto[key];
     }
     const isSaved: boolean = await this.commandRepo.saveBlog(blog);
     if (!isSaved) {
@@ -65,13 +63,17 @@ export class BlogsService {
 
   public async createPostWithSpecifiedBlog(
     blogId: string,
-    pojo: Omit<PostInputModel, 'blogId'>,
+    dto: Omit<PostInputModel, 'blogId'>,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
-    const blog = await this.queryRepo.getBlogById(blogId);
+    const blog = await this.queryRepo.getBlogEntityById(blogId);
     if (!blog) {
       throw new NotFoundException();
     }
-    const post = new this.postModel({ ...pojo, blogId, blogName: blog.name });
+    const post = new this.postModel({
+      ...dto,
+      blogId: blog._id,
+      blogName: blog.name,
+    });
     const result = await this.commandRepo.savePost(post);
     if (!result) {
       throw new ImATeapotException();
