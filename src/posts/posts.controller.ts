@@ -53,8 +53,8 @@ export class PostsController {
   @Post()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  public async createPost(@Body() pojo: PostInput) {
-    return await this.service.createPost(pojo);
+  public async createPost(@Body() dto: PostInput) {
+    return await this.service.createPost(dto);
   }
 
   @Get(':id')

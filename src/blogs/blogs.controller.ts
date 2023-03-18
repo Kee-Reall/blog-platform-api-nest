@@ -50,9 +50,9 @@ export class BlogsController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createBlog(
-    @Body() pojo: BlogInput,
+    @Body() dto: BlogInput,
   ): Promise<BlogPresentationModel> {
-    return await this.blogService.createBlog(pojo);
+    return await this.blogService.createBlog(dto);
   }
 
   @Get(':id')
@@ -68,9 +68,9 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async updateBlog(
     @Param('id') blogId: string,
-    @Body() pojo: BlogInput,
+    @Body() dto: BlogInput,
   ): VoidPromise {
-    await this.blogService.updateById(blogId, pojo);
+    await this.blogService.updateById(blogId, dto);
     return;
   }
 
@@ -97,8 +97,8 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   public async createPost(
     @Param('id') blogId: string,
-    @Body() pojo: PostInputWithoutBlogId,
+    @Body() dto: PostInputWithoutBlogId,
   ) {
-    return await this.blogService.createPostWithSpecifiedBlog(blogId, pojo);
+    return await this.blogService.createPostWithSpecifiedBlog(blogId, dto);
   }
 }
