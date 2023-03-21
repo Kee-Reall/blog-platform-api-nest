@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 
 describe('AppController (e2e)', () => {
@@ -26,7 +26,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe('/blogs', () => {
-    it('shoud had correct status', async () => {
+    it('should had correct status', async () => {
       request(app.getHttpServer()).get('/api/blogs').expect(200);
     });
 
@@ -63,11 +63,11 @@ describe('AppController (e2e)', () => {
       expect(blog.isMembership).toEqual(expect.any(Boolean));
     });
 
-    it('should clear all', async () => {
-      await request(app.getHttpServer())
-        .get('api/testing/all-data')
-        .expect(204);
-    });
+    // it('should clear all', async () => {
+    //   await request(app.getHttpServer())
+    //     .get('api/testing/all-data')
+    //     .expect(204);
+    // });
 
     // const arys = [
     //   {

@@ -4,33 +4,28 @@ import { CookieOptions } from 'express';
 type EnvironmentsTypes = 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
 
 class EnvironmentSettings {
-  constructor(private environment: string) {
-    const available = ['DEVELOPMENT', 'STAGING', 'PRODUCTION'];
-    if (!available.includes(environment)) {
-      throw new Error('INCORRECT configuration');
-    }
-  }
+  constructor(private readonly mode: EnvironmentsTypes) {}
 
-  get env(): string {
-    return this.environment;
+  getMode(): string {
+    return this.mode;
   }
 
   isProduction(): boolean {
-    return this.environment === 'PRODUCTION';
+    return this.getMode() === 'PRODUCTION';
   }
 
   isStaging(): boolean {
-    return this.environment === 'STAGING';
+    return this.getMode() === 'STAGING';
   }
 
   isDevelopment(): boolean {
-    return this.environment === 'DEVELOPMENT';
+    return this.getMode() === 'DEVELOPMENT';
   }
 }
 
 class AppConfig {
   private environment: any;
-  constructor(public mod: EnvironmentSettings) {
+  constructor(public mode: EnvironmentSettings) {
     this.environment = process.env;
   }
 
@@ -88,8 +83,12 @@ class AppConfig {
   get basicAuthPair(): [string, string] {
     return [this.environment.LOGIN, this.environment.PASSWORD];
   }
+
+  get env(): string {
+    return this.mode.getMode();
+  }
 }
 
 export const appConfig = new AppConfig(
-  new EnvironmentSettings(process.env.MOD ?? 'DEVELOPMENT'),
+  new EnvironmentSettings(<EnvironmentsTypes>process.env.MODE ?? 'DEVELOPMENT'),
 );
