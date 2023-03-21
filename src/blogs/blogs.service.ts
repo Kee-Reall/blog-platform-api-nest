@@ -34,7 +34,7 @@ export class BlogsService {
     if (!result) {
       throw new ImATeapotException();
     }
-    return blog;
+    return blog.toJSON() as BlogPresentationModel;
   }
 
   public async updateById(id: string, dto: BlogInputModel): VoidPromise {

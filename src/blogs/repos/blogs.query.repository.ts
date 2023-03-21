@@ -32,7 +32,8 @@ export class BlogsQueryRepository extends Repository {
   public async getBlogsWithPaginationConfig(
     config: IPaginationConfig,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
-    const [items, totalCount] = await this.paginate(this.blogModel, config);
+    const [itemsDoc, totalCount] = await this.paginate(this.blogModel, config);
+    const items = itemsDoc as unknown as BlogPresentationModel[];
     return {
       pagesCount: Math.ceil(totalCount / config.limit),
       page: config.pageNumber,
@@ -47,7 +48,7 @@ export class BlogsQueryRepository extends Repository {
     if (!blog) {
       throw new NotFoundException();
     }
-    return blog;
+    return blog.toJSON() as BlogPresentationModel;
   }
 
   public async getBlogEntityById(id: string): Promise<BlogDocument> {
@@ -78,7 +79,7 @@ export class BlogsQueryRepository extends Repository {
     const items = await Promise.all(
       itemsWithoutLike.map(async (item, idx) => {
         return {
-          ...item.toJSON(),
+          ...(item.toJSON() as PostPresentationModel),
           extendedLikesInfo: {
             ...likesInfo[idx],
             newestLikes: await this.getLastLikes(this.likeModel, item._id),

@@ -12,13 +12,11 @@ import { MessageENUM } from '../helpers';
 import {
   Blog,
   BlogDocument,
-  BlogSchemaMethods,
   Comment,
   Nullable,
   Post,
   PostCreateModel,
   PostDocument,
-  PostSchemaMethods,
   PostPresentationModel,
   VoidPromise,
   WithExtendedLike,
@@ -26,15 +24,18 @@ import {
   LikeDocument,
   Like,
   CommentDocument,
+  ModelWithStatic,
+  PostStaticMethods,
+  BlogStaticMethods,
 } from '../Model';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Blog.name)
-    private blogModel: Model<BlogDocument> & BlogSchemaMethods,
+    private blogModel: ModelWithStatic<BlogDocument, BlogStaticMethods>,
     @InjectModel(Post.name)
-    private postModel: Model<PostDocument> & PostSchemaMethods,
+    private postModel: ModelWithStatic<PostDocument, PostStaticMethods>,
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     private commandRepo: PostsCommandRepository,
@@ -88,8 +89,6 @@ export class PostsService {
       post[key] = dto[key];
     }
     post.blogName = blog.name;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     post.blogId = blog._id;
     const isSaved = await this.commandRepo.savePost(post);
     if (!isSaved) {

@@ -1,14 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { MessageENUM, deleteHidden } from '../../helpers/';
-import {
-  PostLogicModel,
-  PostPresentationModel,
-  NullablePromise,
-} from '../Type';
+import { PostLogicModel, NullablePromise } from '../Type';
 
-export type PostDocument = mongoose.HydratedDocument<PostPresentationModel>;
+export type PostDocument = HydratedDocument<Post>;
 
 @Schema({
   toJSON: {
@@ -16,8 +12,8 @@ export type PostDocument = mongoose.HydratedDocument<PostPresentationModel>;
     transform: deleteHidden,
   },
 })
-export class Post implements Omit<PostLogicModel, '_id'> {
-  private _id: ObjectId;
+export class Post implements PostLogicModel {
+  public _id: ObjectId;
   @Prop({
     trim: true,
     minLength: 1,
@@ -52,29 +48,37 @@ export class Post implements Omit<PostLogicModel, '_id'> {
   get id(): string {
     return this._id.toHexString();
   }
+
+  static async NullableFindById(
+    id: string | ObjectId,
+  ): NullablePromise<PostDocument> {
+    try {
+      const that = this as unknown as Model<PostDocument>;
+      return await that.findById(id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static async isPostExist(id: string | ObjectId): Promise<boolean> {
+    try {
+      const that = this as unknown as Model<PostDocument>;
+      const _id = id instanceof ObjectId ? id : new ObjectId(id);
+      return (await that.countDocuments({ _id })) > 0;
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 
 PostSchema.statics = {
-  async NullableFindById(id: string | ObjectId): NullablePromise<PostDocument> {
-    try {
-      return await this.findById(id);
-    } catch (e) {
-      return null;
-    }
-  },
-  async isPostExist(id: string | ObjectId): Promise<boolean> {
-    try {
-      const _id = id instanceof ObjectId ? id : new ObjectId(id);
-      return (await this.countDocuments({ _id })) > 0;
-    } catch (e) {
-      return false;
-    }
-  },
+  NullableFindById: Post.NullableFindById,
+  isPostExist: Post.NullableFindById,
 };
 
-export interface PostSchemaMethods {
+export interface PostStaticMethods {
   NullableFindById: (id: string | ObjectId) => NullablePromise<PostDocument>;
   isBlogExist: (id: string | ObjectId) => Promise<boolean>;
 }

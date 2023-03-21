@@ -79,7 +79,7 @@ export class PostsQueryRepository extends Repository {
     const items = await Promise.all(
       itemsWithoutLike.map(async (item, idx) => {
         return {
-          ...item.toJSON(),
+          ...(item.toJSON() as PostPresentationModel),
           extendedLikesInfo: {
             ...likesInfo[idx],
             newestLikes: await this.getLastLikes(this.likeModel, item._id),

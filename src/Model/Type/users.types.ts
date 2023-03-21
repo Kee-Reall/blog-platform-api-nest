@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { VoidPromise } from './helpers.types';
 
 export type UserPresentationModel = {
   id: string;
@@ -45,3 +46,16 @@ export type ConfirmationType = {
   code: string;
   confirmationDate: Date;
 };
+
+export interface UserMethods {
+  isFieldsUnique: () => Promise<[boolean, string[]]>;
+  setHash: (password: string) => VoidPromise;
+  changePassword: (password: string) => VoidPromise;
+  confirm: () => void;
+  updateConfirmCode: () => void;
+  killYourself: () => VoidPromise;
+  setRecoveryMetadata: () => void;
+  resetRecoveryCode: () => void;
+  isRecoveryCodeActive: () => boolean;
+  comparePasswords: (password: string) => Promise<boolean>;
+}

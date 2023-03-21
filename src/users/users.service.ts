@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelStatics, UserInputModel } from '../Model';
 import { Model } from 'mongoose';
-import { UsersCommandRepository } from './repos/users.comman.repository';
+import { InjectModel } from '@nestjs/mongoose';
+import { UsersCommandRepository } from './repos';
+import { User, UserDocument, UserModelStatics, UserInputModel } from '../Model';
 
 @Injectable()
 export class UsersService {

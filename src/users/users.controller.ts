@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UsersQueryRepository } from './repos/users.query.repository';
+import { UsersQueryRepository } from './repos';
 import { UsersService } from './users.service';
 import { BasicAuthGuard } from '../helpers';
 import { IPaginationConfig } from '../Model';

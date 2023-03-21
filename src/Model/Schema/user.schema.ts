@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { hash as genHash, genSalt, compare } from 'bcrypt';
 import { v4 as genUUIDv4 } from 'uuid';
 import { addMinutes, isBefore } from 'date-fns';
@@ -10,10 +10,11 @@ import {
   RecoveryType,
   UserInputModel,
   UserLogicModel,
+  UserMethods,
   VoidPromise,
 } from '../Type/';
 
-export type UserDocument = HydratedDocument<User> & UserMethods;
+export type UserDocument = HydratedDocument<User>;
 
 @Schema({ _id: false, versionKey: false })
 export class ConfirmationScheme implements ConfirmationType {
@@ -49,7 +50,7 @@ export class RecoverySchema implements RecoveryType {
     },
   },
 })
-export class User implements UserLogicModel {
+export class User implements UserLogicModel, UserMethods {
   _id: ObjectId;
 
   @Prop({
@@ -91,44 +92,13 @@ export class User implements UserLogicModel {
   get id(): string {
     return this._id.toHexString();
   }
-}
 
-export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.statics = {
-  async newUser(dto: UserInputModel): Promise<UserDocument> {
-    const { login, email, password } = dto;
-    const hash = await genHash(password, await genSalt(13));
-    return new this({ login, email, hash });
-  },
-
-  async findByLoginOrEmail(
-    loginOrEmail: string,
-  ): NullablePromise<UserDocument> {
-    try {
-      return await this.findOne({
-        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-      });
-    } catch (e) {
-      return null;
-    }
-  },
-
-  generateDefaultRecovery(): RecoveryType {
-    return { expirationDate: new Date(), recoveryCode: null };
-  },
-
-  generateDefaultConfirmation(isAdmin = false): ConfirmationType {
-    return { code: null, confirmationDate: new Date(), isConfirmed: isAdmin };
-  },
-};
-
-UserSchema.methods = {
-  async isFieldsUnique(): Promise<[boolean, string[]]> {
+  public async isFieldsUnique(): Promise<[boolean, string[]]> {
+    const model = this.constructor as Model<UserDocument>;
     const { login, email } = this;
     const [userByLogin, userByEmail] = await Promise.all([
-      this.constructor.findOne({ login }),
-      this.constructor.findOne({ email }),
+      model.findOne({ login }),
+      model.findOne({ email }),
     ]);
     const result: Array<'login' | 'email'> = [];
     if (!userByLogin && !userByEmail) {
@@ -137,62 +107,99 @@ UserSchema.methods = {
     if (userByLogin) result.push('login');
     if (userByEmail) result.push('email');
     return [false, result];
-  },
+  }
 
-  async setHash(password: string) {
+  public async setHash(password: string): VoidPromise {
     this.hash = await genHash(password, await genSalt(13));
-  },
+  }
 
-  confirm() {
+  public confirm(): void {
     this.confirmation.isConfirmed = true;
     this.confirmation.code = null;
-  },
+  }
 
-  updateConfirmCode() {
+  public updateConfirmCode(): void {
     this.confirmation.code = genUUIDv4();
     this.confirmation.confirmationDate = addMinutes(new Date(), 60);
-  },
+  }
 
-  setRecoveryMetadata() {
+  public setRecoveryMetadata(): void {
     this.recovery.recoveryCode = genUUIDv4();
     this.recovery.expirationDate = addMinutes(new Date(), 10);
-  },
+  }
 
-  isRecoveryCodeActive() {
+  public isRecoveryCodeActive(): boolean {
     const isDateExpired = isBefore(new Date(), this.recovery.expirationDate);
     return isDateExpired && this.confirmation.isConfirmed;
-  },
+  }
 
-  async changePassword(password: string): VoidPromise {
+  public resetRecoveryCode(): void {
+    this.recovery.recoveryCode = null;
+  }
+
+  public async changePassword(password: string): VoidPromise {
     await this.setHash(password);
     this.resetRecoveryCode();
-  },
+  }
 
-  async comparePasswords(password: string): Promise<boolean> {
+  public async comparePasswords(password: string): Promise<boolean> {
     return await compare(password, this.hash);
-  },
+  }
 
-  resetRecoveryCode() {
-    this.recovery.recoveryCode = null;
-  },
+  public async killYourself(): VoidPromise {
+    const model = this.constructor as Model<UserDocument>;
+    await model.deleteOne(this);
+  }
+  static async newUser(dto: UserInputModel): Promise<UserDocument> {
+    const { login, email, password } = dto;
+    const hash = await genHash(password, await genSalt(13));
+    const that = this as unknown as Model<UserDocument>;
+    return new that({ login, email, hash });
+  }
 
-  async killYourself() {
-    await this.constructor.deleteOne(this);
-  },
+  static async findByLoginOrEmail(
+    loginOrEmail: string,
+  ): NullablePromise<UserDocument> {
+    try {
+      const that = this as unknown as Model<UserDocument>;
+      return await that.findOne({
+        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static generateDefaultRecovery(): RecoveryType {
+    return { expirationDate: new Date(), recoveryCode: null };
+  }
+
+  static generateDefaultConfirmation(isAdmin = false): ConfirmationType {
+    return { code: null, confirmationDate: new Date(), isConfirmed: isAdmin };
+  }
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.methods = {
+  isFieldsUnique: User.prototype.isFieldsUnique,
+  setHash: User.prototype.setHash,
+  confirm: User.prototype.confirm,
+  updateConfirmCode: User.prototype.updateConfirmCode,
+  setRecoveryMetadata: User.prototype.setRecoveryMetadata,
+  isRecoveryCodeActive: User.prototype.isRecoveryCodeActive,
+  changePassword: User.prototype.changePassword,
+  comparePasswords: User.prototype.comparePasswords,
+  resetRecoveryCode: User.prototype.resetRecoveryCode,
+  killYourself: User.prototype.killYourself,
 };
 
-export interface UserMethods {
-  isFieldsUnique: () => Promise<[boolean, string[]]>;
-  setHash: (password: string) => VoidPromise;
-  changePassword: (password: string) => VoidPromise;
-  confirm: () => void;
-  updateConfirmCode: () => void;
-  killYourself: () => VoidPromise;
-  setRecoveryMetadata: () => void;
-  resetRecoveryCode: () => void;
-  isRecoveryCodeActive: () => boolean;
-  comparePasswords: (password: string) => Promise<boolean>;
-}
+UserSchema.statics = {
+  newUser: User.newUser,
+  findByLoginOrEmail: User.findByLoginOrEmail,
+  generateDefaultRecovery: User.generateDefaultRecovery,
+  generateDefaultConfirmation: User.generateDefaultConfirmation,
+};
 
 export interface UserModelStatics {
   findByLoginOrEmail: (loginOrEmail: string) => NullablePromise<UserDocument>;
