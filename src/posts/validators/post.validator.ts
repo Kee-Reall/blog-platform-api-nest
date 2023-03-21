@@ -1,6 +1,6 @@
 import { Length } from 'class-validator';
 import { PostInputModel } from '../../Model';
-import { IsMatchMongoId, TrimIfString } from '../../helpers';
+import { IsMatchMongoId, TrimIfString } from '../../infrastructure';
 import { IsBlogExist } from './isBlogExist';
 
 export class PostInput implements PostInputModel {

@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BlogsController } from './blogs.controller';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryRepository, BlogsCommandRepository } from './repos';
-import { SoftJwtAuthGuard } from '../helpers';
+import { SoftJwtAuthGuard } from '../infrastructure';
 import {
   Blog,
   BlogSchema,

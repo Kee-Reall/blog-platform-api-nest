@@ -1,6 +1,6 @@
-import { PostInputModel } from '../../Model/Type/posts.types';
+import { PostInputModel } from '../../Model';
 import { Length } from 'class-validator';
-import { TrimIfString } from '../../helpers/functions/transformIfString.decorator';
+import { TrimIfString } from '../../infrastructure';
 
 export class PostInputWithoutBlogId implements Omit<PostInputModel, 'blogId'> {
   @TrimIfString()

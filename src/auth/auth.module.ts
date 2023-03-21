@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { EmailService } from './email';
-import { AuthCommandRepository, AuthQueryRepository } from './repos';
-import { HardJwtAuthStrategy, RefreshJwtAuthStrategy } from '../helpers';
-import { Session, SessionSchema, User, UserSchema } from '../Model';
-import { DeviceController } from './device.controller';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { EmailService } from './email';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { DeviceController } from './device.controller';
+import { Session, SessionSchema, User, UserSchema } from '../Model';
+import { AuthCommandRepository, AuthQueryRepository } from './repos';
+import {
+  HardJwtAuthStrategy,
+  RefreshJwtAuthStrategy,
+  appConfig,
+} from '../infrastructure';
 
 @Module({
   imports: [
@@ -17,10 +21,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
       { name: Session.name, schema: SessionSchema },
     ]),
     JwtModule.register({}),
-    ThrottlerModule.forRoot({
-      limit: +process.env.IP_RESTRICTION_LIMIT || 5,
-      ttl: +process.env.IP_RESTRICTION_TTL || 10,
-    }),
+    ThrottlerModule.forRoot(appConfig.throttlerOptions),
   ],
   controllers: [AuthController, DeviceController],
   providers: [

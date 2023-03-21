@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
+import { appConfig } from '../appConfig.class';
 
 @Injectable()
 export class SoftJwtAuthGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class SoftJwtAuthGuard implements CanActivate {
       const [type, token] = req.headers.authorization.split(' ');
       if (type === 'Bearer') {
         const payload = this.jwtService.verify(token, {
-          secret: process.env.JWT_SECRET,
+          secret: appConfig.jwtSecret,
         });
         req.user.userId = payload.userId;
       }

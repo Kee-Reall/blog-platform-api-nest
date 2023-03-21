@@ -9,11 +9,11 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { PostsQueryRepository } from './repos';
-import { HardJwtAuthGuard, SoftJwtAuthGuard, User } from '../helpers';
-import { AccessTokenMeta, SoftGuardMeta } from '../Model';
-import { CommentInput, LikeInput } from './validators';
-import { PostsService } from './posts.service';
+import { PostsQueryRepository } from '../repos';
+import { HardJwtAuthGuard, SoftJwtAuthGuard, User } from '../../infrastructure';
+import { AccessTokenMeta, SoftGuardMeta } from '../../Model';
+import { CommentInput, LikeInput } from '../validators';
+import { PostsService } from '../posts.service';
 
 @Controller('api/comments')
 export class CommentsController {

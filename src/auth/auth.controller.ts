@@ -11,11 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CookieOptions, Response } from 'express';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { EmailService } from './email';
-import { AuthService } from './auth.service';
 import { VoidPromise } from '../Model/';
-import { HardJwtAuthGuard, RefreshJwtAuthGuard, User } from '../helpers';
+import { AuthService } from './auth.service';
 import { AuthQueryRepository } from './repos';
+import { HardJwtAuthGuard, RefreshJwtAuthGuard, User } from '../infrastructure';
 import {
   CodeInput,
   EmailInput,
@@ -23,7 +24,7 @@ import {
   RecoveryInput,
   UserInput,
 } from './validators';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { appConfig } from '../infrastructure';
 
 @Controller('api/auth')
 export class AuthController {
@@ -33,12 +34,7 @@ export class AuthController {
     private queryRepo: AuthQueryRepository,
   ) {}
 
-  private readonly cookiesOptions: CookieOptions = {
-    domain: process.env.DOMAIN,
-    sameSite: 'none',
-    secure: true,
-    httpOnly: true,
-  };
+  private readonly cookiesOptions: CookieOptions = appConfig.cookiesOptions;
 
   @Post('login')
   @UseGuards(ThrottlerGuard)

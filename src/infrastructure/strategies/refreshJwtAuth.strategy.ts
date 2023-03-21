@@ -1,7 +1,8 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RefreshTokenPayload, SessionJwtMeta } from '../../Model/';
+import { RefreshTokenPayload, SessionJwtMeta } from '../../Model';
+import { appConfig } from '../appConfig.class';
 
 @Injectable()
 export class RefreshJwtAuthStrategy extends PassportStrategy(
@@ -19,7 +20,7 @@ export class RefreshJwtAuthStrategy extends PassportStrategy(
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: appConfig.jwtSecret,
     });
   }
   public async validate(payload: object): Promise<SessionJwtMeta> {

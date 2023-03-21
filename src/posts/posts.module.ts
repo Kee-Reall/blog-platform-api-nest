@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SoftJwtAuthGuard } from '../helpers';
+import { SoftJwtAuthGuard } from '../infrastructure';
 import { PostsService } from './posts.service';
-import { PostsController } from './posts.controller';
-import { CommentsController } from './comments.controller';
+import { PostsController, CommentsController } from './controllers';
 import { PostsQueryRepository, PostsCommandRepository } from './repos';
 import {
   Blog,

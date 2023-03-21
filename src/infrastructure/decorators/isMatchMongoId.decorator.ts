@@ -5,7 +5,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ObjectId } from 'mongodb';
-import { MessageENUM } from '../enums';
+import { MessageENUM } from '../../helpers';
 
 @ValidatorConstraint({ name: 'isValidObjectId', async: false })
 export class IsValidObjectIdConstraint implements ValidatorConstraintInterface {

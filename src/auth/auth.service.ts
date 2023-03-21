@@ -28,6 +28,7 @@ import {
   SessionModelStatics,
   ModelWithStatic,
 } from '../Model';
+import { appConfig } from '../infrastructure';
 
 @Injectable()
 export class AuthService {
@@ -155,21 +156,19 @@ export class AuthService {
   }
 
   private generateTokenPair(meta: SessionJwtMeta): TokenPair {
-    const [accessTokenLiveTime, refreshTokenLiveTime] = [
-      process.env.JWT_ACCESS_LIFETIME,
-      process.env.JWT_REFRESH_LIFETIME,
-    ];
+    const [accessTokenLiveTime, refreshTokenLiveTime] =
+      appConfig.jwtLifeTimePair;
     const accessToken = this.jwtService.sign(
       { userId: meta.userId },
       {
         expiresIn: accessTokenLiveTime,
-        secret: process.env.JWT_SECRET,
+        secret: appConfig.jwtSecret,
         algorithm: 'HS512',
       },
     );
     const refreshToken = this.jwtService.sign(meta, {
       expiresIn: refreshTokenLiveTime,
-      secret: process.env.JWT_SECRET,
+      secret: appConfig.jwtSecret,
       algorithm: 'HS512',
     });
     return { accessToken, refreshToken };

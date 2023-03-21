@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
+import { appConfig } from '../appConfig.class';
 
 export class BasicAuthGuard implements CanActivate {
   canActivate(
@@ -24,10 +25,7 @@ export class BasicAuthGuard implements CanActivate {
     const [login, password] = Buffer.from(auth64 ?? '', 'base64')
       .toString('ascii')
       .split(':');
-    const [adminLogin, adminPassword] = [
-      process.env.LOGIN,
-      process.env.PASSWORD,
-    ];
+    const [adminLogin, adminPassword] = appConfig.basicAuthPair;
     const isAdmin: boolean =
       login === adminLogin && password === adminPassword && type === 'Basic';
     if (!isAdmin) {

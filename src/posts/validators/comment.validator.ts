@@ -1,5 +1,5 @@
 import { Length } from 'class-validator';
-import { TrimIfString } from '../../helpers';
+import { TrimIfString } from '../../infrastructure';
 import { CommentInputModel } from '../../Model';
 
 export class CommentInput implements CommentInputModel {

@@ -11,16 +11,16 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { PostsQueryRepository } from './repos';
-import { PostsQueryPipe } from './pipes/posts.query.pipe';
-import { PostInput, LikeInput, CommentInput } from './validators/';
+import { PostsService } from '../posts.service';
+import { PostsQueryRepository } from '../repos';
+import { PostsQueryPipe } from '../pipes/posts.query.pipe';
+import { PostInput, LikeInput, CommentInput } from '../validators';
 import {
   BasicAuthGuard,
   HardJwtAuthGuard,
   SoftJwtAuthGuard,
   User,
-} from '../helpers';
+} from '../../infrastructure';
 import {
   AccessTokenMeta,
   IPaginationConfig,
@@ -30,7 +30,7 @@ import {
   SoftGuardMeta,
   VoidPromise,
   WithExtendedLike,
-} from '../Model';
+} from '../../Model';
 
 @Controller('api/posts')
 export class PostsController {

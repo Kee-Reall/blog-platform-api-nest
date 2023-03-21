@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UsersQueryRepository } from './repos';
 import { UsersService } from './users.service';
-import { BasicAuthGuard } from '../helpers';
+import { BasicAuthGuard } from '../infrastructure';
 import { IPaginationConfig } from '../Model';
 import { UserQueryPipe } from './pipes/users.pipe';
 import { UserInput } from './validators/user.validator';
