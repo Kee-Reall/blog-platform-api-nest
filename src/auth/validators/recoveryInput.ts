@@ -1,6 +1,6 @@
 import { IsUUID, Length } from 'class-validator';
 import { RecoveryInputModel } from '../../Model';
-import { TrimIfString } from '../../infrastructure';
+import { TrimIfString } from '../../Infrastructure';
 
 export class RecoveryInput implements RecoveryInputModel {
   @TrimIfString()

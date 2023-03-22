@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MessageENUM } from '../../helpers';
+import { MessageENUM } from '../../Helpers';
 import { LikeModel, LikeStatus } from '../Type';
 
 export type LikeDocument = HydratedDocument<Like>;

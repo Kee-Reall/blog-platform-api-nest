@@ -6,7 +6,7 @@ import {
   registerDecorator,
 } from 'class-validator';
 import { PostsQueryRepository } from '../repos';
-import { MessageENUM } from '../../helpers';
+import { MessageENUM } from '../../Helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })

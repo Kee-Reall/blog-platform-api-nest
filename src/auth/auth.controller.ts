@@ -16,7 +16,7 @@ import { EmailService } from './email';
 import { VoidPromise } from '../Model/';
 import { AuthService } from './auth.service';
 import { AuthQueryRepository } from './repos';
-import { HardJwtAuthGuard, RefreshJwtAuthGuard, User } from '../infrastructure';
+import { HardJwtAuthGuard, RefreshJwtAuthGuard, User } from '../Infrastructure';
 import {
   CodeInput,
   EmailInput,
@@ -24,7 +24,7 @@ import {
   RecoveryInput,
   UserInput,
 } from './validators';
-import { appConfig } from '../infrastructure';
+import { appConfig } from '../Infrastructure';
 
 @Controller('api/auth')
 export class AuthController {

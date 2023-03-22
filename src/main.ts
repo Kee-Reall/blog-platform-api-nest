@@ -2,12 +2,13 @@ import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { exceptionFactory } from './helpers';
-import { GlobalHTTPFilter, appConfig } from './infrastructure';
+import { exceptionFactory } from './Helpers';
+import { GlobalHTTPFilter, appConfig } from './Infrastructure';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.use(cookieParser());
   app.enableCors(appConfig.corsOptions);

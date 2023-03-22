@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Repository } from '../../helpers';
+import { Repository } from '../../Helpers';
 import {
   User,
   UserDocument,

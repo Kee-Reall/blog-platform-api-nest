@@ -1,13 +1,13 @@
 import { FilterQuery } from 'mongoose';
-import { PaginationConfig } from '../../helpers';
-import { IPaginationConfig, PostFilters, PostLogicModel } from '../../Model';
+import { PaginationConfig } from '../../Helpers';
+import { IPaginationConfig, PostFilter, PostLogicModel } from '../../Model';
 
 export class PostsPaginationConfig
   extends PaginationConfig
   implements IPaginationConfig
 {
   filter: FilterQuery<PostLogicModel>;
-  constructor(query: PostFilters, filter: FilterQuery<PostLogicModel> = {}) {
+  constructor(query: PostFilter, filter: FilterQuery<PostLogicModel> = {}) {
     super(query);
     this.filter = filter;
   }

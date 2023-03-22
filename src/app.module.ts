@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { BlogsModule } from './blogs/blogs.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PostsModule } from './posts/posts.module';
-import { UsersModule } from './users/users.module';
-import { TestingModule } from './testing/testing.module';
-import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { appConfig } from './infrastructure';
+import { PostsModule } from './posts/posts.module';
+import { BlogsModule } from './blogs/blogs.module';
+import { AuthModule } from './auth/auth.module';
+import { appConfig } from './Infrastructure';
+import { TestingModule } from './Testing';
+import { SuperAdminModule } from './SuperAdmin';
 
 @Module({
   imports: [
@@ -16,9 +16,9 @@ import { appConfig } from './infrastructure';
     MailerModule.forRoot(appConfig.mailOptions),
     BlogsModule,
     PostsModule,
-    UsersModule,
     TestingModule,
     AuthModule,
+    SuperAdminModule,
   ],
   controllers: [],
   providers: [],

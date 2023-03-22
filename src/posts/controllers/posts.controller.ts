@@ -20,7 +20,7 @@ import {
   HardJwtAuthGuard,
   SoftJwtAuthGuard,
   User,
-} from '../../infrastructure';
+} from '../../Infrastructure';
 import {
   AccessTokenMeta,
   IPaginationConfig,

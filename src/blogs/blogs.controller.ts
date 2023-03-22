@@ -20,7 +20,7 @@ import {
 } from './pipes/blogs.query.pipe';
 import { BlogInput } from './validators/blog.validator';
 import { PostInputWithoutBlogId } from './validators/post.validator';
-import { BasicAuthGuard, SoftJwtAuthGuard, User } from '../infrastructure';
+import { BasicAuthGuard, SoftJwtAuthGuard, User } from '../Infrastructure';
 import {
   AccessTokenMeta,
   BlogPresentationModel,

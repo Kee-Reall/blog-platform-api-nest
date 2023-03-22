@@ -1,10 +1,10 @@
 import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
-import { CommentsFilter, PostFilters } from '../../Model';
+import { CommentsFilter, PostFilter } from '../../Model';
 import { PostsPaginationConfig } from './posts.pagination.class';
 import { CommentsPaginationConfig } from './comments.pagination.class';
 
 export class PostsQueryPipe implements PipeTransform {
-  transform(inputQuery: PostFilters, metadata: ArgumentMetadata) {
+  transform(inputQuery: PostFilter, metadata: ArgumentMetadata) {
     return new PostsPaginationConfig(inputQuery);
   }
 }

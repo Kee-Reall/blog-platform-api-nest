@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsQueryRepository } from '../repos';
-import { HardJwtAuthGuard, SoftJwtAuthGuard, User } from '../../infrastructure';
+import { HardJwtAuthGuard, SoftJwtAuthGuard, User } from '../../Infrastructure';
 import { AccessTokenMeta, SoftGuardMeta } from '../../Model';
 import { CommentInput, LikeInput } from '../validators';
 import { PostsService } from '../posts.service';

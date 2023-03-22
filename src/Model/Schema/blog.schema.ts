@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument, Model } from 'mongoose';
-import { MessageENUM, deleteHidden } from '../../helpers';
+import { MessageENUM, deleteHidden } from '../../Helpers';
 import { BlogLogicModel, NullablePromise } from '../Type';
 
 export type BlogDocument = HydratedDocument<Blog>;

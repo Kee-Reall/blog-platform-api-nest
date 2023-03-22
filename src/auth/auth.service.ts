@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmailService } from './email/';
 import { AuthCommandRepository, AuthQueryRepository } from './repos';
-import { MessageENUM } from '../helpers';
+import { MessageENUM } from '../Helpers';
 import {
   User,
   UserDocument,
@@ -28,7 +28,7 @@ import {
   SessionModelStatics,
   ModelWithStatic,
 } from '../Model';
-import { appConfig } from '../infrastructure';
+import { appConfig } from '../Infrastructure';
 
 @Injectable()
 export class AuthService {

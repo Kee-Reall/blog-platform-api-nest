@@ -3,19 +3,19 @@ import {
   NotFoundException,
   PipeTransform,
 } from '@nestjs/common';
-import { BlogFilters, PostFilters } from '../../Model';
-import { BlogsPagination } from './blogs.pagination.class';
+import { BlogFilter, PostFilter } from '../../Model';
+import { BlogsPagination } from '../../Infrastructure/paginations/blogs.pagination.class';
 import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
 import { ObjectId } from 'mongodb';
 
 export class BlogsQueryPipe implements PipeTransform {
-  transform(inputQuery: BlogFilters, metadata: ArgumentMetadata) {
+  transform(inputQuery: BlogFilter, metadata: ArgumentMetadata) {
     return new BlogsPagination(inputQuery);
   }
 }
 
 export class PostsByBlogPipe implements PipeTransform {
-  transform(inputQuery: PostFilters, metadata: ArgumentMetadata) {
+  transform(inputQuery: PostFilter, metadata: ArgumentMetadata) {
     return function (blogIdStr: string) {
       try {
         const blogId = new ObjectId(blogIdStr);

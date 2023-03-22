@@ -12,7 +12,7 @@ import {
   HardJwtAuthStrategy,
   RefreshJwtAuthStrategy,
   appConfig,
-} from '../infrastructure';
+} from '../Infrastructure';
 
 @Module({
   imports: [

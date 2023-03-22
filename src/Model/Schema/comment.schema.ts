@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { deleteHiddenAndPostId, MessageENUM } from '../../helpers';
+import { deleteHiddenAndPostId, MessageENUM } from '../../Helpers';
 import { CommentatorInfoType, CommentsLogicModel, VoidPromise } from '../Type';
 
 export type CommentDocument = mongoose.HydratedDocument<Comment>;

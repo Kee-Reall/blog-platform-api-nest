@@ -7,7 +7,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { RefreshJwtAuthGuard, User } from '../infrastructure';
+import { RefreshJwtAuthGuard, User } from '../Infrastructure';
 import { AuthQueryRepository } from './repos';
 import { SessionJwtMeta, VoidPromise } from '../Model';
 import { AuthService } from './auth.service';
