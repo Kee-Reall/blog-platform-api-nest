@@ -26,13 +26,14 @@ export class TestingController {
   @Delete('all-data')
   @HttpCode(204)
   public async clear() {
-    await Promise.all([
+    const res = await Promise.all([
       this.postModel.deleteMany({}),
       this.blogModel.deleteMany({}),
       this.likeModel.deleteMany({}),
       this.commentModel.deleteMany({}),
       this.userModel.deleteMany({}),
     ]);
+    console.log(res);
     return;
   }
 }

@@ -9,12 +9,14 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersFilter } from '../../Model';
 import { UserInput } from '../validators';
 import { adminCommand, adminQuery } from '../useCases';
+import { BanUserInput } from '../validators/ban-user.validator';
 import { BasicAuthGuard, ParseObjectIdPipe } from '../../Infrastructure';
 
 @Controller('api/sa/users')
@@ -27,14 +29,23 @@ export class SuperAdminUsersController {
     return this.queryBus.execute(new adminQuery.GetPaginatedUsers(filter));
   }
 
+  @Post()
+  public async createUser(@Body() dto: UserInput) {
+    return this.commandBus.execute(new adminCommand.CreateUser(dto));
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteUser(@Param('id', ParseObjectIdPipe) userId: ObjectId) {
     return await this.commandBus.execute(new adminCommand.DeleteUser(userId));
   }
 
-  @Post()
-  public async createUser(@Body() dto: UserInput) {
-    return this.commandBus.execute(new adminCommand.CreateUser(dto));
+  @Put(':id/ban')
+  //@HttpCode(HttpStatus.NO_CONTENT)
+  public async banUser(
+    @Param('id', ParseObjectIdPipe) userId: ObjectId,
+    @Body() dto: BanUserInput,
+  ) {
+    return await this.commandBus.execute(new adminCommand.BanUser(userId, dto));
   }
 }

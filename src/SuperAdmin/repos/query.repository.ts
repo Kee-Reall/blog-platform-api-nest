@@ -8,6 +8,8 @@ import {
   PaginatedOutput,
   User,
   UserDocument,
+  UserPresentationModel,
+  WithBanInfo,
 } from '../../Model';
 import { Model } from 'mongoose';
 import { Repository } from '../../Helpers';
@@ -36,7 +38,10 @@ export class SuperAdminQueryRepository extends Repository {
   }
 
   public async getPaginatedUsers(config: IPaginationConfig) {
-    const [items, totalCount] = await this.paginate(this.userModel, config);
+    const [itemsDoc, totalCount] = await this.paginate(this.userModel, config);
+    const items: WithBanInfo<UserPresentationModel>[] = itemsDoc.map(
+      (user: UserDocument) => ({ ...user.toJSON(), banInfo: user.banInfo }),
+    );
     return {
       pagesCount: Math.ceil(totalCount / config.limit),
       page: config.pageNumber,

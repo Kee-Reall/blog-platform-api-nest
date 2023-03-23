@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { VoidPromise } from './helpers.types';
+import { Nullable, VoidPromise } from './helpers.types';
 
 export type UserPresentationModel = {
   id: string;
@@ -59,3 +59,16 @@ export interface UserMethods {
   isRecoveryCodeActive: () => boolean;
   comparePasswords: (password: string) => Promise<boolean>;
 }
+
+export interface BanUserInputModel {
+  isBanned: boolean;
+  banReason: string;
+}
+
+export interface BanInfoModel {
+  isBanned: boolean;
+  banReason: Nullable<string>;
+  banDate: Nullable<Date>;
+}
+
+export type WithBanInfo<T = any> = T & { banInfo: BanInfoModel };

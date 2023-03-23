@@ -1,6 +1,11 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SuperAdminQueryRepository } from '../../repos';
-import { UsersFilter } from '../../../Model';
+import {
+  PaginatedOutput,
+  UserPresentationModel,
+  UsersFilter,
+  WithBanInfo,
+} from '../../../Model';
 import {
   UsersPaginationConfig,
   DefaultUsersQuery,
@@ -20,7 +25,11 @@ export class GetPaginatedUsers {
 @QueryHandler(GetPaginatedUsers)
 export class AdminGetUsersHandler implements IQueryHandler<GetPaginatedUsers> {
   constructor(private queryRepo: SuperAdminQueryRepository) {}
-  public async execute({ config }: GetPaginatedUsers): Promise<any> {
+  public async execute({
+    config,
+  }: GetPaginatedUsers): Promise<
+    PaginatedOutput<WithBanInfo<UserPresentationModel>>
+  > {
     return this.queryRepo.getPaginatedUsers(config);
   }
 }

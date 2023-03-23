@@ -5,6 +5,7 @@ import { hash as genHash, genSalt, compare } from 'bcrypt';
 import { v4 as genUUIDv4 } from 'uuid';
 import { addMinutes, isBefore } from 'date-fns';
 import {
+  BanInfoModel,
   ConfirmationType,
   NullablePromise,
   RecoveryType,
@@ -17,7 +18,7 @@ import {
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ _id: false, versionKey: false })
-export class ConfirmationScheme implements ConfirmationType {
+export class ConfirmationSchema implements ConfirmationType {
   @Prop({ default: () => genUUIDv4(), nullable: true })
   code: string | null = genUUIDv4();
 
@@ -37,17 +38,25 @@ export class RecoverySchema implements RecoveryType {
   recoveryCode: string | null = null;
 }
 
+@Schema({ _id: false, versionKey: false })
+export class BanInfoSchema implements BanInfoModel {
+  @Prop({ default: false, nullable: true })
+  isBanned: boolean = false;
+  @Prop({ default: null, nullable: true })
+  banDate: Date | null = null;
+  @Prop({ default: null, nullable: true })
+  banReason: string | null = null;
+}
+
 @Schema({
   toJSON: {
     getters: true,
-    transform: (doc) => {
-      return {
-        id: doc.id,
-        login: doc.login,
-        email: doc.email,
-        createdAt: doc.createdAt,
-      };
-    },
+    transform: (doc) => ({
+      id: doc.id,
+      login: doc.login,
+      email: doc.email,
+      createdAt: doc.createdAt,
+    }),
   },
 })
 export class User implements UserLogicModel, UserMethods {
@@ -77,17 +86,14 @@ export class User implements UserLogicModel, UserMethods {
   @Prop({ required: true, minlength: 5 })
   hash: string;
 
-  @Prop({
-    required: true,
-    default: () => new ConfirmationScheme(),
-  })
-  confirmation: ConfirmationScheme;
+  @Prop({ default: () => new ConfirmationSchema() })
+  confirmation: ConfirmationSchema;
 
-  @Prop({
-    required: true,
-    default: () => new RecoverySchema(),
-  })
+  @Prop({ default: () => new RecoverySchema() })
   recovery: RecoverySchema;
+
+  @Prop({ default: () => new BanInfoSchema() })
+  banInfo: BanInfoSchema;
 
   get id(): string {
     return this._id.toHexString();

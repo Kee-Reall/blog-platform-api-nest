@@ -1,8 +1,8 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ObjectId } from 'mongodb';
 import { NotFoundException } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { SuperAdminCommandRepository } from '../../repos';
 import { VoidPromise } from '../../../Model';
-import { SuperAdminCommandRepository } from '../../repos/command.repository';
 
 export class DeleteUser {
   constructor(public userId: ObjectId) {}

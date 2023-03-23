@@ -6,6 +6,13 @@ import { BlogLogicModel, NullablePromise } from '../Type';
 
 export type BlogDocument = HydratedDocument<Blog>;
 
+@Schema({ _id: false, versionKey: false })
+class blogOwnerInfo {
+  @Prop({ required: true })
+  userId: ObjectId;
+  @Prop({ required: true })
+  userLogin: string;
+}
 @Schema({
   toJSON: {
     getters: true,
