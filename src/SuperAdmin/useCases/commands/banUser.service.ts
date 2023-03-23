@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { ImATeapotException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { ImATeapotException, NotFoundException } from '@nestjs/common';
 import { BanUserInputModel, UserDocument, VoidPromise } from '../../../Model';
 import {
   SuperAdminCommandRepository,
