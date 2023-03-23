@@ -13,6 +13,7 @@ import {
 } from '../../Model';
 import { Model } from 'mongoose';
 import { Repository } from '../../Helpers';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class SuperAdminQueryRepository extends Repository {
@@ -35,6 +36,10 @@ export class SuperAdminQueryRepository extends Repository {
       totalCount,
       items,
     };
+  }
+
+  public async getUserEntity(userId: ObjectId) {
+    return await this.findById(this.userModel, userId);
   }
 
   public async getPaginatedUsers(config: IPaginationConfig) {

@@ -1,14 +1,11 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { Model } from 'mongoose';
+import { ImATeapotException, NotFoundException } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { BanUserInputModel, UserDocument, VoidPromise } from '../../../Model';
 import {
-  BanUserInputModel,
-  User,
-  UserDocument,
-  VoidPromise,
-} from '../../../Model';
-import { NotFoundException } from '@nestjs/common';
+  SuperAdminCommandRepository,
+  SuperAdminQueryRepository,
+} from '../../repos';
 
 export class BanUser implements BanUserInputModel {
   public banReason: string;
@@ -22,14 +19,63 @@ export class BanUser implements BanUserInputModel {
 
 @CommandHandler(BanUser)
 export class BanUserUseCase implements ICommandHandler<BanUser> {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    private queryRepo: SuperAdminQueryRepository,
+    private commandRepo: SuperAdminCommandRepository,
+  ) {}
   public async execute(command: BanUser): VoidPromise {
-    const user = this.userModel.findById(command.userId);
+    const user = await this.queryRepo.getUserEntity(command.userId);
     if (!user) {
       throw new NotFoundException();
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    return user;
+    let shouldSave = false;
+    if (user.banInfo.isBanned) {
+      if (command.isBanned) {
+        shouldSave = this.BanedBeforeAndBanedAfter(user, command.banReason);
+      } else {
+        shouldSave = this.BannedBeforeAndNotBannedAfter(user);
+      }
+    } else {
+      if (command.isBanned) {
+        shouldSave = this.NotBanedBeforeAndBanedAfter(user, command.banReason);
+      } // 4th is useless
+    }
+    if (shouldSave) {
+      const isSaved = await this.commandRepo.saveUser(user);
+      if (!isSaved) {
+        throw new ImATeapotException();
+      }
+    }
+    return;
   }
+
+  private NotBanedBeforeAndBanedAfter(
+    user: UserDocument,
+    banReason: string,
+  ): true {
+    user.banInfo.isBanned = true;
+    user.banInfo.banReason = banReason;
+    user.banInfo.banDate = new Date();
+    return true;
+  }
+  private BanedBeforeAndBanedAfter(
+    user: UserDocument,
+    banReason: string,
+  ): boolean {
+    if (user.banInfo.banReason === banReason) {
+      return false;
+    }
+    user.banInfo.banReason = banReason;
+    return true;
+  }
+  private BannedBeforeAndNotBannedAfter(user: UserDocument): true {
+    user.banInfo.isBanned = false;
+    user.banInfo.banReason = null;
+    user.banInfo.banDate = null;
+    return true;
+  }
+
+  // private userNotBanedBeforeAndNotBanedAfter(): false {
+  //   return false; //этот сценарий ничего не делает, поэтому просто не учёл его
+  // }
 }
