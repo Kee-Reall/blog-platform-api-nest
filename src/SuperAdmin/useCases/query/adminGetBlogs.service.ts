@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SuperAdminQueryRepository } from '../../repos';
-import { BlogsPagination, DefaultBlogQuery } from '../../../Infrastructure';
+import { BlogsPaginationPipe, DefaultBlogsFilters } from '../../pipes';
 import {
   BlogFilter,
   BlogPresentationModel,
@@ -8,12 +8,12 @@ import {
 } from '../../../Model';
 
 export class GetPaginatedBlogs {
-  config: BlogsPagination;
+  config: BlogsPaginationPipe;
   constructor(input?: BlogFilter) {
     if (!input) {
-      this.config = new BlogsPagination(new DefaultBlogQuery());
+      this.config = new BlogsPaginationPipe(new DefaultBlogsFilters());
     } else {
-      this.config = new BlogsPagination(input);
+      this.config = new BlogsPaginationPipe(input);
     }
   }
 }
@@ -21,7 +21,7 @@ export class GetPaginatedBlogs {
 @QueryHandler(GetPaginatedBlogs)
 export class AdminGetBlogsHandler implements IQueryHandler<GetPaginatedBlogs> {
   constructor(private queryRepo: SuperAdminQueryRepository) {}
-  async execute({
+  public async execute({
     config,
   }: GetPaginatedBlogs): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryRepo.getBlogsWithPaginationConfig(config);

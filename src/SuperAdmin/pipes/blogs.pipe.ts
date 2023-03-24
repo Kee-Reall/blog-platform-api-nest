@@ -3,7 +3,7 @@ import { BlogsPagination } from '../../Infrastructure';
 import { BlogFilter } from '../../Model';
 
 export class BlogsQueryPipe implements PipeTransform {
-  transform(inputQuery: BlogFilter, metadata: ArgumentMetadata) {
+  public transform(inputQuery: BlogFilter, metadata: ArgumentMetadata) {
     return new BlogsPagination(inputQuery);
   }
 }

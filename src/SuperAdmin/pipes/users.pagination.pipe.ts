@@ -32,11 +32,11 @@ export class UsersPaginationConfig extends PaginationConfig {
 }
 
 export class DefaultUsersQuery implements Required<UsersFilter> {
-  pageNumber = 1;
-  pageSize = 10;
-  searchEmailTerm = '[*]*';
-  searchLoginTerm = '[*]*';
-  sortBy = 'createdAt';
-  sortDirection: Direction = 'desc';
-  banStatus: BanQuery = 'all';
+  public pageNumber = 1;
+  public pageSize = 10;
+  public searchEmailTerm = '[*]*';
+  public searchLoginTerm = '[*]*';
+  public sortBy = 'createdAt';
+  public sortDirection: Direction = 'desc';
+  public banStatus: BanQuery = 'all';
 }

@@ -1,15 +1,12 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SuperAdminQueryRepository } from '../../repos';
+import { UsersPaginationConfig, DefaultUsersQuery } from '../../pipes';
 import {
   PaginatedOutput,
   UserPresentationModel,
   UsersFilter,
   WithBanInfo,
 } from '../../../Model';
-import {
-  UsersPaginationConfig,
-  DefaultUsersQuery,
-} from '../../../Infrastructure';
 
 export class GetPaginatedUsers {
   config: UsersPaginationConfig;
