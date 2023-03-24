@@ -21,8 +21,11 @@ export type PostFilter = AbstractFilter<PostPresentationModel>;
 export interface UsersFilter extends AbstractFilter<UserPresentationModel> {
   searchLoginTerm?: string;
   searchEmailTerm?: string;
+  banStatus?: string;
 }
 
 export interface CommentsFilter extends AbstractFilter<CommentsLogicModel> {
   searchId?: string;
 }
+
+export type BanQuery = 'all' | 'banned' | 'notBanned';

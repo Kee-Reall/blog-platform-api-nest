@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { appConfig } from './Infrastructure';
 import { TestingModule } from './Testing';
 import { SuperAdminModule } from './SuperAdmin';
+import { BloggerModule } from './Blogger/blogger.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SuperAdminModule } from './SuperAdmin';
     TestingModule,
     AuthModule,
     SuperAdminModule,
+    BloggerModule,
   ],
   controllers: [],
   providers: [],

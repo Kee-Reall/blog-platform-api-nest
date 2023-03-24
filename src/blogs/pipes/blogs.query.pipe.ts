@@ -4,7 +4,7 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { BlogFilter, PostFilter } from '../../Model';
-import { BlogsPagination } from '../../Infrastructure/paginations/blogs.pagination.class';
+import { BlogsPagination } from '../../Infrastructure';
 import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
 import { ObjectId } from 'mongodb';
 

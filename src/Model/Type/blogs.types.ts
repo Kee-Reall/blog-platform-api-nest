@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+
 export type BlogInputModel = {
   name: string;
   description: string;
@@ -18,3 +19,10 @@ export type BlogPresentationModel = Omit<BlogLogicModel, '_id'> & {
   id: string;
   createdAt: string;
 };
+
+export type BlogOwnerInfoModel = {
+  userId: ObjectId;
+  userLogin: string;
+};
+
+export type WithOwnerInfo<T> = T & BlogOwnerInfoModel;

@@ -41,7 +41,7 @@ export class SuperAdminUsersController {
   }
 
   @Put(':id/ban')
-  //@HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.NO_CONTENT)
   public async banUser(
     @Param('id', ParseObjectIdPipe) userId: ObjectId,
     @Body() dto: BanUserInput,

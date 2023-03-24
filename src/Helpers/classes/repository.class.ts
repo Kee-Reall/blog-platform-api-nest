@@ -10,6 +10,8 @@ import {
   NewestLikeArray,
   Nullable,
   NullablePromise,
+  PaginatedOutput,
+  PaginationDigits,
   VoidablePromise,
   VoidPromise,
 } from '../../Model';
@@ -177,5 +179,18 @@ export abstract class Repository {
     } catch (e) {
       return null;
     }
+  }
+
+  protected paginationOutput<T>(
+    digits: PaginationDigits,
+    items: Array<T>,
+  ): PaginatedOutput<T> {
+    return {
+      pagesCount: Math.ceil(digits.totalCount / digits.limit),
+      page: digits.pageNumber,
+      pageSize: digits.limit,
+      totalCount: digits.totalCount,
+      items,
+    };
   }
 }

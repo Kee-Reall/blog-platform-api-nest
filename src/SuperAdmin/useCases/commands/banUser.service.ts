@@ -56,6 +56,7 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.isBanned = true;
     user.banInfo.banReason = banReason;
     user.banInfo.banDate = new Date();
+    // пройдись тут по всем сущностям и пометь их как те, что не надо выдавать
     return true;
   }
   private BanedBeforeAndBanedAfter(

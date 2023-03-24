@@ -1,4 +1,4 @@
-import { BlogInputModel } from '../../Model/';
+import { BlogInputModel } from '../../Model';
 import { IsUrl, Length } from 'class-validator';
 import { TrimIfString } from '../../Infrastructure';
 

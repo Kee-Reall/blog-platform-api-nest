@@ -2,17 +2,18 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument, Model } from 'mongoose';
 import { MessageENUM, deleteHidden } from '../../Helpers';
-import { BlogLogicModel, NullablePromise } from '../Type';
+import { BlogLogicModel, BlogOwnerInfoModel, NullablePromise } from '../Type';
 
 export type BlogDocument = HydratedDocument<Blog>;
 
 @Schema({ _id: false, versionKey: false })
-class blogOwnerInfo {
-  @Prop({ required: true })
+export class BlogOwnerInfo implements BlogOwnerInfoModel {
+  @Prop({ required: true, readonly: true })
   userId: ObjectId;
   @Prop({ required: true })
   userLogin: string;
 }
+
 @Schema({
   toJSON: {
     getters: true,
@@ -48,7 +49,10 @@ export class Blog implements Required<BlogLogicModel> {
     transform: (date: Date): string => date.toISOString(),
   })
   public createdAt: Date;
-  @Prop({ default: false }) public isMembership: boolean;
+  @Prop({ default: true }) public isMembership: boolean;
+
+  @Prop({ required: true, readonly: true })
+  public _blogOwnerInfo: BlogOwnerInfo;
 
   get id(): string {
     return this._id.toHexString();

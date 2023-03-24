@@ -26,16 +26,20 @@ export class SuperAdminQueryRepository extends Repository {
 
   public async getBlogsWithPaginationConfig(
     config: IPaginationConfig,
-  ): Promise<PaginatedOutput<BlogPresentationModel>> {
+  ): Promise<PaginatedOutput<WithBanInfo<BlogPresentationModel>>> {
     const [itemsDoc, totalCount] = await this.paginate(this.blogModel, config);
-    const items = itemsDoc as unknown as BlogPresentationModel[];
-    return {
-      pagesCount: Math.ceil(totalCount / config.limit),
-      page: config.pageNumber,
-      pageSize: config.limit,
-      totalCount,
+    const { limit, pageNumber } = config;
+    const items: WithBanInfo<BlogPresentationModel>[] = itemsDoc.map(
+      (blog) => ({
+        ...blog.toJSON(),
+        blogOwnerInfo: blog._blogOwnerInfo,
+      }),
+    );
+    const digits = { totalCount, limit, pageNumber };
+    return this.paginationOutput<WithBanInfo<BlogPresentationModel>>(
+      digits,
       items,
-    };
+    );
   }
 
   public async getUserEntity(userId: ObjectId) {

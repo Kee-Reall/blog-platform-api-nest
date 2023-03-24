@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SoftJwtAuthGuard } from '../Infrastructure';
 import { PostsService } from './posts.service';
+import { SoftJwtAuthGuard } from '../Infrastructure';
+import { IsBlogExistConstraint } from './validators/isBlogExist';
 import { PostsController, CommentsController } from './controllers';
 import { PostsQueryRepository, PostsCommandRepository } from './repos';
 import {
@@ -17,7 +18,6 @@ import {
   User,
   UserSchema,
 } from '../Model';
-import { IsBlogExistConstraint } from './validators/isBlogExist';
 
 @Module({
   imports: [
