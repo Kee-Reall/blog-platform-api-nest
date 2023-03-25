@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { TestingModule } from './Testing';
+import { appConfig } from './Infrastructure';
+import { AuthModule } from './auth/auth.module';
+import { SuperAdminModule } from './SuperAdmin';
 import { PostsModule } from './posts/posts.module';
 import { BlogsModule } from './blogs/blogs.module';
-import { AuthModule } from './auth/auth.module';
-import { appConfig } from './Infrastructure';
-import { TestingModule } from './Testing';
-import { SuperAdminModule } from './SuperAdmin';
 import { BloggerModule } from './Blogger/blogger.module';
 
 @Module({

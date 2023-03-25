@@ -1,13 +1,13 @@
 import { Length } from 'class-validator';
 import { PostInputModel } from '../../Model';
+import { IsBlogExists } from '../decorators';
 import { IsMatchMongoId, TrimIfString } from '../../Infrastructure';
-import { IsBlogExist } from './isBlogExist.decorator';
 
 export class PostInput implements PostInputModel {
   @TrimIfString()
   @Length(1, 100)
   @IsMatchMongoId()
-  @IsBlogExist()
+  @IsBlogExists()
   blogId: string;
 
   @TrimIfString()

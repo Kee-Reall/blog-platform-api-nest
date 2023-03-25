@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from '../../Helpers';
+import { Repository } from '../../Base';
 import { BlogDocument } from '../../Model';
 
 @Injectable()

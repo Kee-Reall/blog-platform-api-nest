@@ -183,6 +183,17 @@ export class User implements UserLogicModel, UserMethods {
   static generateDefaultConfirmation(isAdmin = false): ConfirmationType {
     return { code: null, confirmationDate: new Date(), isConfirmed: isAdmin };
   }
+
+  static async nullableFindById(
+    id: string | ObjectId,
+  ): NullablePromise<UserDocument> {
+    const that = this as unknown as Model<UserDocument>;
+    try {
+      return await that.findById(id);
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -205,6 +216,7 @@ UserSchema.statics = {
   findByLoginOrEmail: User.findByLoginOrEmail,
   generateDefaultRecovery: User.generateDefaultRecovery,
   generateDefaultConfirmation: User.generateDefaultConfirmation,
+  nullableFindById: User.nullableFindById,
 };
 
 export interface UserModelStatics {
@@ -212,4 +224,5 @@ export interface UserModelStatics {
   newUser: (dto: UserInputModel) => Promise<UserDocument>;
   generateDefaultRecovery: () => RecoveryType;
   generateDefaultConfirmation: (isAdmin: boolean) => ConfirmationType;
+  nullableFindById: (id: string | ObjectId) => NullablePromise<UserDocument>;
 }

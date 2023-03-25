@@ -4,13 +4,14 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
+import { Transformer } from '../../Base';
 
 export class ParseObjectIdPipe implements PipeTransform {
   transform(value: string, metadata: ArgumentMetadata): ObjectId {
-    try {
-      return new ObjectId(value);
-    } catch (e) {
+    const objectId = Transformer.stringToObjectId(value);
+    if (!objectId) {
       throw new NotFoundException();
     }
+    return objectId;
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Repository } from '../../Helpers';
+import { Repository } from '../../Base';
 import { PostsPaginationConfig } from '../../posts/pipes/posts.pagination.class';
 import {
   Blog,

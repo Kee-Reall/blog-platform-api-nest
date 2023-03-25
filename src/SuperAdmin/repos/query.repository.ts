@@ -12,7 +12,7 @@ import {
   WithBanInfo,
 } from '../../Model';
 import { Model } from 'mongoose';
-import { Repository } from '../../Helpers';
+import { Repository } from '../../Base';
 import { ObjectId } from 'mongodb';
 
 @Injectable()

@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PostsService } from './posts.service';
 import { SoftJwtAuthGuard } from '../Infrastructure';
-import { IsBlogExistConstraint } from './validators/isBlogExist';
+import { IsBlogExistConstraint } from './validators/isBlogExist.decorator';
 import { PostsController, CommentsController } from './controllers';
 import { PostsQueryRepository, PostsCommandRepository } from './repos';
 import {

@@ -1,5 +1,5 @@
 import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
-import { BlogsPagination } from '../../Infrastructure';
+import { BlogsPagination } from '../../Base';
 import { BlogFilter } from '../../Model';
 
 export class BlogsQueryPipe implements PipeTransform {

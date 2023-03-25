@@ -1,5 +1,5 @@
-import { PaginationConfig } from '../../Helpers';
 import { FilterQuery } from 'mongoose';
+import { PaginationConfig } from '../../Base';
 import {
   BanQuery,
   Direction,

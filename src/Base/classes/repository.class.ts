@@ -1,6 +1,6 @@
 import { FilterQuery, HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { LikeENUM } from '../enums';
+import { LikeENUM } from '../../Helpers';
 import {
   IPaginationConfig,
   LikeDocument,

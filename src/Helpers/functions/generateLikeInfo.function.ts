@@ -1,6 +1,6 @@
 import { FilterQuery, PipelineStage } from 'mongoose';
 import { Nullable } from '../../Model';
-import { PaginationConfig } from '../classes';
+import { PaginationConfig } from '../../Base';
 import { ObjectId } from 'mongodb';
 
 export function generateLikeInfo<

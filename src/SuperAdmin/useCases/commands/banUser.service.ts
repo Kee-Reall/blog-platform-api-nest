@@ -73,6 +73,7 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.isBanned = false;
     user.banInfo.banReason = null;
     user.banInfo.banDate = null;
+    //тоже пройтись по всем сущностям
     return true;
   }
 

@@ -1,4 +1,5 @@
 import { FilterQuery } from 'mongoose';
+import { PaginationConfig } from './pagination.config';
 import {
   IPaginationConfig,
   BlogLogicModel,
@@ -6,7 +7,6 @@ import {
   BlogPresentationModel,
   Direction,
 } from '../../Model';
-import { PaginationConfig } from '../../Helpers';
 
 export class BlogsPagination
   extends PaginationConfig
