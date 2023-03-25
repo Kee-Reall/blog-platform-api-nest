@@ -42,4 +42,8 @@ export class BloggerQueryRepository extends Repository {
   public async isBlogExist(blogId: string): Promise<boolean> {
     return !!(await this.findById(this.blogModel, blogId));
   }
+
+  public async getBlogEntity(blogId: string): NullablePromise<BlogDocument> {
+    return this.findById(this.blogModel, blogId);
+  }
 }

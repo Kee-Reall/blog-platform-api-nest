@@ -49,7 +49,9 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Body() dto: PostInput,
   ) {
-    return;
+    return this.commandBus.execute(
+      new bloggerCommands.CreatePost(user.userId, blogId, dto),
+    );
   }
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

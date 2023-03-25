@@ -45,6 +45,9 @@ export class Post implements PostLogicModel {
   })
   public blogName: string;
 
+  @Prop({ default: false }) public _isOwnerBanned: boolean;
+  @Prop({ required: true, readonly: true }) public _ownerId: ObjectId;
+
   get id(): string {
     return this._id.toHexString();
   }
