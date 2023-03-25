@@ -55,8 +55,14 @@ export class BloggerController {
   }
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async UpdateBlog() {
-    return;
+  public async UpdateBlog(
+    @Param('id') blogId: string,
+    @User() user: AccessTokenMeta,
+    @Body() dto: BlogInput,
+  ) {
+    return this.commandBus.execute(
+      new bloggerCommands.UpdateBlog(user.userId, blogId, dto),
+    );
   }
   @Put(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -65,8 +71,13 @@ export class BloggerController {
   }
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async DeleteBlog() {
-    return;
+  public async DeleteBlog(
+    @Param('id') blogId: string,
+    @User() user: AccessTokenMeta,
+  ) {
+    return this.commandBus.execute(
+      new bloggerCommands.DeleteBlog(user.userId, blogId),
+    );
   }
   @Delete(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
