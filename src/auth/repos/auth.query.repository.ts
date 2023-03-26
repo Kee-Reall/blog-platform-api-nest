@@ -10,6 +10,7 @@ import {
   SessionDocument,
   NullablePromise,
   SessionModelStatics,
+  UserInfoType,
 } from '../../Model';
 
 @Injectable()
@@ -22,8 +23,8 @@ export class AuthQueryRepository extends Repository {
     super();
   }
 
-  public async getUserInfo({ userId }: UserAccessDTO) {
-    const user = await this.findById<UserDocument>(this.userModel, userId);
+  public async getUserInfo(id: string): Promise<UserInfoType> {
+    const user = await this.findById<UserDocument>(this.userModel, id);
     if (!user) {
       throw new UnauthorizedException();
     }
