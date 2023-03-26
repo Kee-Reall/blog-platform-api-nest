@@ -7,7 +7,6 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmailService } from './email/';
 import { AuthCommandRepository, AuthQueryRepository } from './repos';
@@ -18,17 +17,13 @@ import {
   UserModelStatics,
   RecoveryInputModel,
   UserInputModel,
-  UserLoginModel,
-  WithClientMeta,
   VoidPromise,
   Session,
   SessionDocument,
   SessionJwtMeta,
-  TokenPair,
   SessionModelStatics,
   ModelWithStatic,
 } from '../Model';
-import { appConfig } from '../Infrastructure';
 
 @Injectable()
 export class AuthService {
@@ -39,8 +34,7 @@ export class AuthService {
     private sessionModel: ModelWithStatic<SessionDocument, SessionModelStatics>,
     private commandRepo: AuthCommandRepository,
     private queryRepo: AuthQueryRepository,
-    private mailService: EmailService,
-    private jwtService: JwtService,
+    private mailService: EmailService, //private jwtService: JwtService,
   ) {}
 
   public async registration({
@@ -155,50 +149,50 @@ export class AuthService {
     return;
   }
 
-  private generateTokenPair(meta: SessionJwtMeta): TokenPair {
-    const [accessTokenLiveTime, refreshTokenLiveTime] =
-      appConfig.jwtLifeTimePair;
-    const accessToken = this.jwtService.sign(
-      { userId: meta.userId },
-      {
-        expiresIn: accessTokenLiveTime,
-        secret: appConfig.jwtSecret,
-        algorithm: 'HS512',
-      },
-    );
-    const refreshToken = this.jwtService.sign(meta, {
-      expiresIn: refreshTokenLiveTime,
-      secret: appConfig.jwtSecret,
-      algorithm: 'HS512',
-    });
-    return { accessToken, refreshToken };
-  }
+  // private generateTokenPair(meta: SessionJwtMeta): TokenPair {
+  //   const [accessTokenLiveTime, refreshTokenLiveTime] =
+  //     appConfig.jwtLifeTimePair;
+  //   const accessToken = this.jwtService.sign(
+  //     { userId: meta.userId },
+  //     {
+  //       expiresIn: accessTokenLiveTime,
+  //       secret: appConfig.jwtSecret,
+  //       algorithm: 'HS512',
+  //     },
+  //   );
+  //   const refreshToken = this.jwtService.sign(meta, {
+  //     expiresIn: refreshTokenLiveTime,
+  //     secret: appConfig.jwtSecret,
+  //     algorithm: 'HS512',
+  //   });
+  //   return { accessToken, refreshToken };
+  // }
 
-  public async loginAttempt({
-    ip,
-    password,
-    loginOrEmail,
-    agent: title,
-  }: WithClientMeta<UserLoginModel>): Promise<TokenPair> {
-    const user = await this.userModel.findByLoginOrEmail(loginOrEmail);
-    if (!user || !user.confirmation.isConfirmed) {
-      throw new UnauthorizedException();
-    }
-    const isPasswordValid = await user.comparePasswords(password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException();
-    }
-    const session = new this.sessionModel({
-      userId: user._id,
-      title,
-      ip: [ip],
-    });
-    const isSaved: boolean = await this.commandRepo.saveSession(session);
-    if (!isSaved) {
-      throw new ImATeapotException();
-    }
-    return this.generateTokenPair(session.getMetaForToken());
-  }
+  // public async loginAttempt({ deprecated
+  //   ip,
+  //   password,
+  //   loginOrEmail,
+  //   agent: title,
+  // }: WithClientMeta<UserLoginModel>): Promise<TokenPair> {
+  //   const user = await this.userModel.findByLoginOrEmail(loginOrEmail);
+  //   if (!user || !user.confirmation.isConfirmed) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   const isPasswordValid = await user.comparePasswords(password);
+  //   if (!isPasswordValid) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   const session = new this.sessionModel({
+  //     userId: user._id,
+  //     title,
+  //     ip: [ip],
+  //   });
+  //   const isSaved: boolean = await this.commandRepo.saveSession(session);
+  //   if (!isSaved) {
+  //     throw new ImATeapotException();
+  //   }
+  //   return this.generateTokenPair(session.getMetaForToken());
+  // }
 
   private checkValidMeta(
     meta: SessionJwtMeta,
@@ -209,38 +203,38 @@ export class AuthService {
     return isSameUser && isSameDate;
   }
 
-  public async refreshAttempt(
-    meta: SessionJwtMeta,
-    ip: string = null,
-  ): Promise<TokenPair> {
-    const session = await this.queryRepo.findSession(meta.deviceId);
-    if (!session) {
-      throw new UnauthorizedException();
-    }
-    if (!this.checkValidMeta(meta, session)) {
-      throw new UnauthorizedException();
-    }
-    session.setNewUpdateDate();
-    if (ip) {
-      session.setLastIp(ip);
-    }
-    const isSaved: boolean = await this.commandRepo.saveSession(session);
-    if (!isSaved) {
-      throw new ImATeapotException();
-    }
-    return this.generateTokenPair(session.getMetaForToken());
-  }
+  // public async refreshAttempt(
+  //   meta: SessionJwtMeta,
+  //   ip: string = null,
+  // ): Promise<TokenPair> {
+  //   const session = await this.queryRepo.findSession(meta.deviceId);
+  //   if (!session) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   if (!this.checkValidMeta(meta, session)) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   session.setNewUpdateDate();
+  //   if (ip) {
+  //     session.setLastIp(ip);
+  //   }
+  //   const isSaved: boolean = await this.commandRepo.saveSession(session);
+  //   if (!isSaved) {
+  //     throw new ImATeapotException();
+  //   }
+  //   return this.generateTokenPair(session.getMetaForToken());
+  // }
 
-  public async logout(meta: SessionJwtMeta): VoidPromise {
-    const session = await this.queryRepo.findSession(meta.deviceId);
-    if (!session) {
-      throw new UnauthorizedException();
-    }
-    if (!this.checkValidMeta(meta, session)) {
-      throw new UnauthorizedException();
-    }
-    return await session.killYourself();
-  }
+  // public async logout(meta: SessionJwtMeta): VoidPromise {
+  //   const session = await this.queryRepo.findSession(meta.deviceId);
+  //   if (!session) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   if (!this.checkValidMeta(meta, session)) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   return await session.killYourself();
+  // }
 
   public async killSessionsExcludeCurrent(meta: SessionJwtMeta) {
     const session = await this.queryRepo.findSession(meta.deviceId);

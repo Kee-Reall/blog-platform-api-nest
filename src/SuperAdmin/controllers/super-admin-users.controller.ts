@@ -25,13 +25,13 @@ export class SuperAdminUsersController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Get()
-  public getUsersForAdmin(@Query() filter: UsersFilter) {
-    return this.queryBus.execute(new adminQuery.GetPaginatedUsers(filter));
+  public async getUsersForAdmin(@Query() fltr: UsersFilter) {
+    return await this.queryBus.execute(new adminQuery.GetPaginatedUsers(fltr));
   }
 
   @Post()
   public async createUser(@Body() dto: UserInput) {
-    return this.commandBus.execute(new adminCommand.CreateUser(dto));
+    return await this.commandBus.execute(new adminCommand.CreateUser(dto));
   }
 
   @Delete(':id')

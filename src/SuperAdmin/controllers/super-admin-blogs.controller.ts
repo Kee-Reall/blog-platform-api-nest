@@ -11,6 +11,8 @@ export class SuperAdminBlogsController {
 
   @Get()
   public async getBlogsForAdmin(@Query() filter: BlogFilter) {
-    return this.queryBus.execute(new adminQuery.GetPaginatedBlogs(filter));
+    return await this.queryBus.execute(
+      new adminQuery.GetPaginatedBlogs(filter),
+    );
   }
 }

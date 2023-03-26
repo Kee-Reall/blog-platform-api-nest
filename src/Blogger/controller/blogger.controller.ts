@@ -31,7 +31,7 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Query() filters: BlogFilter,
   ) {
-    return this.queryBus.execute(
+    return await this.queryBus.execute(
       new bloggerQueries.GetPaginatedBlogs(user.userId, filters),
     );
   }
@@ -41,7 +41,7 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Body() dto: BlogInput,
   ): Promise<BlogPresentationModel> {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.CreateBlog(user.userId, dto),
     );
   }
@@ -52,7 +52,7 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Body() dto: PostInput,
   ) {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.CreatePost(user.userId, blogId, dto),
     );
   }
@@ -64,7 +64,7 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Body() dto: BlogInput,
   ) {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.UpdateBlog(user.userId, blogId, dto),
     );
   }
@@ -77,7 +77,7 @@ export class BloggerController {
     @User() user: AccessTokenMeta,
     @Body() dto: PostInput,
   ) {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.UpdatePost(user.userId, blogId, postId, dto),
     );
   }
@@ -88,7 +88,7 @@ export class BloggerController {
     @Param('id') blogId: string,
     @User() user: AccessTokenMeta,
   ) {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.DeleteBlog(user.userId, blogId),
     );
   }
@@ -100,7 +100,7 @@ export class BloggerController {
     @Param('postId', MatchMongoIdPipe) postId: string,
     @User() user: AccessTokenMeta,
   ) {
-    return this.commandBus.execute(
+    return await this.commandBus.execute(
       new bloggerCommands.DeletePost(user.userId, blogId, postId),
     );
   }

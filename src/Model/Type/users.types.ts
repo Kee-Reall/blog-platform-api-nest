@@ -31,6 +31,12 @@ export type UserLogicModel = {
   recovery: RecoveryType;
 };
 
+export type UserInfoType = {
+  email: string;
+  login: string;
+  userId: string | ObjectId;
+};
+
 export type RecoveryType = {
   recoveryCode: string;
   expirationDate: Date;
