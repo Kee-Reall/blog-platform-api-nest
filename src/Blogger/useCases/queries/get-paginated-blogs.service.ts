@@ -1,7 +1,7 @@
-import { BlogFilter } from '../../../Model';
-import { BlogsForOwnerPaginationConfig } from '../../pipes/blogs-for-owner.pagination.class';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { BlogFilter } from '../../../Model';
 import { BloggerQueryRepository } from '../../repos';
+import { BlogsForOwnerPaginationConfig } from '../../pipes';
 
 export class GetPaginatedBlogs {
   public config: BlogsForOwnerPaginationConfig;

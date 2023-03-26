@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
+import { useCasesHandlers } from './useCases';
 import { BloggerController } from './controller';
 import { IsBlogExistConstraint } from './decorators';
 import { HardJwtAuthStrategy } from '../Infrastructure';
 import { BloggerCommandRepository, BloggerQueryRepository } from './repos';
-import { bloggerCommandsHandlers, bloggerQueriesHandlers } from './useCases';
 import { Blog, BlogSchema, Post, PostSchema, User, UserSchema } from '../Model';
 
 @Module({
@@ -21,10 +21,9 @@ import { Blog, BlogSchema, Post, PostSchema, User, UserSchema } from '../Model';
   providers: [
     BloggerCommandRepository,
     BloggerQueryRepository,
-    ...bloggerCommandsHandlers,
-    ...bloggerQueriesHandlers,
     HardJwtAuthStrategy,
     IsBlogExistConstraint,
+    ...useCasesHandlers,
   ],
 })
 export class BloggerModule {}

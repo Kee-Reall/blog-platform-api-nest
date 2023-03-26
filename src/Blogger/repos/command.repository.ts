@@ -44,4 +44,8 @@ export class BloggerCommandRepository extends Repository {
       return;
     }
   }
+
+  public async deletePost(postId: string) {
+    return await this.deleteUsingId(this.postModel, postId);
+  }
 }

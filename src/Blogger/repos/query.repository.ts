@@ -9,6 +9,8 @@ import {
   IPaginationConfig,
   NullablePromise,
   PaginatedOutput,
+  Post,
+  PostDocument,
   User,
   UserDocument,
 } from '../../Model';
@@ -18,13 +20,10 @@ export class BloggerQueryRepository extends Repository {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
   ) {
     super();
   }
-  public async getUserEntity(userId: string): NullablePromise<UserDocument> {
-    return this.findById(this.userModel, userId);
-  }
-
   public async getBlogsWithPaginationConfigForUser(
     config: IPaginationConfig,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
@@ -43,7 +42,15 @@ export class BloggerQueryRepository extends Repository {
     return !!(await this.findById(this.blogModel, blogId));
   }
 
+  public async getUserEntity(userId: string): NullablePromise<UserDocument> {
+    return await this.findById(this.userModel, userId);
+  }
+
   public async getBlogEntity(blogId: string): NullablePromise<BlogDocument> {
-    return this.findById(this.blogModel, blogId);
+    return await this.findById(this.blogModel, blogId);
+  }
+
+  public async getPostEntity(postId: string): NullablePromise<PostDocument> {
+    return await this.findById(this.postModel, postId);
   }
 }
