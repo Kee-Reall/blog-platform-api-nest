@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ImATeapotException, UnauthorizedException } from '@nestjs/common';
 import { AuthCommandRepository } from '../../repos';
-import { SecurityService } from './security.service';
+import { SecurityService } from '../base';
 import {
   ModelWithStatic,
   Session,
@@ -58,6 +58,6 @@ export class LoginUseCase
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    return this.generateTokenPair(session.getMetaForToken());
+    return this.generateTokenPair(this.jwtService, session.getMetaForToken());
   }
 }

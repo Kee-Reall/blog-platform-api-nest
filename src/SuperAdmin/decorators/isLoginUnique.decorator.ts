@@ -6,13 +6,13 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { SuperAdminQueryRepository } from '../repos';
+import { AdminQueryRepository } from '../repos';
 import { MessageENUM } from '../../Helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class IsLoginUniqueConstraint implements ValidatorConstraintInterface {
-  constructor(private queryRepo: SuperAdminQueryRepository) {}
+  constructor(private queryRepo: AdminQueryRepository) {}
   async validate(
     value: string,
     validationArguments?: ValidationArguments,

@@ -20,6 +20,10 @@ import {
   AccessTokenMeta,
   BlogFilter,
   BlogPresentationModel,
+  PaginatedOutput,
+  PostPresentationModel,
+  VoidPromise,
+  WithExtendedLike,
 } from '../../Model';
 
 @Controller('api/blogger/blogs')
@@ -30,7 +34,7 @@ export class BloggerController {
   public async getBlogsForOwner(
     @User() user: AccessTokenMeta,
     @Query() filters: BlogFilter,
-  ) {
+  ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryBus.execute(
       new bloggerQueries.GetPaginatedBlogs(user.userId, filters),
     );
@@ -51,7 +55,7 @@ export class BloggerController {
     @Param('id') blogId: string,
     @User() user: AccessTokenMeta,
     @Body() dto: PostInput,
-  ) {
+  ): Promise<WithExtendedLike<PostPresentationModel>> {
     return await this.commandBus.execute(
       new bloggerCommands.CreatePost(user.userId, blogId, dto),
     );
@@ -63,7 +67,7 @@ export class BloggerController {
     @Param('id') blogId: string,
     @User() user: AccessTokenMeta,
     @Body() dto: BlogInput,
-  ) {
+  ): VoidPromise {
     return await this.commandBus.execute(
       new bloggerCommands.UpdateBlog(user.userId, blogId, dto),
     );
@@ -76,7 +80,7 @@ export class BloggerController {
     @Param('postId', MatchMongoIdPipe) postId: string,
     @User() user: AccessTokenMeta,
     @Body() dto: PostInput,
-  ) {
+  ): VoidPromise {
     return await this.commandBus.execute(
       new bloggerCommands.UpdatePost(user.userId, blogId, postId, dto),
     );
@@ -87,7 +91,7 @@ export class BloggerController {
   public async DeleteBlog(
     @Param('id') blogId: string,
     @User() user: AccessTokenMeta,
-  ) {
+  ): VoidPromise {
     return await this.commandBus.execute(
       new bloggerCommands.DeleteBlog(user.userId, blogId),
     );
@@ -99,7 +103,7 @@ export class BloggerController {
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
     @User() user: AccessTokenMeta,
-  ) {
+  ): VoidPromise {
     return await this.commandBus.execute(
       new bloggerCommands.DeletePost(user.userId, blogId, postId),
     );

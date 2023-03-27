@@ -1,9 +1,9 @@
-import { Nullable, SessionJwtMeta, TokenPair } from '../../../Model';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SecurityService } from './security.service';
-import { ImATeapotException, UnauthorizedException } from '@nestjs/common';
-import { AuthCommandRepository, AuthQueryRepository } from '../../repos';
 import { JwtService } from '@nestjs/jwt';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { ImATeapotException, UnauthorizedException } from '@nestjs/common';
+import { SecurityService } from '../base';
+import { Nullable, SessionJwtMeta, TokenPair } from '../../../Model';
+import { AuthCommandRepository, AuthQueryRepository } from '../../repos';
 
 export class Refresh {
   public ip: Nullable<string> = null;
@@ -42,6 +42,6 @@ export class RefreshUseCase
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    return this.generateTokenPair(session.getMetaForToken());
+    return this.generateTokenPair(this.jwtService, session.getMetaForToken());
   }
 }

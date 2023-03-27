@@ -1,12 +1,25 @@
-import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, SessionDocument } from '../../Model/';
 import { Repository } from '../../Base/';
+import {
+  User,
+  UserDocument,
+  SessionDocument,
+  SessionJwtMeta,
+  ModelWithStatic,
+  SessionModelStatics,
+  UserModelStatics,
+  Session,
+} from '../../Model/';
 
 @Injectable()
 export class AuthCommandRepository extends Repository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
+  constructor(
+    @InjectModel(User.name)
+    private userModel: ModelWithStatic<UserDocument, UserModelStatics>,
+    @InjectModel(Session.name)
+    private sessionModel: ModelWithStatic<SessionDocument, SessionModelStatics>,
+  ) {
     super();
   }
 
@@ -20,5 +33,9 @@ export class AuthCommandRepository extends Repository {
 
   public async saveSession(ses: SessionDocument): Promise<boolean> {
     return await this.saveEntity(ses);
+  }
+
+  async killAllSessionsExcludeCurrent(command: SessionJwtMeta) {
+    return await this.sessionModel.killAllSessionsExcludeCurrent(command);
   }
 }

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SuperAdminCommandRepository } from '../../repos';
+import { AdminCommandRepository } from '../../repos';
 import { VoidPromise } from '../../../Model';
 
 export class DeleteUser {
@@ -9,7 +9,7 @@ export class DeleteUser {
 }
 @CommandHandler(DeleteUser)
 export class DeleteUserUseCase implements ICommandHandler<DeleteUser> {
-  constructor(private commandRepo: SuperAdminCommandRepository) {}
+  constructor(private commandRepo: AdminCommandRepository) {}
   public async execute({ userId }: DeleteUser): VoidPromise {
     const isDeleted = await this.commandRepo.deleteUser(userId);
     if (!isDeleted) {

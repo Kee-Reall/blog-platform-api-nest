@@ -2,10 +2,7 @@ import { ObjectId } from 'mongodb';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ImATeapotException, NotFoundException } from '@nestjs/common';
 import { BanUserInputModel, UserDocument, VoidPromise } from '../../../Model';
-import {
-  SuperAdminCommandRepository,
-  SuperAdminQueryRepository,
-} from '../../repos';
+import { AdminCommandRepository, AdminQueryRepository } from '../../repos';
 
 export class BanUser implements BanUserInputModel {
   public banReason: string;
@@ -20,8 +17,8 @@ export class BanUser implements BanUserInputModel {
 @CommandHandler(BanUser)
 export class BanUserUseCase implements ICommandHandler<BanUser> {
   constructor(
-    private queryRepo: SuperAdminQueryRepository,
-    private commandRepo: SuperAdminCommandRepository,
+    private queryRepo: AdminQueryRepository,
+    private commandRepo: AdminCommandRepository,
   ) {}
   public async execute(command: BanUser): VoidPromise {
     const user = await this.queryRepo.getUserEntity(command.userId);

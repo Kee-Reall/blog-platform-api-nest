@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException, ImATeapotException } from '@nestjs/common';
 import { MessageENUM } from '../../../Helpers';
-import { SuperAdminCommandRepository } from '../../repos';
+import { AdminCommandRepository } from '../../repos';
 import {
   ErrorMessage,
   ModelWithStatic,
@@ -31,7 +31,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUser> {
   constructor(
     @InjectModel(User.name)
     private model: ModelWithStatic<UserDocument, UserModelStatics>,
-    private commandRepo: SuperAdminCommandRepository,
+    private commandRepo: AdminCommandRepository,
   ) {}
   public async execute({
     login,

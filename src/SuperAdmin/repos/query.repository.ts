@@ -1,25 +1,30 @@
+import { ObjectId } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Repository } from '../../Base';
 import {
   Blog,
   BlogDocument,
   BlogPresentationModel,
+  BlogStaticMethods,
   IPaginationConfig,
+  ModelWithStatic,
+  NullablePromise,
   PaginatedOutput,
   User,
   UserDocument,
+  UserModelStatics,
   UserPresentationModel,
   WithBanInfo,
 } from '../../Model';
-import { Model } from 'mongoose';
-import { Repository } from '../../Base';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
-export class SuperAdminQueryRepository extends Repository {
+export class AdminQueryRepository extends Repository {
   constructor(
-    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Blog.name)
+    private blogModel: ModelWithStatic<BlogDocument, BlogStaticMethods>,
+    @InjectModel(User.name)
+    private userModel: ModelWithStatic<UserDocument, UserModelStatics>,
   ) {
     super();
   }
@@ -42,7 +47,7 @@ export class SuperAdminQueryRepository extends Repository {
     );
   }
 
-  public async getUserEntity(userId: ObjectId) {
+  public async getUserEntity(userId: ObjectId | string) {
     return await this.findById(this.userModel, userId);
   }
 
@@ -66,5 +71,11 @@ export class SuperAdminQueryRepository extends Repository {
   ): Promise<boolean> {
     const count = await this.userModel.countDocuments({ [field]: value });
     return count === 0;
+  }
+
+  public async getBlogEntity(
+    blogId: ObjectId | string,
+  ): NullablePromise<BlogDocument> {
+    return await this.findById(this.blogModel, blogId);
   }
 }

@@ -13,9 +13,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { EmailService } from '../email';
 import { command, query } from '../useCases';
-import { AuthService } from '../auth.service';
 import { appConfig } from '../../Infrastructure';
 import {
   HardJwtAuthGuard,
@@ -41,12 +39,7 @@ import {
 export class AuthController {
   private readonly cookiesOptions: CookieOptions = appConfig.cookiesOptions;
 
-  constructor(
-    private mailer: EmailService,
-    private service: AuthService,
-    private commandBus: CommandBus,
-    private queryBus: QueryBus,
-  ) {}
+  constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Post('login')
   @UseGuards(ThrottlerGuard)
@@ -56,7 +49,7 @@ export class AuthController {
     @Headers('user-agent') agent: string,
     @Body() dto: LoginInput,
     @Ip() ip: string,
-  ) {
+  ): Promise<Pick<TokenPair, 'accessToken'>> {
     const tokenPair: TokenPair = await this.commandBus.execute(
       new command.Login(agent, ip, dto),
     );
@@ -80,7 +73,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @User() userMeta: SessionJwtMeta,
     @Ip() ip,
-  ) {
+  ): Promise<Pick<TokenPair, 'accessToken'>> {
     const tokenPair: TokenPair = await this.commandBus.execute(
       new command.Refresh(userMeta, ip),
     );
@@ -104,35 +97,36 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async registration(@Body() dto: UserInput): VoidPromise {
-    await this.service.registration(dto);
-    return;
+    return await this.commandBus.execute(new command.Register(dto));
   }
 
   @Post('registration-email-resending')
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async resendConfirmCode(@Body() dto: EmailInput): VoidPromise {
-    return await this.service.resendRegistryCode(dto.email);
+    return await this.commandBus.execute(
+      new command.ResendConfirmCode(dto.email),
+    );
   }
 
   @Post('registration-confirmation')
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async confirm(@Body() dto: CodeInput): VoidPromise {
-    return await this.service.confirmUser(dto.code);
+    return await this.commandBus.execute(new command.ConfirmAccount(dto.code));
   }
 
   @Post('password-recovery')
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async recoveryPassword(@Body() dto: EmailInput): VoidPromise {
-    return await this.service.passwordRecoveryAttempt(dto.email);
+    return await this.commandBus.execute(new command.SetRecovery(dto.email));
   }
 
   @Post('new-password')
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async changePassword(@Body() dto: RecoveryInput): VoidPromise {
-    return await this.service.changePassword(dto);
+    return await this.commandBus.execute(new command.ChangePassword(dto));
   }
 }

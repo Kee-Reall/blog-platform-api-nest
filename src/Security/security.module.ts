@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { useCases } from './useCases';
 import { EmailService } from './email';
-import { AuthService } from './auth.service';
 import { AuthController, DeviceController } from './controllers';
 import { Session, SessionSchema, User, UserSchema } from '../Model';
 import { AuthCommandRepository, AuthQueryRepository } from './repos';
@@ -27,7 +26,6 @@ import {
   ],
   controllers: [AuthController, DeviceController],
   providers: [
-    AuthService,
     EmailService,
     AuthCommandRepository,
     AuthQueryRepository,
@@ -36,4 +34,4 @@ import {
     ...useCases,
   ],
 })
-export class AuthModule {}
+export class SecurityModule {}

@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { SuperAdminQueryRepository } from '../../repos';
+import { AdminQueryRepository } from '../../repos';
 import { UsersPaginationConfig, DefaultUsersQuery } from '../../pipes';
 import {
   PaginatedOutput,
@@ -21,7 +21,7 @@ export class GetPaginatedUsers {
 
 @QueryHandler(GetPaginatedUsers)
 export class AdminGetUsersHandler implements IQueryHandler<GetPaginatedUsers> {
-  constructor(private queryRepo: SuperAdminQueryRepository) {}
+  constructor(private queryRepo: AdminQueryRepository) {}
   public async execute({
     config,
   }: GetPaginatedUsers): Promise<

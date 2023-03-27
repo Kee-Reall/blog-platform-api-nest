@@ -1,9 +1,8 @@
-import { SessionJwtMeta, VoidPromise } from '../../../Model';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SecurityService } from './security.service';
-import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { SecurityService } from '../base';
 import { AuthQueryRepository } from '../../repos';
+import { SessionJwtMeta, VoidPromise } from '../../../Model';
 
 export class Logout implements SessionJwtMeta {
   deviceId: string;
@@ -22,10 +21,7 @@ export class LogoutUseCase
   extends SecurityService
   implements ICommandHandler<Logout>
 {
-  constructor(
-    protected jwtService: JwtService,
-    private repo: AuthQueryRepository,
-  ) {
+  constructor(private repo: AuthQueryRepository) {
     super();
   }
 

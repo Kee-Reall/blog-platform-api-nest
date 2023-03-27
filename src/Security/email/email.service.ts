@@ -21,10 +21,7 @@ export class EmailService {
     </p>`;
   }
 
-  public async sendConfirmationAfterRegistration(
-    email: string,
-    code: string,
-  ): Promise<boolean> {
+  public async sendConfirmation(email: string, code: string): Promise<boolean> {
     try {
       const { accepted } = await this.mail.sendMail({
         to: email,
