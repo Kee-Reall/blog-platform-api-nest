@@ -1,24 +1,25 @@
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Repository } from '../../Base';
 import {
   User,
   UserDocument,
-  UserAccessDTO,
   Session,
   SessionDocument,
   NullablePromise,
   SessionModelStatics,
   UserInfoType,
+  ModelWithStatic,
+  UserModelStatics,
 } from '../../Model';
 
 @Injectable()
 export class AuthQueryRepository extends Repository {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(User.name)
+    private userModel: ModelWithStatic<UserDocument, UserModelStatics>,
     @InjectModel(Session.name)
-    private sessionModel: Model<SessionDocument> & SessionModelStatics,
+    private sessionModel: ModelWithStatic<SessionDocument, SessionModelStatics>,
   ) {
     super();
   }
@@ -37,5 +38,23 @@ export class AuthQueryRepository extends Repository {
 
   public async getSessions(userId: string) {
     return await this.sessionModel.findUsersSessions(userId);
+  }
+
+  public async getUserByEmail(email: string): NullablePromise<UserDocument> {
+    return await this.findOneWithFilter(this.userModel, { email });
+  }
+
+  public async getUserByCode(code: string): NullablePromise<UserDocument> {
+    return await this.findOneWithFilter(this.userModel, {
+      'confirmation.code': code,
+    });
+  }
+
+  public async getUserByRecoveryCode(
+    recoveryCode: string,
+  ): NullablePromise<UserDocument> {
+    return await this.findOneWithFilter(this.userModel, {
+      'recovery.recoveryCode': recoveryCode,
+    });
   }
 }
