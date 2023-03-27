@@ -18,7 +18,7 @@ import {
   PostConfigFabric,
   PostsByBlogPipe,
 } from './pipes/blogs.query.pipe';
-import { BlogInput } from '../Blogger/validators/blog.validator';
+import { BlogInput } from '../Blogger/validators';
 import { PostInputWithoutBlogId } from './validators/post.validator';
 import { BasicAuthGuard, SoftJwtAuthGuard, User } from '../Infrastructure';
 import {
