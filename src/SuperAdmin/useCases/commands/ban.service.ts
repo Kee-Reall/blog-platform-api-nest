@@ -52,12 +52,11 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
   private async NotBanedBeforeAndBanedAfter(
     user: UserDocument,
     banReason: string,
-  ): Promise<true> {
+  ): Promise<boolean> {
     user.banInfo.isBanned = true;
     user.banInfo.banReason = banReason;
     user.banInfo.banDate = new Date();
-    await this.commandRepo.banEntities(user._id, true);
-    return true;
+    return await this.commandRepo.banEntities(user._id, true);
   }
   private BanedBeforeAndBanedAfter(
     user: UserDocument,
@@ -71,15 +70,10 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
   }
   private async BannedBeforeAndNotBannedAfter(
     user: UserDocument,
-  ): Promise<true> {
+  ): Promise<boolean> {
     user.banInfo.isBanned = false;
     user.banInfo.banReason = null;
     user.banInfo.banDate = null;
-    await this.commandRepo.banEntities(user._id, false);
-    return true;
+    return await this.commandRepo.banEntities(user._id, false);
   }
-
-  // private userNotBanedBeforeAndNotBanedAfter(): false {
-  //   return false; //этот сценарий ничего не делает, поэтому просто не учёл его
-  // }
 }
