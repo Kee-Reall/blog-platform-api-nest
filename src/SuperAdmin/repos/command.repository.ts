@@ -48,7 +48,7 @@ export class AdminCommandRepository extends Repository {
     userId: ObjectId,
     banStatus: boolean,
   ): Promise<boolean> {
-    let operationFlag = true;
+    let isTransactionSuccess = true;
     const updateQuery = { $set: { _isOwnerBanned: banStatus } };
     const session = await this.connection.startSession();
     session.startTransaction();
@@ -70,10 +70,10 @@ export class AdminCommandRepository extends Repository {
       await session.commitTransaction();
     } catch (e) {
       await session.abortTransaction();
-      operationFlag = false;
+      isTransactionSuccess = false;
     } finally {
       await session.endSession();
-      return operationFlag;
+      return isTransactionSuccess;
     }
   }
 }
