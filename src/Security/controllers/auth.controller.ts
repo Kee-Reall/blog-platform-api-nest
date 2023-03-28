@@ -18,7 +18,7 @@ import { appConfig } from '../../Infrastructure';
 import {
   HardJwtAuthGuard,
   RefreshJwtAuthGuard,
-  User,
+  Meta,
 } from '../../Infrastructure';
 import {
   CodeInput,
@@ -61,7 +61,7 @@ export class AuthController {
   @UseGuards(HardJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public async getInfoByToken(
-    @User() user: AccessTokenMeta,
+    @Meta() user: AccessTokenMeta,
   ): Promise<UserInfoType> {
     return await this.queryBus.execute(new query.GetUserInfo(user.userId));
   }
@@ -71,7 +71,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async refreshSession(
     @Res({ passthrough: true }) res: Response,
-    @User() userMeta: SessionJwtMeta,
+    @Meta() userMeta: SessionJwtMeta,
     @Ip() ip,
   ): Promise<Pick<TokenPair, 'accessToken'>> {
     const tokenPair: TokenPair = await this.commandBus.execute(
@@ -86,7 +86,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(
     @Res({ passthrough: true }) res: Response,
-    @User() userMeta: SessionJwtMeta,
+    @Meta() userMeta: SessionJwtMeta,
   ): VoidPromise {
     await this.commandBus.execute(new command.Logout(userMeta));
     res.clearCookie('refreshToken');

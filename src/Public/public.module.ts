@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
+import { HardJwtAuthStrategy, SoftJwtAuthGuard } from '../Infrastructure';
+import { useCases } from './useCases';
+import { BlogsController } from './controllers';
+import { PublicQueryRepository } from './repos';
 import {
   Blog,
   BlogSchema,
@@ -14,7 +18,6 @@ import {
   User,
   UserSchema,
 } from '../Model';
-import { HardJwtAuthStrategy, SoftJwtAuthGuard } from '../Infrastructure';
 
 @Module({
   imports: [
@@ -28,7 +31,12 @@ import { HardJwtAuthStrategy, SoftJwtAuthGuard } from '../Infrastructure';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [],
-  providers: [SoftJwtAuthGuard, HardJwtAuthStrategy],
+  controllers: [BlogsController],
+  providers: [
+    SoftJwtAuthGuard,
+    HardJwtAuthStrategy,
+    PublicQueryRepository,
+    ...useCases,
+  ],
 })
 export class PublicModule {}

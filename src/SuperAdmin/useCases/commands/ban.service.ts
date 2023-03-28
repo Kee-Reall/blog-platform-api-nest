@@ -30,12 +30,15 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
       if (command.isBanned) {
         shouldSave = this.BanedBeforeAndBanedAfter(user, command.banReason);
       } else {
-        shouldSave = this.BannedBeforeAndNotBannedAfter(user);
+        shouldSave = await this.BannedBeforeAndNotBannedAfter(user);
       }
     } else {
       if (command.isBanned) {
-        shouldSave = this.NotBanedBeforeAndBanedAfter(user, command.banReason);
-      } // 4th is useless
+        shouldSave = await this.NotBanedBeforeAndBanedAfter(
+          user,
+          command.banReason,
+        );
+      }
     }
     if (shouldSave) {
       const isSaved = await this.commandRepo.saveUser(user);
@@ -46,14 +49,14 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     return;
   }
 
-  private NotBanedBeforeAndBanedAfter(
+  private async NotBanedBeforeAndBanedAfter(
     user: UserDocument,
     banReason: string,
-  ): true {
+  ): Promise<true> {
     user.banInfo.isBanned = true;
     user.banInfo.banReason = banReason;
     user.banInfo.banDate = new Date();
-    // пройдись тут по всем сущностям и пометь их как те, что не надо выдавать
+    await this.commandRepo.banEntities(user._id, true);
     return true;
   }
   private BanedBeforeAndBanedAfter(
@@ -66,11 +69,13 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.banReason = banReason;
     return true;
   }
-  private BannedBeforeAndNotBannedAfter(user: UserDocument): true {
+  private async BannedBeforeAndNotBannedAfter(
+    user: UserDocument,
+  ): Promise<true> {
     user.banInfo.isBanned = false;
     user.banInfo.banReason = null;
     user.banInfo.banDate = null;
-    //тоже пройтись по всем сущностям
+    await this.commandRepo.banEntities(user._id, false);
     return true;
   }
 

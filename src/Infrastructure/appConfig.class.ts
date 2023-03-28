@@ -28,7 +28,7 @@ class AppConfig {
     this.environment = process.env;
   }
 
-  get mongoUri() {
+  get mongoUri(): string {
     return this.environment.MONGO_URI;
   }
 
@@ -48,7 +48,7 @@ class AppConfig {
     };
   }
 
-  get port() {
+  get port(): number {
     return this.environment.PORT ?? 3000;
   }
 
@@ -66,7 +66,7 @@ class AppConfig {
     ];
   }
 
-  get jwtSecret() {
+  get jwtSecret(): string {
     return this.environment.JWT_SECRET;
   }
 

@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { command, query } from '../useCases';
-import { RefreshJwtAuthGuard, User } from '../../Infrastructure';
+import { RefreshJwtAuthGuard, Meta } from '../../Infrastructure';
 import { SessionDocument, SessionJwtMeta, VoidPromise } from '../../Model';
 
 @Controller('api/security/devices')
@@ -19,7 +19,7 @@ export class DeviceController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async getDevices(
-    @User() userMeta: SessionJwtMeta,
+    @Meta() userMeta: SessionJwtMeta,
   ): Promise<SessionDocument[]> {
     return await this.queryBus.execute(new query.GetSessions(userMeta));
   }
@@ -27,7 +27,7 @@ export class DeviceController {
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteSessionsExcludeCurrent(
-    @User() userMeta: SessionJwtMeta,
+    @Meta() userMeta: SessionJwtMeta,
   ): VoidPromise {
     await this.commandBus.execute(
       new command.KillAllSessionsExcludeCurrent(userMeta),
@@ -38,7 +38,7 @@ export class DeviceController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteSessionById(
-    @User() userMeta: SessionJwtMeta,
+    @Meta() userMeta: SessionJwtMeta,
     @Param('id') deviceId: string,
   ): VoidPromise {
     await this.commandBus.execute(new command.KillSession(deviceId, userMeta));

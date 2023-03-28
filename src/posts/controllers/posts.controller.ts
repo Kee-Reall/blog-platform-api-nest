@@ -19,7 +19,7 @@ import {
   BasicAuthGuard,
   HardJwtAuthGuard,
   SoftJwtAuthGuard,
-  User,
+  Meta,
 } from '../../Infrastructure';
 import {
   AccessTokenMeta,
@@ -44,7 +44,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   public async getAllPosts(
     @Query(PostsQueryPipe) config: IPaginationConfig,
-    @User() user: NullableKey<AccessTokenMeta>,
+    @Meta() user: NullableKey<AccessTokenMeta>,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     console.log('user id: ', user);
     return await this.queryRepo.getPaginatedPosts(config, user.userId);
@@ -62,7 +62,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   public async getPostById(
     @Param('id') postId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     return await this.queryRepo.findPostByIdWithLike(postId, meta.userId);
   }
@@ -82,7 +82,7 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async likePost(
     @Param('id') postId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
     @Body() dto: LikeInput,
   ) {
     return this.service.likePost(postId, dto.likeStatus, meta.userId);
@@ -100,7 +100,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   public async getCommentsForPost(
     @Param('id') postId: string,
-    @User() meta: SoftGuardMeta,
+    @Meta() meta: SoftGuardMeta,
     @Query() inputQuery,
   ) {
     return await this.queryRepo.getPaginatedComments(
@@ -115,7 +115,7 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   public async createCommentForPost(
     @Param('id') postId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
     @Body() dto: CommentInput,
   ) {
     return await this.service.createComment(postId, dto.content, meta.userId);

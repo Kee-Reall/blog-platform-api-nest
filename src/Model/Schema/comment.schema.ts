@@ -39,6 +39,9 @@ export class Comment implements Omit<CommentsLogicModel, '_id'> {
   @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
   postId: ObjectId;
 
+  @Prop({ default: false })
+  _isOwnerBanned: boolean;
+
   get id() {
     return this._id.toHexString();
   }

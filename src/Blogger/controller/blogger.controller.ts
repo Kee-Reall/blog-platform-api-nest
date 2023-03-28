@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { MatchMongoIdPipe } from '../pipes';
 import { BlogInput, PostInput } from '../validators';
-import { HardJwtAuthGuard, User } from '../../Infrastructure';
+import { HardJwtAuthGuard, Meta } from '../../Infrastructure';
 import { bloggerCommands, bloggerQueries } from '../useCases';
 import {
   AccessTokenMeta,
@@ -32,7 +32,7 @@ export class BloggerController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()
   public async getBlogsForOwner(
-    @User() user: AccessTokenMeta,
+    @Meta() user: AccessTokenMeta,
     @Query() filters: BlogFilter,
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     return await this.queryBus.execute(
@@ -42,7 +42,7 @@ export class BloggerController {
 
   @Post()
   public async CreateBlog(
-    @User() user: AccessTokenMeta,
+    @Meta() user: AccessTokenMeta,
     @Body() dto: BlogInput,
   ): Promise<BlogPresentationModel> {
     return await this.commandBus.execute(
@@ -53,11 +53,11 @@ export class BloggerController {
   @Post(':id/posts')
   public async CreatePost(
     @Param('id') blogId: string,
-    @User() user: AccessTokenMeta,
+    @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: PostInput,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     return await this.commandBus.execute(
-      new bloggerCommands.CreatePost(user.userId, blogId, dto),
+      new bloggerCommands.CreatePost(tknMeta.userId, blogId, dto),
     );
   }
 
@@ -65,11 +65,11 @@ export class BloggerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async UpdateBlog(
     @Param('id') blogId: string,
-    @User() user: AccessTokenMeta,
+    @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: BlogInput,
   ): VoidPromise {
     return await this.commandBus.execute(
-      new bloggerCommands.UpdateBlog(user.userId, blogId, dto),
+      new bloggerCommands.UpdateBlog(tknMeta.userId, blogId, dto),
     );
   }
 
@@ -78,11 +78,11 @@ export class BloggerController {
   public async UpdatePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
-    @User() user: AccessTokenMeta,
+    @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: PostInput,
   ): VoidPromise {
     return await this.commandBus.execute(
-      new bloggerCommands.UpdatePost(user.userId, blogId, postId, dto),
+      new bloggerCommands.UpdatePost(tknMeta.userId, blogId, postId, dto),
     );
   }
 
@@ -90,10 +90,10 @@ export class BloggerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async DeleteBlog(
     @Param('id') blogId: string,
-    @User() user: AccessTokenMeta,
+    @Meta() tknMeta: AccessTokenMeta,
   ): VoidPromise {
     return await this.commandBus.execute(
-      new bloggerCommands.DeleteBlog(user.userId, blogId),
+      new bloggerCommands.DeleteBlog(tknMeta.userId, blogId),
     );
   }
 
@@ -102,10 +102,10 @@ export class BloggerController {
   public async DeletePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
-    @User() user: AccessTokenMeta,
+    @Meta() tknMeta: AccessTokenMeta,
   ): VoidPromise {
     return await this.commandBus.execute(
-      new bloggerCommands.DeletePost(user.userId, blogId, postId),
+      new bloggerCommands.DeletePost(tknMeta.userId, blogId, postId),
     );
   }
 }

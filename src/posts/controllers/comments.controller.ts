@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsQueryRepository } from '../repos';
-import { HardJwtAuthGuard, SoftJwtAuthGuard, User } from '../../Infrastructure';
+import { HardJwtAuthGuard, SoftJwtAuthGuard, Meta } from '../../Infrastructure';
 import { AccessTokenMeta, SoftGuardMeta } from '../../Model';
 import { CommentInput, LikeInput } from '../validators';
 import { PostsService } from '../posts.service';
@@ -27,7 +27,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   public async getCommentById(
     @Param('id') commentId: string,
-    @User() meta: SoftGuardMeta,
+    @Meta() meta: SoftGuardMeta,
   ) {
     return this.queryRepo.getCommentWithLike(commentId, meta.userId);
   }
@@ -37,7 +37,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async createCommentForPost(
     @Param('id') commentId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
     @Body() dto: CommentInput,
   ) {
     return await this.service.updateComment(
@@ -52,7 +52,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteComment(
     @Param('id') commentId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
   ) {
     return await this.service.deleteComment(commentId, meta.userId);
   }
@@ -62,7 +62,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async likeComment(
     @Param('id') commentId: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
     @Body() dto: LikeInput,
   ) {
     return await this.service.likeComment(

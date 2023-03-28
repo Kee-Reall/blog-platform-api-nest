@@ -21,6 +21,8 @@ export class Like implements Omit<LikeModel, 'likeStatus'> {
   public addedAt: Date;
   @Prop({ default: 'None', enum: ['Like', 'Dislike', 'None'] })
   public likeStatus: string;
+  @Prop({ default: false })
+  public _isOwnerBanned: boolean;
 
   public async setLikeStatus(likeStatus: LikeStatus) {
     if (this.likeStatus === likeStatus) {

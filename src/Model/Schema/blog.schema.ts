@@ -54,7 +54,7 @@ export class Blog implements Required<BlogLogicModel> {
   @Prop({ required: true, readonly: true })
   public _blogOwnerInfo: BlogOwnerInfo;
 
-  @Prop({ default: false }) public _isOwnerBaned: boolean;
+  @Prop({ default: false }) public _isOwnerBanned: boolean;
 
   get id(): string {
     return this._id.toHexString();

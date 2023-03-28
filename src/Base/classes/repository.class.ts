@@ -80,6 +80,7 @@ export abstract class Repository {
       const likes: LikeMapped[] = await model
         .find({
           target: { $in: targetIds },
+          _isOwnerBanned: false,
         })
         .select('likeStatus target userId')
         .lean();

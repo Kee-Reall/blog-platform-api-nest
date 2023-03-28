@@ -20,7 +20,7 @@ import {
 } from './pipes/blogs.query.pipe';
 import { BlogInput } from '../Blogger/validators';
 import { PostInputWithoutBlogId } from './validators/post.validator';
-import { BasicAuthGuard, SoftJwtAuthGuard, User } from '../Infrastructure';
+import { BasicAuthGuard, SoftJwtAuthGuard, Meta } from '../Infrastructure';
 import {
   AccessTokenMeta,
   BlogPresentationModel,
@@ -87,7 +87,7 @@ export class BlogsController {
   public async getPostsByBlogID(
     @Query(PostsByBlogPipe) configFabric: PostConfigFabric,
     @Param('id') id: string,
-    @User() meta: AccessTokenMeta,
+    @Meta() meta: AccessTokenMeta,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     return await this.queryRepo.getPostsByBlogId(configFabric(id), meta.userId);
   }

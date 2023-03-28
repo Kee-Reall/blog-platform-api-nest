@@ -16,6 +16,8 @@ import {
   LikeSchema,
   Post,
   PostSchema,
+  Session,
+  SessionSchema,
   User,
   UserSchema,
 } from '../Model';
@@ -29,6 +31,7 @@ import {
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },
       { name: Comment.name, schema: CommentSchema },
+      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [SuperAdminBlogsController, SuperAdminUsersController],

@@ -12,6 +12,8 @@ import {
   PostDocument,
   User,
   UserDocument,
+  SessionDocument,
+  Session,
 } from '../Model';
 
 @Controller('api/testing')
@@ -22,18 +24,19 @@ export class TestingController {
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
   ) {}
   @Delete('all-data')
   @HttpCode(204)
   public async clear() {
-    const res = await Promise.all([
+    await Promise.all([
       this.postModel.deleteMany({}),
       this.blogModel.deleteMany({}),
       this.likeModel.deleteMany({}),
       this.commentModel.deleteMany({}),
       this.userModel.deleteMany({}),
-    ]);
-    console.log(res);
+      this.sessionModel.deleteMany({}),
+    ]).then((res) => console.log(res));
     return;
   }
 }
