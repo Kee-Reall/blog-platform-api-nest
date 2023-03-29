@@ -1,5 +1,14 @@
-import { Controller, Delete, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Request, Response } from 'express';
 import { Model } from 'mongoose';
 import {
   Blog,
@@ -26,6 +35,30 @@ export class TestingController {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
   ) {}
+
+  @Get('always-ok') //
+  @HttpCode(HttpStatus.OK)
+  public async alwaysOk(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { url, baseUrl, body, originalUrl, params, path, protocol, query } =
+      req;
+    const { status, statusCode, statusMessage } = res;
+    return {
+      url,
+      baseUrl,
+      body,
+      originalUrl,
+      params,
+      path,
+      protocol,
+      query,
+      status,
+      statusCode,
+      statusMessage,
+    };
+  }
   @Delete('all-data')
   @HttpCode(204)
   public async clear() {
