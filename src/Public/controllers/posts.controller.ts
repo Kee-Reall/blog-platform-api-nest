@@ -19,7 +19,7 @@ import {
   SoftGuardMeta,
 } from '../../Model';
 
-@Controller('api/v2/posts')
+@Controller('api/posts')
 export class PostsController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
 

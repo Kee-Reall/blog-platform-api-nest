@@ -158,7 +158,11 @@ export class PublicQueryRepository extends Repository {
     postId: string,
     userId: string,
   ): NullablePromise<LikeDocument> {
-    return await super.getLikeForTarget(this.likeModel, userId, postId);
+    return await this.getLikeForTarget(this.likeModel, userId, postId);
+  }
+
+  public async getLikeForComment(commentId: string, userId: string) {
+    return await this.getLikeForTarget(this.likeModel, userId, commentId);
   }
 
   public async getCommentWithLike(

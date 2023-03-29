@@ -21,7 +21,7 @@ import {
   WithLike,
 } from '../../Model';
 
-@Controller('api/v2/comments/:id')
+@Controller('api/comments/:id')
 export class CommentsController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()
@@ -68,6 +68,8 @@ export class CommentsController {
     @Meta() meta: AccessTokenMeta,
     @Body() dto: LikeInput,
   ) {
-    return;
+    return await this.commandBus.execute(
+      new command.LikeComment(meta.userId, commentId, dto.likeStatus),
+    );
   }
 }
