@@ -14,10 +14,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersFilter } from '../../Model';
-import { UserInput } from '../validators';
+import { BasicAuthGuard } from '../guard';
 import { adminCommand, adminQuery } from '../useCases';
-import { BanUserInput } from '../validators/ban-user.validator';
-import { BasicAuthGuard, ParseObjectIdPipe } from '../../Infrastructure';
+import { BanUserInput, UserInput } from '../validators';
+import { ParseObjectIdPipe } from '../../Infrastructure';
 
 @Controller('api/sa/users')
 @UseGuards(BasicAuthGuard)

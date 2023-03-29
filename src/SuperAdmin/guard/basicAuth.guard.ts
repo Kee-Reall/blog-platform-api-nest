@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { appConfig } from '../';
+import { appConfig } from '../../Infrastructure';
 
 export class BasicAuthGuard implements CanActivate {
   canActivate(
