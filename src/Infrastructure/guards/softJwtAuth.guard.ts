@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../';
 
 @Injectable()
-export class SoftJwtAuthGuard implements CanActivate {
+export class SoftJwtGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
   canActivate(
     context: ExecutionContext,

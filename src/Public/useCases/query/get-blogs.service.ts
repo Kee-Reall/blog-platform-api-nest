@@ -2,12 +2,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { BlogFilter } from '../../../Model';
 import { PaginationConfig } from '../../../Base';
 import { PublicQueryRepository } from '../../repos';
-import { PublicBlogsPaginationPipe } from '../../pipes';
+import { PublicBlogsPipe } from '../../pipes';
 
 export class GetBlogs {
   config: PaginationConfig;
   constructor(filer: BlogFilter) {
-    this.config = new PublicBlogsPaginationPipe(filer);
+    this.config = new PublicBlogsPipe(filer);
   }
 }
 

@@ -4,7 +4,7 @@ import { IPaginationConfig, Nullable, Post, PostFilter } from '../../Model';
 import { ObjectId } from 'mongodb';
 import { NotFoundException } from '@nestjs/common';
 
-export class PublicPostsPaginationPipe
+export class PublicPostsByBlogPaginationPipe
   extends PaginationConfig
   implements IPaginationConfig
 {

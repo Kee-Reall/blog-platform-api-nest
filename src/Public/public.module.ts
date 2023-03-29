@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
-import { HardJwtAuthStrategy, SoftJwtAuthGuard } from '../Infrastructure';
+import { HardJwtAuthStrategy, SoftJwtGuard } from '../Infrastructure';
 import { useCases } from './useCases';
-import { BlogsController } from './controllers';
-import { PublicQueryRepository } from './repos';
+import { BlogsController, PostsController } from './controllers';
+import { PublicCommandRepository, PublicQueryRepository } from './repos';
 import {
   Blog,
   BlogSchema,
@@ -18,6 +18,7 @@ import {
   User,
   UserSchema,
 } from '../Model';
+import { CommentsController } from './controllers/comments.controller';
 
 @Module({
   imports: [
@@ -31,11 +32,12 @@ import {
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [BlogsController],
+  controllers: [BlogsController, CommentsController, PostsController],
   providers: [
-    SoftJwtAuthGuard,
+    SoftJwtGuard,
     HardJwtAuthStrategy,
     PublicQueryRepository,
+    PublicCommandRepository,
     ...useCases,
   ],
 })

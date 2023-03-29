@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Repository } from '../../Base';
-import { CommentsPaginationConfig } from '../pipes/comments.pagination.class';
+import { PublicCommentsPaginationPipe } from '../../Public/pipes';
 import {
   Blog,
   BlogDocument,
@@ -97,7 +97,7 @@ export class PostsQueryRepository extends Repository {
   }
 
   public async getPaginatedComments(
-    inputQuery: CommentsPaginationConfig,
+    inputQuery: PublicCommentsPaginationPipe,
     postId: string,
     userId: string,
   ) {
@@ -105,7 +105,7 @@ export class PostsQueryRepository extends Repository {
     if (!post) {
       throw new NotFoundException();
     }
-    const config = new CommentsPaginationConfig(inputQuery, post._id);
+    const config = new PublicCommentsPaginationPipe(inputQuery, post._id);
     const [itemsWithoutLike, totalCount] = await this.paginate<CommentDocument>(
       this.commentModel,
       config,

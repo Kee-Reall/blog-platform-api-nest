@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { MatchMongoIdPipe } from '../pipes';
 import { BlogInput, PostInput } from '../validators';
-import { HardJwtAuthGuard, Meta } from '../../Infrastructure';
+import { JwtGuard, Meta } from '../../Infrastructure';
 import { bloggerCommands, bloggerQueries } from '../useCases';
 import {
   AccessTokenMeta,
@@ -27,7 +27,7 @@ import {
 } from '../../Model';
 
 @Controller('api/blogger/blogs')
-@UseGuards(HardJwtAuthGuard)
+@UseGuards(JwtGuard)
 export class BloggerController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()

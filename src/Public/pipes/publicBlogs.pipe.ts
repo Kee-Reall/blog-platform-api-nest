@@ -1,8 +1,11 @@
 import { FilterQuery } from 'mongoose';
 import { PaginationConfig } from '../../Base';
-import { Blog, BlogFilter } from '../../Model';
+import { Blog, BlogFilter, IPaginationConfig } from '../../Model';
 
-export class PublicBlogsPaginationPipe extends PaginationConfig {
+export class PublicBlogsPipe
+  extends PaginationConfig
+  implements IPaginationConfig
+{
   filter: FilterQuery<Blog>;
   constructor(filter: BlogFilter) {
     super(filter);

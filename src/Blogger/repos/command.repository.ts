@@ -2,23 +2,28 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Repository } from '../../Base';
 import { ErrorENUM } from '../../Helpers';
+import { Repository } from '../../Base';
 import {
   Blog,
   BlogDocument,
+  BlogStaticMethods,
+  ModelWithStatic,
   Post,
   PostDocument,
   User,
   UserDocument,
+  UserModelStatics,
   VoidPromise,
 } from '../../Model';
 
 @Injectable()
 export class BloggerCommandRepository extends Repository {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @InjectModel(User.name)
+    private userModel: ModelWithStatic<UserDocument, UserModelStatics>,
+    @InjectModel(Blog.name)
+    private blogModel: ModelWithStatic<BlogDocument, BlogStaticMethods>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
   ) {
     super();

@@ -1,4 +1,5 @@
 import { CookieOptions } from 'express';
+import { exceptionFactory } from '../Helpers';
 
 type EnvironmentsTypes = 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
 
@@ -85,6 +86,14 @@ class AppConfig {
 
   get env(): EnvironmentsTypes {
     return this.mode.getMode();
+  }
+
+  get globalValidatorOptions() {
+    return { transform: true, exceptionFactory: exceptionFactory };
+  }
+
+  get globalContainerOptions() {
+    return { fallbackOnErrors: true };
   }
 }
 

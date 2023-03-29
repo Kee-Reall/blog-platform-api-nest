@@ -1,7 +1,7 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { query } from '../useCases';
-import { SoftJwtAuthGuard, Meta } from '../../Infrastructure';
+import { SoftJwtGuard, Meta } from '../../Infrastructure';
 import { BlogFilter, PostFilter, SoftGuardMeta } from '../../Model';
 
 @Controller('api/blogs')
@@ -17,7 +17,7 @@ export class BlogsController {
     return await this.bus.execute(new query.GetBlog(blogId));
   }
   @Get(':id/posts')
-  @UseGuards(SoftJwtAuthGuard)
+  @UseGuards(SoftJwtGuard)
   public async getPostsByBlogId(
     @Param('id') blogId: string,
     @Query() filters: PostFilter,

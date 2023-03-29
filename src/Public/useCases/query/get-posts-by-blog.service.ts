@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PublicPostsPaginationPipe } from '../../pipes';
+import { PublicPostsByBlogPaginationPipe } from '../../pipes';
 import { PublicQueryRepository } from '../../repos';
 import {
   IPaginationConfig,
@@ -18,7 +18,7 @@ export class GetPostsByBlog {
     public blogId: string,
     filter: PostFilter,
   ) {
-    this.config = new PublicPostsPaginationPipe(filter, blogId);
+    this.config = new PublicPostsByBlogPaginationPipe(filter, blogId);
   }
 }
 

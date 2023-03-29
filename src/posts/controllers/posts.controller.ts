@@ -17,8 +17,8 @@ import { PostsQueryPipe } from '../pipes/posts.query.pipe';
 import { PostInput, LikeInput, CommentInput } from '../validators';
 import {
   BasicAuthGuard,
-  HardJwtAuthGuard,
-  SoftJwtAuthGuard,
+  JwtGuard,
+  SoftJwtGuard,
   Meta,
 } from '../../Infrastructure';
 import {
@@ -31,6 +31,7 @@ import {
   VoidPromise,
   WithExtendedLike,
 } from '../../Model';
+import { MatchMongoIdPipe } from '../../Blogger/pipes';
 
 @Controller('api/posts')
 export class PostsController {
@@ -40,7 +41,7 @@ export class PostsController {
   ) {}
 
   @Get()
-  @UseGuards(SoftJwtAuthGuard)
+  @UseGuards(SoftJwtGuard)
   @HttpCode(HttpStatus.OK)
   public async getAllPosts(
     @Query(PostsQueryPipe) config: IPaginationConfig,
@@ -58,7 +59,7 @@ export class PostsController {
   }
 
   @Get(':id')
-  @UseGuards(SoftJwtAuthGuard)
+  @UseGuards(SoftJwtGuard)
   @HttpCode(HttpStatus.OK)
   public async getPostById(
     @Param('id') postId: string,
@@ -78,7 +79,7 @@ export class PostsController {
   }
 
   @Put(':id/like-status')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async likePost(
     @Param('id') postId: string,
@@ -96,10 +97,10 @@ export class PostsController {
   }
 
   @Get(':id/comments')
-  @UseGuards(SoftJwtAuthGuard)
+  @UseGuards(SoftJwtGuard)
   @HttpCode(HttpStatus.OK)
   public async getCommentsForPost(
-    @Param('id') postId: string,
+    @Param('id', MatchMongoIdPipe) postId: string,
     @Meta() meta: SoftGuardMeta,
     @Query() inputQuery,
   ) {
@@ -111,7 +112,7 @@ export class PostsController {
   }
 
   @Post(':id/comments')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
   public async createCommentForPost(
     @Param('id') postId: string,

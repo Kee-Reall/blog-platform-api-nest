@@ -53,22 +53,32 @@ export class AdminCommandRepository extends Repository {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const blogBan = this.blogModel
-        .updateMany({ '_blogOwnerInfo.userId': userId }, updateQuery)
-        .session(session);
-      const postBan = this.postModel
-        .updateMany({ _ownerId: userId }, updateQuery)
-        .session(session);
-      const commentBan = this.commentModel
-        .updateMany({ userId }, updateQuery)
-        .session(session);
-      const likeBan = this.likeModel
-        .updateMany({ userId }, updateQuery)
-        .session(session);
+      const blogBan = this.blogModel.updateMany(
+        { '_blogOwnerInfo.userId': userId },
+        updateQuery,
+        session,
+      );
+      const postBan = this.postModel.updateMany(
+        { _ownerId: userId },
+        updateQuery,
+        session,
+      );
+      const commentBan = this.commentModel.updateMany(
+        { userId },
+        updateQuery,
+        session,
+      );
+      const likeBan = this.likeModel.updateMany(
+        { userId },
+        updateQuery,
+        session,
+      );
       const killSession = this.sessionModel.deleteMany({ userId }, session);
       await Promise.all([blogBan, postBan, commentBan, likeBan, killSession]);
       await session.commitTransaction();
     } catch (e) {
+      console.error(e.message);
+      console.error(e);
       await session.abortTransaction();
       isTransactionSuccess = false;
     } finally {

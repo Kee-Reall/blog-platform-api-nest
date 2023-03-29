@@ -121,6 +121,7 @@ export abstract class Repository {
         .find({
           target,
           likeStatus: LikeENUM.LIKE,
+          _isOwnerBanned: false,
         })
         .sort({ addedAt: -1 })
         .limit(limit)

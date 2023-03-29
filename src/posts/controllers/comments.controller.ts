@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsQueryRepository } from '../repos';
-import { HardJwtAuthGuard, SoftJwtAuthGuard, Meta } from '../../Infrastructure';
+import { JwtGuard, SoftJwtGuard, Meta } from '../../Infrastructure';
 import { AccessTokenMeta, SoftGuardMeta } from '../../Model';
 import { CommentInput, LikeInput } from '../validators';
 import { PostsService } from '../posts.service';
@@ -23,7 +23,7 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
-  @UseGuards(SoftJwtAuthGuard)
+  @UseGuards(SoftJwtGuard)
   @HttpCode(HttpStatus.OK)
   public async getCommentById(
     @Param('id') commentId: string,
@@ -33,7 +33,7 @@ export class CommentsController {
   }
 
   @Put(':id')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async createCommentForPost(
     @Param('id') commentId: string,
@@ -48,7 +48,7 @@ export class CommentsController {
   }
 
   @Delete(':id')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteComment(
     @Param('id') commentId: string,
@@ -58,7 +58,7 @@ export class CommentsController {
   }
 
   @Put(':id/like-status')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async likeComment(
     @Param('id') commentId: string,

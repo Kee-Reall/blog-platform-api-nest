@@ -15,11 +15,7 @@ import {
 } from '@nestjs/common';
 import { command, query } from '../useCases';
 import { appConfig } from '../../Infrastructure';
-import {
-  HardJwtAuthGuard,
-  RefreshJwtAuthGuard,
-  Meta,
-} from '../../Infrastructure';
+import { JwtGuard, RefreshJwtAuthGuard, Meta } from '../../Infrastructure';
 import {
   CodeInput,
   EmailInput,
@@ -58,7 +54,7 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(HardJwtAuthGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   public async getInfoByToken(
     @Meta() user: AccessTokenMeta,

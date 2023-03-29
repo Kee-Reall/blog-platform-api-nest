@@ -24,8 +24,6 @@ export interface UsersFilter extends AbstractFilter<UserPresentationModel> {
   banStatus?: string;
 }
 
-export interface CommentsFilter extends AbstractFilter<CommentsLogicModel> {
-  searchId?: string;
-}
+export type CommentsFilter = AbstractFilter<CommentsLogicModel>;
 
 export type BanQuery = 'all' | 'banned' | 'notBanned';
