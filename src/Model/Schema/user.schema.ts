@@ -116,7 +116,7 @@ export class User implements UserLogicModel, UserMethods {
   }
 
   public async setHash(password: string): VoidPromise {
-    this.hash = await genHash(password, await genSalt(13));
+    this.hash = await genHash(password, await genSalt(7));
   }
 
   public confirm(): void {
