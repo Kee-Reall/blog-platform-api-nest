@@ -172,16 +172,6 @@ export class PublicQueryRepository extends Repository {
     const comment = await this.findById(this.commentModel, commentId);
     if (!comment || comment._isOwnerBanned) {
       console.log(comment);
-      if (comment) {
-        console.log(
-          'owner is:  ' +
-            (await this.findById(
-              this.userModel,
-              comment.commentatorInfo.userId, // вот это всё для дебага, после удалить
-            )),
-        );
-      }
-      console.log('================================================');
       throw new NotFoundException();
     }
     const [{ likesCount, dislikesCount, myStatus }] = await this.countLikesInfo(
