@@ -170,7 +170,7 @@ export class PublicQueryRepository extends Repository {
     userId: Nullable<string>,
   ): Promise<WithLike<CommentPresentationModel>> {
     const comment = await this.findById(this.commentModel, commentId);
-    if (!comment || comment._isOwnerBanned) {
+    if (!comment) {
       throw new NotFoundException();
     }
     const [{ likesCount, dislikesCount, myStatus }] = await this.countLikesInfo(
