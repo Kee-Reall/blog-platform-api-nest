@@ -42,7 +42,7 @@ export class LoginUseCase
   }
   public async execute(command: Login): Promise<any> {
     const user = await this.userModel.findByLoginOrEmail(command.loginOrEmail);
-    if (!user || !user.confirmation.isConfirmed) {
+    if (!user || !user.confirmation.isConfirmed || user.banInfo.isBanned) {
       throw new UnauthorizedException();
     }
     const isPasswordValid = await user.comparePasswords(command.password);
