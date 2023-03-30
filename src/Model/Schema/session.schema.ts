@@ -77,7 +77,6 @@ export class Session implements SessionMetadata {
       const that = this as unknown as Model<SessionDocument>;
       return await that.find({ userId });
     } catch (e) {
-      console.error('failed findUsersSessions at session static ');
       return [];
     }
   }

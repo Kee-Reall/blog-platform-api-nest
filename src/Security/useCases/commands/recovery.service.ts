@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ImATeapotException } from '@nestjs/common';
+import { EmailService } from '../../email';
 import { VoidPromise } from '../../../Model';
 import { AuthCommandRepository, AuthQueryRepository } from '../../repos';
-import { EmailService } from '../../email';
 
 export class SetRecovery {
   constructor(public email: string) {}
@@ -10,7 +10,6 @@ export class SetRecovery {
 
 @CommandHandler(SetRecovery)
 export class SetRecoveryCodeUseCase implements ICommandHandler<SetRecovery> {
-  private emailErMsg: string = 'failed EMAIL sending attempt to: ';
   constructor(
     private queryRepo: AuthQueryRepository,
     private commandRepo: AuthCommandRepository,
@@ -26,11 +25,7 @@ export class SetRecoveryCodeUseCase implements ICommandHandler<SetRecovery> {
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    this.mailServ // don't wait for mail server
-      .sendRecoveryInfo(user.email, user.recovery.recoveryCode)
-      .then((isSent) => {
-        if (!isSent) console.error(this.emailErMsg + command.email);
-      });
+    this.mailServ.sendRecoveryInfo(user.email, user.recovery.recoveryCode); // don't wait for this Promise
     return;
   }
 }

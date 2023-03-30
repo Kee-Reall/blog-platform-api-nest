@@ -2,7 +2,6 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { ErrorENUM } from '../../Helpers';
 import { Repository } from '../../Base';
 import {
   Blog,
@@ -43,8 +42,6 @@ export class BloggerCommandRepository extends Repository {
   public async deletePostsByBlogId(_id: ObjectId): VoidPromise {
     try {
       await this.postModel.deleteMany({ blogId: _id }); // todo ты должен каскадно получить все удаленные посты, удалить их коменты, каскадн удалить все лайки к коментам и постам.
-    } catch (e) {
-      console.error(ErrorENUM.BROKEN_DATA + e.message ?? ErrorENUM.MESSAGE);
     } finally {
       return;
     }
