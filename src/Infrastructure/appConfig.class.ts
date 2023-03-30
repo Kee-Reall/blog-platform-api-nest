@@ -73,7 +73,7 @@ class AppConfig {
 
   get cookiesOptions(): CookieOptions {
     return {
-      //domain: this.mode.isDevelopment() ? undefined : this.environment.DOMAIN,
+      domain: this.mode.isDevelopment() ? undefined : this.environment.DOMAIN,
       sameSite: 'none',
       secure: !this.mode.isDevelopment(),
       httpOnly: true,
