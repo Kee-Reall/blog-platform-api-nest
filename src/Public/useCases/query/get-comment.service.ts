@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { CommentPresentationModel, Nullable, WithLike } from '../../../Model';
 import { PublicQueryRepository } from '../../repos';
+import { CommentPresentationModel, Nullable, WithLike } from '../../../Model';
 
 export class GetComment {
   constructor(public userId: Nullable<string>, public commentId: string) {}
