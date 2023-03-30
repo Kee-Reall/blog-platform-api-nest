@@ -1,22 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { hash as genHash, genSalt, compare } from 'bcrypt';
 import { v4 as genUUIDv4 } from 'uuid';
 import { addMinutes, isBefore } from 'date-fns';
 import {
+  BanInfoModel,
   ConfirmationType,
   NullablePromise,
   RecoveryType,
   UserInputModel,
   UserLogicModel,
+  UserMethods,
   VoidPromise,
 } from '../Type/';
 
-export type UserDocument = HydratedDocument<User> & UserMethods;
+export type UserDocument = HydratedDocument<User>;
 
 @Schema({ _id: false, versionKey: false })
-export class ConfirmationScheme implements ConfirmationType {
+export class ConfirmationSchema implements ConfirmationType {
   @Prop({ default: () => genUUIDv4(), nullable: true })
   code: string | null = genUUIDv4();
 
@@ -36,20 +38,28 @@ export class RecoverySchema implements RecoveryType {
   recoveryCode: string | null = null;
 }
 
+@Schema({ _id: false, versionKey: false })
+export class BanInfoSchema implements BanInfoModel {
+  @Prop({ default: false, nullable: true })
+  isBanned: boolean = false;
+  @Prop({ default: null, nullable: true })
+  banDate: Date | null = null;
+  @Prop({ default: null, nullable: true })
+  banReason: string | null = null;
+}
+
 @Schema({
   toJSON: {
     getters: true,
-    transform: (doc) => {
-      return {
-        id: doc.id,
-        login: doc.login,
-        email: doc.email,
-        createdAt: doc.createdAt,
-      };
-    },
+    transform: (doc) => ({
+      id: doc.id,
+      login: doc.login,
+      email: doc.email,
+      createdAt: doc.createdAt,
+    }),
   },
 })
-export class User implements UserLogicModel {
+export class User implements UserLogicModel, UserMethods {
   _id: ObjectId;
 
   @Prop({
@@ -76,59 +86,25 @@ export class User implements UserLogicModel {
   @Prop({ required: true, minlength: 5 })
   hash: string;
 
-  @Prop({
-    required: true,
-    default: () => new ConfirmationScheme(),
-  })
-  confirmation: ConfirmationScheme;
+  @Prop({ default: () => new ConfirmationSchema() })
+  confirmation: ConfirmationSchema;
 
-  @Prop({
-    required: true,
-    default: () => new RecoverySchema(),
-  })
+  @Prop({ default: () => new RecoverySchema() })
   recovery: RecoverySchema;
+
+  @Prop({ default: () => new BanInfoSchema() })
+  banInfo: BanInfoSchema;
 
   get id(): string {
     return this._id.toHexString();
   }
-}
 
-export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.statics = {
-  async newUser(dto: UserInputModel): Promise<UserDocument> {
-    const { login, email, password } = dto;
-    const hash = await genHash(password, await genSalt(13));
-    return new this({ login, email, hash });
-  },
-
-  async findByLoginOrEmail(
-    loginOrEmail: string,
-  ): NullablePromise<UserDocument> {
-    try {
-      return await this.findOne({
-        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-      });
-    } catch (e) {
-      return null;
-    }
-  },
-
-  generateDefaultRecovery(): RecoveryType {
-    return { expirationDate: new Date(), recoveryCode: null };
-  },
-
-  generateDefaultConfirmation(isAdmin = false): ConfirmationType {
-    return { code: null, confirmationDate: new Date(), isConfirmed: isAdmin };
-  },
-};
-
-UserSchema.methods = {
-  async isFieldsUnique(): Promise<[boolean, string[]]> {
+  public async isFieldsUnique(): Promise<[boolean, string[]]> {
+    const model = this.constructor as Model<UserDocument>;
     const { login, email } = this;
     const [userByLogin, userByEmail] = await Promise.all([
-      this.constructor.findOne({ login }),
-      this.constructor.findOne({ email }),
+      model.findOne({ login }),
+      model.findOne({ email }),
     ]);
     const result: Array<'login' | 'email'> = [];
     if (!userByLogin && !userByEmail) {
@@ -137,66 +113,116 @@ UserSchema.methods = {
     if (userByLogin) result.push('login');
     if (userByEmail) result.push('email');
     return [false, result];
-  },
+  }
 
-  async setHash(password: string) {
-    this.hash = await genHash(password, await genSalt(13));
-  },
+  public async setHash(password: string): VoidPromise {
+    this.hash = await genHash(password, await genSalt(7));
+  }
 
-  confirm() {
+  public confirm(): void {
     this.confirmation.isConfirmed = true;
     this.confirmation.code = null;
-  },
+  }
 
-  updateConfirmCode() {
+  public updateConfirmCode(): void {
     this.confirmation.code = genUUIDv4();
     this.confirmation.confirmationDate = addMinutes(new Date(), 60);
-  },
+  }
 
-  setRecoveryMetadata() {
+  public setRecoveryMetadata(): void {
     this.recovery.recoveryCode = genUUIDv4();
     this.recovery.expirationDate = addMinutes(new Date(), 10);
-  },
+  }
 
-  isRecoveryCodeActive() {
+  public isRecoveryCodeActive(): boolean {
     const isDateExpired = isBefore(new Date(), this.recovery.expirationDate);
     return isDateExpired && this.confirmation.isConfirmed;
-  },
+  }
 
-  async changePassword(password: string): VoidPromise {
+  public resetRecoveryCode(): void {
+    this.recovery.recoveryCode = null;
+  }
+
+  public async changePassword(password: string): VoidPromise {
     await this.setHash(password);
     this.resetRecoveryCode();
-  },
+  }
 
-  async comparePasswords(password: string): Promise<boolean> {
+  public async comparePasswords(password: string): Promise<boolean> {
     return await compare(password, this.hash);
-  },
+  }
 
-  resetRecoveryCode() {
-    this.recovery.recoveryCode = null;
-  },
+  public async killYourself(): VoidPromise {
+    const model = this.constructor as Model<UserDocument>;
+    await model.deleteOne(this);
+  }
+  static async newUser(dto: UserInputModel): Promise<UserDocument> {
+    const { login, email, password } = dto;
+    const hash = await genHash(password, await genSalt(13));
+    const that = this as unknown as Model<UserDocument>;
+    return new that({ login, email, hash });
+  }
 
-  async killYourself() {
-    await this.constructor.deleteOne(this);
-  },
+  static async findByLoginOrEmail(
+    loginOrEmail: string,
+  ): NullablePromise<UserDocument> {
+    try {
+      const that = this as unknown as Model<UserDocument>;
+      return await that.findOne({
+        $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static generateDefaultRecovery(): RecoveryType {
+    return { expirationDate: new Date(), recoveryCode: null };
+  }
+
+  static generateDefaultConfirmation(isAdmin = false): ConfirmationType {
+    return { code: null, confirmationDate: new Date(), isConfirmed: isAdmin };
+  }
+
+  static async nullableFindById(
+    id: string | ObjectId,
+  ): NullablePromise<UserDocument> {
+    const that = this as unknown as Model<UserDocument>;
+    try {
+      return await that.findById(id);
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.methods = {
+  isFieldsUnique: User.prototype.isFieldsUnique,
+  setHash: User.prototype.setHash,
+  confirm: User.prototype.confirm,
+  updateConfirmCode: User.prototype.updateConfirmCode,
+  setRecoveryMetadata: User.prototype.setRecoveryMetadata,
+  isRecoveryCodeActive: User.prototype.isRecoveryCodeActive,
+  changePassword: User.prototype.changePassword,
+  comparePasswords: User.prototype.comparePasswords,
+  resetRecoveryCode: User.prototype.resetRecoveryCode,
+  killYourself: User.prototype.killYourself,
 };
 
-export interface UserMethods {
-  isFieldsUnique: () => Promise<[boolean, string[]]>;
-  setHash: (password: string) => VoidPromise;
-  changePassword: (password: string) => VoidPromise;
-  confirm: () => void;
-  updateConfirmCode: () => void;
-  killYourself: () => VoidPromise;
-  setRecoveryMetadata: () => void;
-  resetRecoveryCode: () => void;
-  isRecoveryCodeActive: () => boolean;
-  comparePasswords: (password: string) => Promise<boolean>;
-}
+UserSchema.statics = {
+  newUser: User.newUser,
+  findByLoginOrEmail: User.findByLoginOrEmail,
+  generateDefaultRecovery: User.generateDefaultRecovery,
+  generateDefaultConfirmation: User.generateDefaultConfirmation,
+  nullableFindById: User.nullableFindById,
+};
 
 export interface UserModelStatics {
   findByLoginOrEmail: (loginOrEmail: string) => NullablePromise<UserDocument>;
   newUser: (dto: UserInputModel) => Promise<UserDocument>;
   generateDefaultRecovery: () => RecoveryType;
   generateDefaultConfirmation: (isAdmin: boolean) => ConfirmationType;
+  nullableFindById: (id: string | ObjectId) => NullablePromise<UserDocument>;
 }

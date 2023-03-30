@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { deleteHiddenAndPostId, MessageENUM } from '../../helpers';
+import { deleteHiddenAndPostId, MessageENUM } from '../../Helpers';
 import { CommentatorInfoType, CommentsLogicModel, VoidPromise } from '../Type';
 
 export type CommentDocument = mongoose.HydratedDocument<Comment>;
@@ -38,6 +38,9 @@ export class Comment implements Omit<CommentsLogicModel, '_id'> {
 
   @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
   postId: ObjectId;
+
+  @Prop({ default: false })
+  _isOwnerBanned: boolean;
 
   get id() {
     return this._id.toHexString();

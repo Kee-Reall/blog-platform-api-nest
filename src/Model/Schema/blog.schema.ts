@@ -1,16 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { HydratedDocument } from 'mongoose';
-import { MessageENUM, deleteHidden } from '../../helpers';
-import {
-  BlogLogicModel,
-  BlogPresentationModel,
-  NullablePromise,
-} from '../Type';
+import { HydratedDocument, Model } from 'mongoose';
+import { MessageENUM, deleteHidden } from '../../Helpers';
+import { BlogLogicModel, BlogOwnerInfoModel, NullablePromise } from '../Type';
 
-export type BlogDocument = HydratedDocument<BlogPresentationModel> & {
-  _id: ObjectId;
-};
+export type BlogDocument = HydratedDocument<Blog>;
+
+@Schema({ _id: false, versionKey: false })
+export class BlogOwnerInfo implements BlogOwnerInfoModel {
+  @Prop({ required: true, readonly: true })
+  userId: ObjectId;
+  @Prop({ required: true })
+  userLogin: string;
+}
 
 @Schema({
   toJSON: {
@@ -18,8 +20,8 @@ export type BlogDocument = HydratedDocument<BlogPresentationModel> & {
     transform: deleteHidden,
   },
 })
-export class Blog implements Omit<BlogLogicModel, '_id'> {
-  _id: ObjectId;
+export class Blog implements Required<BlogLogicModel> {
+  public _id: ObjectId;
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
     minlength: [1, MessageENUM.LENGTH],
@@ -49,30 +51,43 @@ export class Blog implements Omit<BlogLogicModel, '_id'> {
   public createdAt: Date;
   @Prop({ default: false }) public isMembership: boolean;
 
+  @Prop({ required: true, readonly: true })
+  public _blogOwnerInfo: BlogOwnerInfo;
+
+  @Prop({ default: false }) public _isOwnerBanned: boolean;
+
   get id(): string {
     return this._id.toHexString();
+  }
+
+  static async NullableFindById(
+    id: string | ObjectId,
+  ): NullablePromise<BlogDocument> {
+    try {
+      const that = this as unknown as Model<BlogDocument>;
+      return await that.findById(id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static async isBlogExist(id: string | ObjectId) {
+    try {
+      const that = this as unknown as Model<BlogDocument>;
+      const _id = id instanceof ObjectId ? id : new ObjectId(id);
+      return (await that.countDocuments({ _id })) > 0;
+    } catch (e) {
+      return false;
+    }
   }
 }
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 
 BlogSchema.statics = {
-  async NullableFindById(id: string | ObjectId): NullablePromise<BlogDocument> {
-    try {
-      return await this.findById(id);
-    } catch (e) {
-      return null;
-    }
-  },
-  async isBlogExist(id: string | ObjectId) {
-    try {
-      const _id = id instanceof ObjectId ? id : new ObjectId(id);
-      return (await this.countDocuments({ _id })) > 0;
-    } catch (e) {
-      return false;
-    }
-  },
+  NullableFindById: Blog.NullableFindById,
+  isBlogExist: Blog.isBlogExist,
 };
-export interface BlogSchemaMethods {
+export interface BlogStaticMethods {
   NullableFindById: (id: string | ObjectId) => NullablePromise<BlogDocument>;
   isBlogExist: (id: string | ObjectId) => Promise<boolean>;
 }

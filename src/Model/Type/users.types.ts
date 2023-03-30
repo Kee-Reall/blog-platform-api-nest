@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { Nullable, VoidPromise } from './helpers.types';
 
 export type UserPresentationModel = {
   id: string;
@@ -30,6 +31,12 @@ export type UserLogicModel = {
   recovery: RecoveryType;
 };
 
+export type UserInfoType = {
+  email: string;
+  login: string;
+  userId: string | ObjectId;
+};
+
 export type RecoveryType = {
   recoveryCode: string;
   expirationDate: Date;
@@ -45,3 +52,29 @@ export type ConfirmationType = {
   code: string;
   confirmationDate: Date;
 };
+
+export interface UserMethods {
+  isFieldsUnique: () => Promise<[boolean, string[]]>;
+  setHash: (password: string) => VoidPromise;
+  changePassword: (password: string) => VoidPromise;
+  confirm: () => void;
+  updateConfirmCode: () => void;
+  killYourself: () => VoidPromise;
+  setRecoveryMetadata: () => void;
+  resetRecoveryCode: () => void;
+  isRecoveryCodeActive: () => boolean;
+  comparePasswords: (password: string) => Promise<boolean>;
+}
+
+export interface BanUserInputModel {
+  isBanned: boolean;
+  banReason: string;
+}
+
+export interface BanInfoModel {
+  isBanned: boolean;
+  banReason: Nullable<string>;
+  banDate: Nullable<Date>;
+}
+
+export type WithBanInfo<T = any> = T & { banInfo: BanInfoModel };

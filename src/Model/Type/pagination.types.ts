@@ -17,3 +17,9 @@ export type PaginatedOutput<Data> = {
   totalCount: number;
   items: Data[];
 };
+
+export type PaginationDigits = {
+  totalCount: number;
+  limit: number;
+  pageNumber: number;
+};

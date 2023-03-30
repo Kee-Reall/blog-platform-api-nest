@@ -23,6 +23,7 @@
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/cqrs": "^9.0.3",
     "@nestjs/jwt": "^10.0.2",
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/passport": "^9.0.3",
@@ -88,5 +89,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "engines": {
+    "node": "18.13.0"
   }
 }
