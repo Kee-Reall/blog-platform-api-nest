@@ -92,7 +92,6 @@ export class Session implements SessionMetadata {
       await that.deleteMany(filter);
       return;
     } catch (e) {
-      console.log('cant delete except');
       return;
     }
   }

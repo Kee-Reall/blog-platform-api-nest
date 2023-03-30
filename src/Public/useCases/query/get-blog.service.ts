@@ -12,7 +12,6 @@ export class GetBlogUseCase implements IQueryHandler<GetBlog> {
   constructor(private repo: PublicQueryRepository) {}
   public async execute(query: GetBlog): Promise<BlogPresentationModel> {
     const blog = await this.repo.getBlogEntity(query.id);
-    console.log(blog);
     if (!blog || blog._isOwnerBanned) {
       throw new NotFoundException();
     }

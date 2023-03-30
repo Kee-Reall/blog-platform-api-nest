@@ -17,7 +17,6 @@ export class IsLoginUniqueConstraint implements ValidatorConstraintInterface {
     value: string,
     validationArguments?: ValidationArguments,
   ): Promise<boolean> {
-    console.log(validationArguments);
     return await this.queryRepo.isUserUnique('login', value);
   }
 }

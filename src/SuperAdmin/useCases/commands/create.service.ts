@@ -45,7 +45,6 @@ export class CreateUserUseCase implements ICommandHandler<CreateUser> {
     }
     await user.setHash(password);
     user.confirm();
-    console.log(user.confirmation, user.recovery);
     const isSaved: boolean = await this.commandRepo.saveUser(user);
     if (!isSaved) {
       throw new ImATeapotException();

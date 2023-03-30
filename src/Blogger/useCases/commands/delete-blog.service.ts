@@ -29,7 +29,6 @@ export class DeleteBlogUseCase
       throw new NotFoundException();
     }
     if (!this.isOwner(command.userId, blog._blogOwnerInfo.userId)) {
-      console.log(command.userId, blog._id);
       throw new ForbiddenException();
     }
     const isDeleted = await this.commandRepo.deleteBlog(blog.id);

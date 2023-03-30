@@ -69,7 +69,7 @@ export class TestingController {
       this.commentModel.deleteMany({}),
       this.userModel.deleteMany({}),
       this.sessionModel.deleteMany({}),
-    ]).then((res) => console.log(res));
+    ]);
     return;
   }
 }

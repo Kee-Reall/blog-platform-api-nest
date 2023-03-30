@@ -13,7 +13,6 @@ export class BlogsController {
   }
   @Get(':id')
   public async getBlogById(@Param('id') blogId: string) {
-    console.log('test');
     return await this.bus.execute(new query.GetBlog(blogId));
   }
   @Get(':id/posts')

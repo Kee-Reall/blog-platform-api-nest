@@ -49,7 +49,6 @@ export abstract class Repository {
       await entity.save();
       return true;
     } catch (e) {
-      console.log(e);
       return false;
     }
   }
@@ -165,7 +164,6 @@ export abstract class Repository {
     filter: FilterQuery<unknown>,
   ): NullablePromise<Doc[]> {
     try {
-      console.log(filter);
       return await model.find(filter);
     } catch (e) {
       return null;
