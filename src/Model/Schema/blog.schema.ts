@@ -49,7 +49,7 @@ export class Blog implements Required<BlogLogicModel> {
     transform: (date: Date): string => date.toISOString(),
   })
   public createdAt: Date;
-  @Prop({ default: true }) public isMembership: boolean;
+  @Prop({ default: false }) public isMembership: boolean;
 
   @Prop({ required: true, readonly: true })
   public _blogOwnerInfo: BlogOwnerInfo;
