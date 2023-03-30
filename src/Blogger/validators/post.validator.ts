@@ -1,6 +1,6 @@
 import { Length } from 'class-validator';
+import { TrimIfString } from '../../Base';
 import { PostInputModel } from '../../Model';
-import { TrimIfString } from '../../Infrastructure';
 
 export class PostInput implements PostInputModel {
   @TrimIfString()

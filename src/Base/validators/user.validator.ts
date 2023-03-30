@@ -1,6 +1,6 @@
 import { UserInputModel } from '../../Model';
 import { IsEmail, Length, Matches } from 'class-validator';
-import { TrimIfString } from '../../Infrastructure';
+import { TrimIfString } from '../decorators';
 
 export class UserValidator implements UserInputModel {
   @TrimIfString()

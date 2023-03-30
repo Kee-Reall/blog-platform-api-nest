@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { useCases } from './useCases';
-import { HardJwtAuthStrategy, SoftJwtGuard } from '../Infrastructure';
 import { PublicCommandRepository, PublicQueryRepository } from './repos';
 import {
   BlogsController,
@@ -22,6 +21,7 @@ import {
   User,
   UserSchema,
 } from '../Model';
+import { HardJwtAuthStrategy, SoftJwtGuard } from '../Base';
 
 @Module({
   imports: [

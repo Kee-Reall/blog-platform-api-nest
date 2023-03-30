@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { appConfig } from '../appConfig.class';
+import { appConfig } from '../../Infrastructure';
 import {
   AccessTokenPayload,
   ModelWithStatic,

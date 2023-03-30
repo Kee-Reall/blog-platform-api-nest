@@ -13,11 +13,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { BanUserInput, UserInput } from '../validators';
+import { adminCommand, adminQuery } from '../useCases';
+import { ParseObjectIdPipe } from '../../Base';
 import { UsersFilter } from '../../Model';
 import { BasicAuthGuard } from '../guard';
-import { adminCommand, adminQuery } from '../useCases';
-import { BanUserInput, UserInput } from '../validators';
-import { ParseObjectIdPipe } from '../../Infrastructure';
 
 @Controller('api/sa/users')
 @UseGuards(BasicAuthGuard)

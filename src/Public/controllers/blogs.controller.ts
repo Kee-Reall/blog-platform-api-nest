@@ -1,8 +1,8 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { query } from '../useCases';
-import { SoftJwtGuard, Meta } from '../../Infrastructure';
 import { BlogFilter, PostFilter, SoftGuardMeta } from '../../Model';
+import { Meta, SoftJwtGuard } from '../../Base';
 
 @Controller('api/blogs')
 export class BlogsController {

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { command, query } from '../useCases';
 import { CommentInput, LikeInput } from '../validators';
-import { JwtGuard, Meta, SoftJwtGuard } from '../../Infrastructure';
+import { JwtGuard, Meta, SoftJwtGuard } from '../../Base';
 import {
   AccessTokenMeta,
   CommentsFilter,

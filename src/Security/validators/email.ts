@@ -1,5 +1,5 @@
 import { IsEmail, Length } from 'class-validator';
-import { TrimIfString } from '../../Infrastructure';
+import { TrimIfString } from '../../Base';
 
 export class EmailInput {
   @IsEmail()

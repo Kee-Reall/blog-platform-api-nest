@@ -35,7 +35,7 @@ export class AuthCommandRepository extends Repository {
     return await this.saveEntity(ses);
   }
 
-  async killAllSessionsExcludeCurrent(command: SessionJwtMeta) {
+  public async killAllSessionsExcludeCurrent(command: SessionJwtMeta) {
     return await this.sessionModel.killAllSessionsExcludeCurrent(command);
   }
 }

@@ -28,13 +28,13 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     let shouldSave = false;
     if (user.banInfo.isBanned) {
       if (command.isBanned) {
-        shouldSave = this.BanedBeforeAndBanedAfter(user, command.banReason);
+        shouldSave = this.BannedBeforeAndBanedAfter(user, command.banReason);
       } else {
         shouldSave = await this.BannedBeforeAndNotBannedAfter(user);
       }
     } else {
       if (command.isBanned) {
-        shouldSave = await this.NotBanedBeforeAndBanedAfter(
+        shouldSave = await this.NotBannedBeforeAndBanedAfter(
           user,
           command.banReason,
         );
@@ -49,7 +49,7 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     return;
   }
 
-  private async NotBanedBeforeAndBanedAfter(
+  private async NotBannedBeforeAndBanedAfter(
     user: UserDocument,
     banReason: string,
   ): Promise<boolean> {
@@ -58,7 +58,7 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.banDate = new Date();
     return await this.commandRepo.banEntities(user._id, true);
   }
-  private BanedBeforeAndBanedAfter(
+  private BannedBeforeAndBanedAfter(
     user: UserDocument,
     banReason: string,
   ): boolean {

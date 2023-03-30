@@ -5,14 +5,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { useCases } from './useCases';
 import { EmailService } from './email';
+import { appConfig } from '../Infrastructure';
+import { HardJwtAuthStrategy } from '../Base';
+import { RefreshJwtAuthStrategy } from './strategy';
 import { AuthController, DeviceController } from './controllers';
 import { Session, SessionSchema, User, UserSchema } from '../Model';
 import { AuthCommandRepository, AuthQueryRepository } from './repos';
-import {
-  RefreshJwtAuthStrategy,
-  HardJwtAuthStrategy,
-  appConfig,
-} from '../Infrastructure';
 
 @Module({
   imports: [

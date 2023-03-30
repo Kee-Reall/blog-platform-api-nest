@@ -3,8 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { appConfig } from './Infrastructure';
+import { GlobalHTTPFilter } from './Base';
 import { AppModule } from './app.module';
-import { GlobalHTTPFilter, appConfig } from './Infrastructure';
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

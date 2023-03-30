@@ -14,8 +14,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { command, query } from '../useCases';
+import { RefreshJwtAuthGuard } from '../guard';
 import { appConfig } from '../../Infrastructure';
-import { JwtGuard, RefreshJwtAuthGuard, Meta } from '../../Infrastructure';
+
 import {
   CodeInput,
   EmailInput,
@@ -30,6 +31,7 @@ import {
   UserInfoType,
   VoidPromise,
 } from '../../Model';
+import { JwtGuard, Meta } from '../../Base';
 
 @Controller('api/auth')
 export class AuthController {

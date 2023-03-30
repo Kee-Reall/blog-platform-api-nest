@@ -8,8 +8,9 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
+import { Meta } from '../../Base';
 import { command, query } from '../useCases';
-import { RefreshJwtAuthGuard, Meta } from '../../Infrastructure';
+import { RefreshJwtAuthGuard } from '../guard';
 import { SessionDocument, SessionJwtMeta, VoidPromise } from '../../Model';
 
 @Controller('api/security/devices')

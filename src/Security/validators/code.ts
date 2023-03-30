@@ -1,5 +1,5 @@
 import { IsUUID } from 'class-validator';
-import { TrimIfString } from '../../Infrastructure';
+import { TrimIfString } from '../../Base';
 
 export class CodeInput {
   @IsUUID()

@@ -12,9 +12,9 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { JwtGuard, Meta } from '../../Base';
 import { MatchMongoIdPipe } from '../pipes';
 import { BlogInput, PostInput } from '../validators';
-import { JwtGuard, Meta } from '../../Infrastructure';
 import { bloggerCommands, bloggerQueries } from '../useCases';
 import {
   AccessTokenMeta,

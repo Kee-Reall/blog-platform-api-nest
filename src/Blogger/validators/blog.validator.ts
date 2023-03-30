@@ -1,6 +1,6 @@
 import { BlogInputModel } from '../../Model';
 import { IsUrl, Length } from 'class-validator';
-import { TrimIfString } from '../../Infrastructure';
+import { TrimIfString } from '../../Base';
 
 export class BlogInput implements BlogInputModel {
   @TrimIfString()
