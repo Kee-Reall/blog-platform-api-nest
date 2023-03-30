@@ -1,7 +1,7 @@
+import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Injectable } from '@nestjs/common';
-import { Connection, Model } from 'mongoose';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 import { Repository } from '../../Base';
 import {
   Blog,
@@ -27,7 +27,6 @@ export class AdminCommandRepository extends Repository {
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
-    @InjectConnection() private connection: Connection,
   ) {
     super();
   }
@@ -48,42 +47,25 @@ export class AdminCommandRepository extends Repository {
     userId: ObjectId,
     banStatus: boolean,
   ): Promise<boolean> {
-    let isTransactionSuccess = true;
+    let isProcessSuccess = true;
     const updateQuery = { $set: { _isOwnerBanned: banStatus } };
-    const session = await this.connection.startSession();
-    session.startTransaction();
     try {
       const blogBan = this.blogModel.updateMany(
         { '_blogOwnerInfo.userId': userId },
         updateQuery,
-        session,
       );
       const postBan = this.postModel.updateMany(
         { _ownerId: userId },
         updateQuery,
-        session,
       );
-      const commentBan = this.commentModel.updateMany(
-        { userId },
-        updateQuery,
-        session,
-      );
-      const likeBan = this.likeModel.updateMany(
-        { userId },
-        updateQuery,
-        session,
-      );
-      const killSession = this.sessionModel.deleteMany({ userId }, session);
+      const commentBan = this.commentModel.updateMany({ userId }, updateQuery);
+      const likeBan = this.likeModel.updateMany({ userId }, updateQuery);
+      const killSession = this.sessionModel.deleteMany({ userId });
       await Promise.all([blogBan, postBan, commentBan, likeBan, killSession]);
-      await session.commitTransaction();
     } catch (e) {
-      console.error(e.message);
-      console.error(e);
-      await session.abortTransaction();
-      isTransactionSuccess = false;
+      isProcessSuccess = false;
     } finally {
-      await session.endSession();
-      return isTransactionSuccess;
+      return isProcessSuccess;
     }
   }
 }
