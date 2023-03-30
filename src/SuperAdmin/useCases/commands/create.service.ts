@@ -50,7 +50,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUser> {
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    return user;
+    return { ...user.toJSON(), banInfo: user.banInfo };
   }
 
   private generateNotUniqueError(fields: string[]): {
