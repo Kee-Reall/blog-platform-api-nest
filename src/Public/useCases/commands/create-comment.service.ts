@@ -1,14 +1,15 @@
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { ImATeapotException, NotFoundException } from '@nestjs/common';
+import { PublicCommandRepository, PublicQueryRepository } from '../../repos';
 import {
   Comment,
   CommentDocument,
   CommentPresentationModel,
+  LikesInfo,
   WithLike,
 } from '../../../Model';
-import { ImATeapotException, NotFoundException } from '@nestjs/common';
-import { PublicCommandRepository, PublicQueryRepository } from '../../repos';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 
 export class CreateComment {
   constructor(
@@ -47,6 +48,17 @@ export class CreateCommentUseCase implements ICommandHandler<CreateComment> {
     if (!isSaved) {
       throw new ImATeapotException();
     }
-    return await this.queryRepo.getCommentWithLike(comment.id, user.id);
+    return {
+      ...(comment.toJSON() as CommentPresentationModel),
+      likesInfo: this.generateDefaultLikesInfo(),
+    };
+  }
+
+  private generateDefaultLikesInfo(): LikesInfo {
+    return {
+      likesCount: 0,
+      dislikesCount: 0,
+      myStatus: 'None',
+    };
   }
 }
