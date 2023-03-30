@@ -58,7 +58,10 @@ export class AdminCommandRepository extends Repository {
         { _ownerId: userId },
         updateQuery,
       );
-      const commentBan = this.commentModel.updateMany({ userId }, updateQuery);
+      const commentBan = this.commentModel.updateMany(
+        { 'commentatorInfo.userId': userId },
+        updateQuery,
+      );
       const likeBan = this.likeModel.updateMany({ userId }, updateQuery);
       const killSession = this.sessionModel.deleteMany({ userId });
       await Promise.all([blogBan, postBan, commentBan, likeBan, killSession]);
