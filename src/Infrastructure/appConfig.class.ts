@@ -33,6 +33,10 @@ class AppConfig {
     return this.environment.MONGO_URI;
   }
 
+  get mongoUriForTest(): string {
+    return this.environment.TEST_MONGO_URI;
+  }
+
   get mailOptions() {
     return {
       transport: `smtps://${this.environment.MAIL_NAME}:${this.environment.MAIL_PASSWORD}@smtp.${this.environment.MAIL_DOMAIN}`,
