@@ -21,7 +21,6 @@ lerna-debug.log*
 #Enviroment
 .env
 .env.stage
-.env.test
 .vercel/*
 .vercel/README.txt
 .vercel/project.json
