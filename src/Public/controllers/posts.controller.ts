@@ -73,7 +73,7 @@ export class PostsController {
     @Body() dto: LikeInput,
   ) {
     return await this.commandBus.execute(
-      new command.LikePost(postId, meta.userId, dto.likeStatus),
+      new command.LikePost(meta.userId, postId, dto.likeStatus),
     );
   }
 }

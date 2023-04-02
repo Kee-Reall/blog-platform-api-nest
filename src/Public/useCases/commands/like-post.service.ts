@@ -7,8 +7,8 @@ import { Model } from 'mongoose';
 
 export class LikePost {
   constructor(
-    public postId: string,
     public userId: string,
+    public postId: string,
     public likeStatus: LikeStatus,
   ) {}
 }
