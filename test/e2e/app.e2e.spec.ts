@@ -19,6 +19,8 @@ import {
   Session,
   Like,
 } from '../../src/Model';
+import { create5users } from './Helpers/create5users';
+import { response } from 'express';
 
 describe('App (e2e)', () => {
   let app: INestApplication;
@@ -182,7 +184,7 @@ describe('App (e2e)', () => {
           expect(banDate).toBeNull();
           expect(banReason).toBeDefined();
           expect(banReason).toBeNull();
-          created.push(res.body);
+          created.unshift(res.body);
         });
         it.each(sendData)(
           'users Already exists should be 400',
@@ -209,7 +211,7 @@ describe('App (e2e)', () => {
       it('5 users in base', async () => {
         expect(await modelUser.countDocuments({})).toBe(5);
       });
-      it('5users in response', async () => {
+      it('5 users in response', async () => {
         const res = await request(app.getHttpServer())
           .get(mainRout + 'users')
           .set('Authorization', basicHeader);
@@ -217,7 +219,19 @@ describe('App (e2e)', () => {
         expect(res.statusCode).toBe(200);
         expect(res.body.items).toEqual(expect.any(Array));
         expect(res.body.items.length).toBe(5);
-        //expect(JSON.stringify(res.body.items)).toBe(JSON.stringify(created));
+        expect(JSON.stringify(res.body.items)).toBe(JSON.stringify(created));
+      });
+      it('try to login', async () => {
+        const res = await request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send({
+            loginOrEmail: sendData[0].login,
+            password: sendData[0].password,
+          });
+        console.log(res.body);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.accessToken).toBeDefined();
+        expect(res.body.accessToken).toEqual(expect.any(String));
       });
     });
   });
