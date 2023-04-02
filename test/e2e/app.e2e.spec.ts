@@ -4,7 +4,8 @@ import request from 'supertest';
 import { getBasicAuth } from './Helpers/basicAuth-header';
 import * as process from 'process';
 import { appConfig } from '../../src/Infrastructure';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { isObjectIdOrHexString, Model } from 'mongoose';
+import jwt from 'jsonwebtoken';
 import {
   Post,
   Blog,
@@ -221,17 +222,53 @@ describe('App (e2e)', () => {
         expect(res.body.items.length).toBe(5);
         expect(JSON.stringify(res.body.items)).toBe(JSON.stringify(created));
       });
-      it('try to login', async () => {
-        const res = await request(app.getHttpServer())
-          .post('/api/auth/login')
-          .send({
-            loginOrEmail: sendData[0].login,
-            password: sendData[0].password,
-          });
-        console.log(res.body);
-        expect(res.statusCode).toBe(200);
-        expect(res.body.accessToken).toBeDefined();
-        expect(res.body.accessToken).toEqual(expect.any(String));
+      describe('login attempt', () => {
+        let accessTkn: string | undefined = undefined;
+        let cookies: string | string[] | undefined = undefined;
+        it('try to login', async () => {
+          const res = await request(app.getHttpServer())
+            .post('/api/auth/login')
+            .send({
+              loginOrEmail: sendData[0].login,
+              password: sendData[0].password,
+            });
+          expect(res.statusCode).toBe(200);
+          expect(res.body.accessToken).toBeDefined();
+          accessTkn = res.body.accessToken;
+          cookies = res.get('Set-Cookie');
+          expect(cookies).toBeDefined();
+        });
+        it('check tokens', () => {
+          const cookie: string = cookies[0];
+          expect(accessTkn).toEqual(expect.any(String));
+          const decodedTokenAccess: any = jwt.decode(accessTkn);
+          expect(decodedTokenAccess).toBeDefined();
+          expect(decodedTokenAccess).toHaveProperty('userId');
+          expect(decodedTokenAccess.userId).toBeDefined();
+          expect(isObjectIdOrHexString(decodedTokenAccess.userId)).toBe(true);
+          expect(decodedTokenAccess).toHaveProperty('exp');
+          expect(decodedTokenAccess).toHaveProperty('iat');
+          expect(cookie).toContain('refreshToken=');
+          const cookSplt = cookie.split(';');
+          const rfrhTkn = cookSplt[0].split('refreshToken=').join('');
+          expect(rfrhTkn).toEqual(expect.any(String));
+          const decodedTokenRefresh: any = jwt.decode(rfrhTkn);
+          expect(decodedTokenRefresh).toHaveProperty('exp');
+          expect(decodedTokenRefresh).toHaveProperty('iat');
+          expect(decodedTokenRefresh).toHaveProperty('userId');
+          expect(decodedTokenRefresh).toHaveProperty('deviceId');
+          expect(decodedTokenRefresh).toHaveProperty('updateDate');
+          expect(decodedTokenRefresh['userId']).toBeDefined();
+          expect(decodedTokenRefresh['deviceId']).toBeDefined();
+          expect(decodedTokenRefresh['updateDate']).toBeDefined();
+          expect(decodedTokenRefresh['userId']).toEqual(expect.any(String));
+          expect(decodedTokenRefresh['deviceId']).toEqual(expect.any(String));
+          expect(decodedTokenRefresh['updateDate']).toEqual(expect.any(String));
+          expect(isObjectIdOrHexString(decodedTokenRefresh.userId)).toBe(true);
+          expect(isObjectIdOrHexString(decodedTokenRefresh.deviceId)).toBe(
+            true,
+          );
+        });
       });
     });
   });
