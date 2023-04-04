@@ -8,7 +8,7 @@ export type BlogDocument = HydratedDocument<Blog>;
 
 @Schema({ _id: false, versionKey: false })
 export class BlogOwnerInfo implements BlogOwnerInfoModel {
-  @Prop({ required: true, readonly: true })
+  @Prop({ required: true, readonly: true, ref: 'User' })
   userId: ObjectId;
   @Prop({ required: true })
   userLogin: string;

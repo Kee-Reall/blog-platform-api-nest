@@ -37,6 +37,7 @@ export class Post implements PostLogicModel {
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
     trim: true,
+    ref: 'Blog',
   })
   public blogId: ObjectId;
   @Prop({
@@ -46,7 +47,8 @@ export class Post implements PostLogicModel {
   public blogName: string;
 
   @Prop({ default: false }) public _isOwnerBanned: boolean;
-  @Prop({ required: true, readonly: true }) public _ownerId: ObjectId;
+  @Prop({ required: true, readonly: true, ref: 'User' })
+  public _ownerId: ObjectId;
 
   get id(): string {
     return this._id.toHexString();
