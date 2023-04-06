@@ -1,5 +1,6 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -19,6 +20,7 @@ import {
   VoidPromise,
   WithOwnerInfo,
 } from '../../Model';
+import { BanInput } from '../validators';
 
 @Controller('/api/sa/blogs')
 @UseGuards(BasicAuthGuard)
@@ -42,6 +44,17 @@ export class SuperAdminBlogsController {
   ): VoidPromise {
     return await this.commandBus.execute(
       new adminCommand.BindBlog(userId, blogId),
+    );
+  }
+
+  @Put(':blogId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async banBlog(
+    @Param('blogId', MatchMongoIdPipe) blogId: string,
+    @Body() dto: BanInput,
+  ) {
+    return await this.commandBus.execute(
+      new adminCommand.BanBlog(blogId, dto.isBanned),
     );
   }
 }

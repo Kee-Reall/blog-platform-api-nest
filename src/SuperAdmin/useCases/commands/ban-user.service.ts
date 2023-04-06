@@ -56,7 +56,7 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.isBanned = true;
     user.banInfo.banReason = banReason;
     user.banInfo.banDate = new Date();
-    return await this.commandRepo.banEntities(user._id, true);
+    return await this.commandRepo.banUserEntities(user._id, true);
   }
   private BannedBeforeAndBanedAfter(
     user: UserDocument,
@@ -74,6 +74,6 @@ export class BanUserUseCase implements ICommandHandler<BanUser> {
     user.banInfo.isBanned = false;
     user.banInfo.banReason = null;
     user.banInfo.banDate = null;
-    return await this.commandRepo.banEntities(user._id, false);
+    return await this.commandRepo.banUserEntities(user._id, false);
   }
 }
