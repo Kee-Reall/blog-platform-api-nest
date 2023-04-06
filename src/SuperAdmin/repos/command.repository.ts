@@ -72,14 +72,17 @@ export class AdminCommandRepository extends Repository {
     }
   }
 
-  public async banBlogEntities(blog: BlogDocument): Promise<boolean> {
+  public async banBlogEntities(
+    blog: BlogDocument,
+    status: boolean,
+  ): Promise<boolean> {
     try {
-      blog._isBlogBanned = true;
+      blog._isBlogBanned = status;
       await Promise.all([
         this.saveBlog(blog),
         this.postModel.updateMany(
           { blogId: blog._id },
-          { $set: { _isBlogBanned: true } },
+          { $set: { _isBlogBanned: status } },
         ),
       ]);
       return true;

@@ -7,7 +7,7 @@ export class BanBlog implements Pick<BanBlog, 'isBanned'> {
   constructor(public blogId: string, public isBanned: boolean) {}
 }
 
-@CommandHandler(CommandHandler)
+@CommandHandler(BanBlog)
 export class BanBlogUseCase implements ICommandHandler<BanBlog> {
   constructor(
     private queryRepo: AdminQueryRepository,
@@ -18,18 +18,23 @@ export class BanBlogUseCase implements ICommandHandler<BanBlog> {
     if (!blog) {
       throw new NotFoundException();
     }
-    const isStatusDifferent = blog._isBlogBanned !== command.isBanned;
-    if (isStatusDifferent) {
+    const isSameStatus = blog._isBlogBanned === command.isBanned;
+    if (isSameStatus) {
+      console.log(blog._isBlogBanned, command.isBanned);
+      console.log('abort');
       return; // nothing to change, just exit
     }
-    const isBanned = await this.setBanStatus(blog);
+    const isBanned = await this.setBanStatus(blog, command.isBanned);
     if (!isBanned) {
       throw new ImATeapotException();
     }
     return;
   }
 
-  private async setBanStatus(blog: BlogDocument): Promise<boolean> {
-    return this.commandRepo.banBlogEntities(blog);
+  private async setBanStatus(
+    blog: BlogDocument,
+    status: boolean,
+  ): Promise<boolean> {
+    return this.commandRepo.banBlogEntities(blog, status);
   }
 }
