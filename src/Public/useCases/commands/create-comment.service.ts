@@ -4,10 +4,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ImATeapotException, NotFoundException } from '@nestjs/common';
 import { PublicCommandRepository, PublicQueryRepository } from '../../repos';
 import {
+  BlogDocument,
   Comment,
   CommentDocument,
   CommentPresentationModel,
   LikesInfo,
+  Populated,
+  PostDocument,
   WithLike,
 } from '../../../Model';
 
@@ -37,6 +40,15 @@ export class CreateCommentUseCase implements ICommandHandler<CreateComment> {
       throw new NotFoundException();
     }
     if (post._isBlogBanned) {
+      throw new NotFoundException();
+    }
+    const populatedPost = (await post.populate('blogId')) as Populated<
+      PostDocument,
+      BlogDocument,
+      'blogId'
+    >;
+    if (populatedPost.blogId._banList.includes(user.id)) {
+      //todo should keep hexstring or objectId?
       throw new NotFoundException();
     }
     const comment = new this.commentModel({
