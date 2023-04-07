@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PublicQueryRepository } from '../repos';
-import { PopulatedPostDocument } from '../../Model';
+import { CommentDocument, Populated, PostDocument } from '../../Model';
 
 @Injectable()
 export class IsBlogBanByCommentGuard implements CanActivate {
@@ -22,7 +22,11 @@ export class IsBlogBanByCommentGuard implements CanActivate {
     if (!comment) {
       throw new NotFoundException();
     }
-    const post = (await comment.populate('postId')) as PopulatedPostDocument;
-    return post.postId._isBlogBanned;
+    const populatedComment = (await comment.populate('postId')) as Populated<
+      CommentDocument,
+      PostDocument,
+      'postId'
+    >;
+    return populatedComment.postId._isBlogBanned;
   }
 }

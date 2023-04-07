@@ -3,12 +3,8 @@ import { HydratedDocument, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { MessageENUM, deleteHidden } from '../../Helpers/';
 import { PostLogicModel, NullablePromise } from '../Type';
-import { BlogDocument } from './blog.schema';
 
 export type PostDocument = HydratedDocument<Post>;
-export type PopulatedPostDocument = Omit<PostDocument, 'postId'> & {
-  postId: BlogDocument;
-};
 
 @Schema({
   toJSON: {
