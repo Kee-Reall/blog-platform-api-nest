@@ -11,4 +11,17 @@ export type NullableKey<T> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type ModelWithStatic<Doc, Static = {}> = Model<Doc> & Static;
+export type ModelWithStatic<
+  Doc,
+  Static = {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    [p in any]: Function;
+  },
+> = Model<Doc> & Static;
+
+export type Populated<mainDoc, populatedDoc, key extends keyof mainDoc> = Omit<
+  mainDoc,
+  key
+> & {
+  [param in key]: populatedDoc;
+};
