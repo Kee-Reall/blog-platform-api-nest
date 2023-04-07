@@ -6,7 +6,7 @@ export class PublicPostsPaginationPipe
   extends PaginationConfig
   implements IPaginationConfig
 {
-  filter: FilterQuery<Post> = { _isOwnerBanned: false };
+  filter: FilterQuery<Post> = { _isOwnerBanned: false, _isBlogBanned: false };
   constructor(filter: PostFilter) {
     super(filter);
   }

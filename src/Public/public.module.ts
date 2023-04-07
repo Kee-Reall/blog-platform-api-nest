@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { useCases } from './useCases';
+import { IsBlogBanByCommentGuard } from './guards';
 import { PublicCommandRepository, PublicQueryRepository } from './repos';
 import {
   BlogsController,
@@ -41,6 +42,7 @@ import { HardJwtAuthStrategy, SoftJwtGuard } from '../Base';
     HardJwtAuthStrategy,
     PublicQueryRepository,
     PublicCommandRepository,
+    IsBlogBanByCommentGuard,
     ...useCases,
   ],
 })

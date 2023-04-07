@@ -36,6 +36,9 @@ export class CreateCommentUseCase implements ICommandHandler<CreateComment> {
     if (!post || !user) {
       throw new NotFoundException();
     }
+    if (post._isBlogBanned) {
+      throw new NotFoundException();
+    }
     const comment = new this.commentModel({
       postId: post._id,
       content: command.content,

@@ -12,6 +12,7 @@ export class PublicBlogsPipe
     this.filter = this.filter = {
       name: new RegExp(filter.searchNameTerm || '[*]*', 'gi'),
       _isOwnerBanned: false,
+      _isBlogBanned: false,
     };
   }
 }

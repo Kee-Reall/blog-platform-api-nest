@@ -10,6 +10,7 @@ export class BlogsForOwnerPaginationConfig extends PaginationConfig {
     this.filter = {
       name: new RegExp(query.searchNameTerm || '[*]*', 'gi'),
       '_blogOwnerInfo.userId': Transformer.stringToObjectId(userId),
+      _isBlogBanned: false,
     };
   }
 }

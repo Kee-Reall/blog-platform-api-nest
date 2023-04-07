@@ -194,7 +194,7 @@ export class PublicQueryRepository extends Repository {
     config: IPaginationConfig,
   ) {
     const post = await this.getPostEntity(postId);
-    if (!post || post._isOwnerBanned) {
+    if (!post || post._isOwnerBanned || post._isBlogBanned) {
       throw new NotFoundException();
     }
     const [itemsWithoutLike, totalCount] = await this.paginate<CommentDocument>(
@@ -222,7 +222,7 @@ export class PublicQueryRepository extends Repository {
   }
 
   public async getCommentEntity(
-    commentId: string,
+    commentId: string | ObjectId,
   ): NullablePromise<CommentDocument> {
     return await this.findById(this.commentModel, commentId);
   }

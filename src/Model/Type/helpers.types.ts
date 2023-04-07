@@ -10,4 +10,5 @@ export type NullableKey<T> = {
   [K in keyof T]: T[K] | null;
 };
 
-export type ModelWithStatic<Doc, Static> = Model<Doc> & Static;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ModelWithStatic<Doc, Static = {}> = Model<Doc> & Static;

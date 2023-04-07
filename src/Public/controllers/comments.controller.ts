@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { command, query } from '../useCases';
+import { IsBlogBanByCommentGuard } from '../guards';
 import { CommentInput, LikeInput } from '../validators';
 import { JwtGuard, Meta, SoftJwtGuard } from '../../Base';
 import {
@@ -22,6 +23,7 @@ import {
 } from '../../Model';
 
 @Controller('api/comments/:id')
+@UseGuards(IsBlogBanByCommentGuard)
 export class CommentsController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()
