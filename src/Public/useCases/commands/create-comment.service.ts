@@ -48,7 +48,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateComment> {
       'blogId'
     >;
     if (populatedPost.blogId._banList.includes(user.id)) {
-      //todo should keep hexstring or objectId?
+      //todo should keep hexstring or objectId? write unit test to check it
       throw new NotFoundException();
     }
     const comment = new this.commentModel({
