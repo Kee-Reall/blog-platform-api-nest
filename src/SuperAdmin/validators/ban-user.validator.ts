@@ -1,7 +1,7 @@
 import { BanUserInputModel } from '../../Model';
 import { Length } from 'class-validator';
 import { TrimIfString } from '../../Base';
-import { BanInput } from './ban.validator';
+import { BanInput } from '../../Base/validators/ban.validator';
 
 export class BanUserInput extends BanInput implements BanUserInputModel {
   @Length(20, 200)
