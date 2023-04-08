@@ -28,7 +28,7 @@ import {
 
 @Controller('api/blogger/blogs')
 @UseGuards(JwtGuard)
-export class BloggerController {
+export class BloggerBlogsController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()
   public async getBlogsForOwner(

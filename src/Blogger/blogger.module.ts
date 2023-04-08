@@ -3,7 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HardJwtAuthStrategy } from '../Base';
 import { useCasesHandlers } from './useCases';
-import { BloggerController } from './controller';
+import { BloggerBlogsController, BloggerUsersController } from './controller';
 import { IsBlogExistConstraint } from './decorators';
 import { BloggerCommandRepository, BloggerQueryRepository } from './repos';
 import { Blog, BlogSchema, Post, PostSchema, User, UserSchema } from '../Model';
@@ -17,7 +17,7 @@ import { Blog, BlogSchema, Post, PostSchema, User, UserSchema } from '../Model';
       { name: Post.name, schema: PostSchema },
     ]),
   ],
-  controllers: [BloggerController],
+  controllers: [BloggerBlogsController, BloggerUsersController],
   providers: [
     BloggerCommandRepository,
     BloggerQueryRepository,
