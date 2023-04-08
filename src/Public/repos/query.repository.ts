@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationConfig, Repository } from '../../Base';
 import {
+  Ban,
+  BanDocument,
   Blog,
   BlogDocument,
   BlogPresentationModel,
@@ -42,6 +44,7 @@ export class PublicQueryRepository extends Repository {
     @InjectModel(Like.name)
     private likeModel: Model<LikeDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Ban.name) private banModel: Model<BanDocument>,
   ) {
     super();
   }
@@ -225,5 +228,15 @@ export class PublicQueryRepository extends Repository {
     commentId: string | ObjectId,
   ): NullablePromise<CommentDocument> {
     return await this.findById(this.commentModel, commentId);
+  }
+
+  public async getBanEntity(
+    blogId: ObjectId,
+    userId: ObjectId,
+  ): NullablePromise<BanDocument> {
+    return await this.findOneWithFilter(this.banModel, {
+      blogId,
+      bannedUserId: userId,
+    });
   }
 }

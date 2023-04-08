@@ -4,6 +4,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { useCases } from './useCases';
 import { IsBlogBanByCommentGuard } from './guards';
+import { HardJwtAuthStrategy, SoftJwtGuard } from '../Base';
 import { PublicCommandRepository, PublicQueryRepository } from './repos';
 import {
   BlogsController,
@@ -11,6 +12,8 @@ import {
   PostsController,
 } from './controllers';
 import {
+  Ban,
+  BanSchema,
   Blog,
   BlogSchema,
   Comment,
@@ -22,13 +25,13 @@ import {
   User,
   UserSchema,
 } from '../Model';
-import { HardJwtAuthStrategy, SoftJwtGuard } from '../Base';
 
 @Module({
   imports: [
     CqrsModule,
     JwtModule.register({}),
     MongooseModule.forFeature([
+      { name: Ban.name, schema: BanSchema },
       { name: Post.name, schema: PostSchema },
       { name: Blog.name, schema: BlogSchema },
       { name: Like.name, schema: LikeSchema },
