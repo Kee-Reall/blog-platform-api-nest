@@ -1,8 +1,11 @@
 import { Model } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Repository } from '../../Base';
 import {
+  Ban,
+  BanDocument,
   Blog,
   BlogDocument,
   BlogPresentationModel,
@@ -21,6 +24,7 @@ export class BloggerQueryRepository extends Repository {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Ban.name) private banModel: Model<BanDocument>,
   ) {
     super();
   }
@@ -52,5 +56,21 @@ export class BloggerQueryRepository extends Repository {
 
   public async getPostEntity(postId: string): NullablePromise<PostDocument> {
     return await this.findById(this.postModel, postId);
+  }
+
+  public async getBanEntity(
+    ownerId: string,
+    userId: string,
+    blogId: string,
+  ): NullablePromise<BanDocument> {
+    try {
+      return await this.findOneWithFilter(this.banModel, {
+        ownerId: new ObjectId(ownerId),
+        bannedUserId: new ObjectId(userId),
+        blogId: new ObjectId(blogId),
+      });
+    } catch (e) {
+      return null;
+    }
   }
 }

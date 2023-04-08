@@ -172,7 +172,7 @@ export abstract class Repository {
 
   protected async findOneWithFilter<Doc>(
     model: Model<Doc>,
-    filter: FilterQuery<unknown>,
+    filter: FilterQuery<Doc>,
   ): NullablePromise<Doc> {
     try {
       return await model.findOne(filter);

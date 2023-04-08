@@ -1,3 +1,4 @@
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   Body,
   Controller,
@@ -9,11 +10,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtGuard } from '../../Base';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { MatchMongoIdPipe } from '../pipes';
+import { JwtGuard, Meta } from '../../Base';
+import { bloggerCommands } from '../useCases';
 import { BunUserForBlogInput } from '../validators';
-import { VoidPromise } from '../../Model';
+import { AccessTokenMeta, VoidPromise } from '../../Model';
 
 type typeUserFilterLater = any;
 
@@ -27,6 +28,7 @@ export class BloggerUsersController {
   public async getBannedUsers(
     @Param('id', MatchMongoIdPipe) blogId: string,
     @Query() filter: typeUserFilterLater,
+    @Meta() meta: AccessTokenMeta,
   ) {
     return;
   }
@@ -36,7 +38,10 @@ export class BloggerUsersController {
   public async banUserForBlog(
     @Param('id', MatchMongoIdPipe) userId: string,
     @Body() dto: BunUserForBlogInput,
+    @Meta() meta: AccessTokenMeta,
   ): VoidPromise {
-    return;
+    return this.commandBus.execute(
+      new bloggerCommands.BanUserForBlog(meta.userId, userId, dto),
+    );
   }
 }

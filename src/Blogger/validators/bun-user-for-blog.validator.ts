@@ -1,8 +1,11 @@
-import { BanInput } from '../../Base/validators/ban.validator';
 import { Length } from 'class-validator';
-import { IsMatchMongoId, TrimIfString } from '../../Base';
+import { BanInput, IsMatchMongoId, TrimIfString } from '../../Base';
+import { BanUserForBlogInputModel } from '../../Model';
 
-export class BunUserForBlogInput extends BanInput {
+export class BunUserForBlogInput
+  extends BanInput
+  implements BanUserForBlogInputModel
+{
   @TrimIfString()
   @Length(20, 300)
   banReason: string;

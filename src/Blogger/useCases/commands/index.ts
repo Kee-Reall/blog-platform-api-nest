@@ -4,8 +4,13 @@ import { UpdateBlog, UpdateBlogUseCase } from './update-blog.service';
 import { UpdatePost, UpdatePostUseCase } from './update-post.service';
 import { DeleteBlog, DeleteBlogUseCase } from './delete-blog.service';
 import { DeletePost, DeletePostUseCase } from './delete-post.service';
+import {
+  BanUserForBlog,
+  BloggerBanUserUseCase,
+} from './ban-user-for-blog.service';
 
 export const bloggerCommands = {
+  BanUserForBlog,
   CreateBlog,
   CreatePost,
   UpdateBlog,
@@ -15,6 +20,7 @@ export const bloggerCommands = {
 };
 
 export const bloggerCommandsHandlers = [
+  BloggerBanUserUseCase,
   CreateBlogUseCase,
   CreatePostUseCase,
   UpdateBlogUseCase,
