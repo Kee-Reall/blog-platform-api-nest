@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserForBloggerPresentation } from '../Type';
 
 export type BanDocument = HydratedDocument<Ban>;
@@ -19,11 +19,11 @@ export class Ban {
 
   public toPresentationModel(): UserForBloggerPresentation {
     return {
-      id: this.bannedUserId.toHexString(),
+      id: this.bannedUserId,
       login: this.bannedUserLogin,
       banInfo: {
         isBanned: this.isBanned,
-        banDate: this.banDate.toISOString(),
+        banDate: this.banDate,
         banReason: this.banReason,
       },
     };

@@ -84,7 +84,7 @@ export interface BanUserForBlogInputModel extends BanUserInputModel {
 export type WithBanInfo<T = any> = T & { banInfo: BanInfoModel };
 
 export type UserForBloggerPresentation = {
-  id: string;
+  id: string | ObjectId;
   login: string;
   banInfo: {
     isBanned: boolean;
