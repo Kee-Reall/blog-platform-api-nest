@@ -1,13 +1,13 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import {
   BlogFilter,
   IPaginationConfig,
   PaginatedOutput,
   UserForBloggerPresentation,
 } from '../../../Model';
-import { UsersForBloggerPaginationPipe } from '../../pipes/users-for-blogger.pagination.pipe';
 import { BloggerQueryRepository } from '../../repos';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { UsersForBloggerPaginationPipe } from '../../pipes';
 
 export class GetBannedUsers {
   public config: IPaginationConfig;
