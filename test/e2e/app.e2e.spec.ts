@@ -19,6 +19,8 @@ import {
   Comment,
   Session,
   Like,
+  BanSchema,
+  Ban,
 } from '../../src/Model';
 import { create5users } from './Helpers/create5users';
 import { response } from 'express';
@@ -33,6 +35,7 @@ describe('App (e2e)', () => {
   const modelComment = db.model(Comment.name, CommentSchema);
   const modelSession = db.model(Session.name, SessionSchema);
   const modelLike = db.model(Like.name, LikeSchema);
+  const modelBan = db.model(Ban.name, BanSchema);
   const allModels: Array<Model<any>> = [
     modelPost,
     modelSession,
@@ -40,6 +43,7 @@ describe('App (e2e)', () => {
     modelComment,
     modelLike,
     modelUser,
+    modelBan,
   ];
 
   beforeAll(async () => {
