@@ -47,6 +47,9 @@ export class BloggerBanUserUseCase implements ICommandHandler<BanUserForBlog> {
       command.userId,
       command.blogId,
     );
+    if (!ban && !command.isBanned) {
+      return;
+    }
     return ban ? this.updateBan(command, ban) : this.createBan(command);
   }
   private async updateBan(

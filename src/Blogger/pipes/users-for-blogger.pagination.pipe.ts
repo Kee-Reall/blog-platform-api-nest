@@ -12,7 +12,7 @@ export class UsersForBloggerPaginationPipe extends PaginationConfig {
       bannedUserLogin: new RegExp(filters.searchLoginTerm || '[*]*', 'ig'),
       ownerId: new ObjectId(ownerId),
       blogId: new ObjectId(blogId),
-      isBanned: true,
+      //isBanned: true,
     };
     if (this.sortBy === 'login') {
       this.sortBy = 'bannedUserLogin';
