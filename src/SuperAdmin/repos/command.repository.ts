@@ -78,11 +78,7 @@ export class AdminCommandRepository extends Repository {
   ): Promise<boolean> {
     try {
       blog._isBlogBanned = status;
-      if (blog._isBlogBanned) {
-        blog._banDate = null;
-      } else {
-        blog._banDate = blog._banDate ? blog._banDate : new Date();
-      }
+      blog._banDate = status ? new Date() : null;
       await Promise.all([
         this.saveBlog(blog),
         this.postModel.updateMany(
