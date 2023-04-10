@@ -2,10 +2,12 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import {
+  BadRequestException,
   ForbiddenException,
   ImATeapotException,
   NotFoundException,
 } from '@nestjs/common';
+import { MessageENUM } from '../../../Helpers';
 import { BloggerCommandRepository, BloggerQueryRepository } from '../../repos';
 import {
   Ban,
@@ -51,7 +53,7 @@ export class BloggerBanUserUseCase implements ICommandHandler<BanUserForBlog> {
     command: BanUserForBlog,
     ban: BanDocument,
   ): VoidPromise {
-    if (command.isBanned === ban.isBanned) {
+    if (command.isBanned && ban.isBanned) {
       if (command.banReason === ban.banReason) {
         return;
       }
@@ -64,23 +66,32 @@ export class BloggerBanUserUseCase implements ICommandHandler<BanUserForBlog> {
         return;
       }
     }
+    if (!ban.isBanned && command.isBanned) {
+      await this.commandRepo.deleteBan(ban._id);
+      return;
+    }
     // you never should get here
-    throw new ImATeapotException();
+    console.error('uncaught case');
+    return;
   }
 
   private async createBan(command: BanUserForBlog): VoidPromise {
-    const entities: [UserDocument, UserDocument, BlogDocument] =
+    const [owner, user, blog]: [UserDocument, UserDocument, BlogDocument] =
       await Promise.all([
         this.queryRepo.getUserEntity(command.ownerId),
         this.queryRepo.getUserEntity(command.userId),
         this.queryRepo.getBlogEntity(command.blogId),
       ]);
-    for (const doc of entities) {
-      if (!doc) {
-        throw new NotFoundException();
-      }
+    if (!owner) {
+      throw new ForbiddenException();
     }
-    const [owner, user, blog] = entities;
+    if (!user) {
+      throw new NotFoundException();
+    }
+    if (!blog) {
+      throw new BadRequestException(this.generateNotAllowMessage());
+    }
+
     if (blog._blogOwnerInfo.userId.toHexString() !== owner.id) {
       throw new ForbiddenException();
     }
@@ -100,5 +111,11 @@ export class BloggerBanUserUseCase implements ICommandHandler<BanUserForBlog> {
       throw new ImATeapotException();
     }
     return;
+  }
+
+  private generateNotAllowMessage() {
+    return {
+      errorsMessages: [{ message: MessageENUM.NOT_EXIST, field: 'blogId' }],
+    };
   }
 }

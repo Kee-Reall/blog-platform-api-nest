@@ -166,6 +166,7 @@ export abstract class Repository {
     try {
       return await model.find(filter);
     } catch (e) {
+      console.log(e.message);
       return null;
     }
   }

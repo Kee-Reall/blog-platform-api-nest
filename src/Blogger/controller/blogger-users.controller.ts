@@ -12,11 +12,15 @@ import {
 } from '@nestjs/common';
 import { MatchMongoIdPipe } from '../pipes';
 import { JwtGuard, Meta } from '../../Base';
-import { bloggerCommands } from '../useCases';
+import { bloggerCommands, bloggerQueries } from '../useCases';
 import { BunUserForBlogInput } from '../validators';
-import { AccessTokenMeta, VoidPromise } from '../../Model';
-
-type typeUserFilterLater = any;
+import {
+  AccessTokenMeta,
+  PaginatedOutput,
+  UserForBloggerPresentation,
+  UsersForBloggerFilter,
+  VoidPromise,
+} from '../../Model';
 
 @Controller('api/blogger/users')
 @UseGuards(JwtGuard)
@@ -27,10 +31,12 @@ export class BloggerUsersController {
   @HttpCode(HttpStatus.OK)
   public async getBannedUsers(
     @Param('id', MatchMongoIdPipe) blogId: string,
-    @Query() filter: typeUserFilterLater,
-    @Meta() meta: AccessTokenMeta,
-  ) {
-    return;
+    @Meta('userId', MatchMongoIdPipe) userId: string,
+    @Query() filter: UsersForBloggerFilter,
+  ): Promise<PaginatedOutput<UserForBloggerPresentation>> {
+    return this.queryBus.execute(
+      new bloggerQueries.GetBannedUsers(userId, blogId, filter),
+    );
   }
 
   @Put(':id/ban')

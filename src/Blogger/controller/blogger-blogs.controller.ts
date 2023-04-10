@@ -20,6 +20,7 @@ import {
   AccessTokenMeta,
   BlogFilter,
   BlogPresentationModel,
+  CommentsFilter,
   PaginatedOutput,
   PostPresentationModel,
   VoidPromise,
@@ -40,8 +41,17 @@ export class BloggerBlogsController {
     );
   }
 
+  @Get('comments')
+  public async getCommentsForBlogger(
+    @Meta() meta: AccessTokenMeta,
+    @Query() filters: CommentsFilter,
+  ) {
+    return await this.queryBus.execute(
+      new bloggerQueries.GetCommentsForBlogger(meta.userId, filters),
+    );
+  }
   @Post()
-  public async CreateBlog(
+  public async createBlog(
     @Meta() user: AccessTokenMeta,
     @Body() dto: BlogInput,
   ): Promise<BlogPresentationModel> {
@@ -51,7 +61,7 @@ export class BloggerBlogsController {
   }
 
   @Post(':id/posts')
-  public async CreatePost(
+  public async createPost(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: PostInput,
@@ -63,7 +73,7 @@ export class BloggerBlogsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async UpdateBlog(
+  public async updateBlog(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: BlogInput,
@@ -75,7 +85,7 @@ export class BloggerBlogsController {
 
   @Put(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async UpdatePost(
+  public async updatePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
     @Meta() tknMeta: AccessTokenMeta,
@@ -88,7 +98,7 @@ export class BloggerBlogsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async DeleteBlog(
+  public async deleteBlog(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
   ): VoidPromise {
@@ -99,7 +109,7 @@ export class BloggerBlogsController {
 
   @Delete(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async DeletePost(
+  public async deletePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
     @Meta() tknMeta: AccessTokenMeta,

@@ -11,6 +11,8 @@ import {
   BanSchema,
   Blog,
   BlogSchema,
+  Comment,
+  CommentSchema,
   Post,
   PostSchema,
   User,
@@ -21,10 +23,11 @@ import {
   imports: [
     CqrsModule,
     MongooseModule.forFeature([
+      { name: Ban.name, schema: BanSchema },
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
-      { name: Ban.name, schema: BanSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
   ],
   controllers: [BloggerBlogsController, BloggerUsersController],

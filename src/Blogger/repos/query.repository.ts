@@ -9,13 +9,17 @@ import {
   Blog,
   BlogDocument,
   BlogPresentationModel,
+  Comment,
+  CommentDocument,
   IPaginationConfig,
   NullablePromise,
   PaginatedOutput,
+  Populated,
   Post,
   PostDocument,
   User,
   UserDocument,
+  UserForBloggerPresentation,
 } from '../../Model';
 
 @Injectable()
@@ -25,6 +29,7 @@ export class BloggerQueryRepository extends Repository {
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Ban.name) private banModel: Model<BanDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {
     super();
   }
@@ -33,13 +38,8 @@ export class BloggerQueryRepository extends Repository {
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     const [itemsDoc, totalCount] = await this.paginate(this.blogModel, config);
     const items = itemsDoc as unknown as BlogPresentationModel[];
-    return {
-      pagesCount: Math.ceil(totalCount / config.limit),
-      page: config.pageNumber,
-      pageSize: config.limit,
-      totalCount,
-      items,
-    };
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ limit, pageNumber, totalCount }, items);
   }
 
   public async isBlogExist(blogId: string): Promise<boolean> {
@@ -72,5 +72,40 @@ export class BloggerQueryRepository extends Repository {
     } catch (e) {
       return null;
     }
+  }
+
+  public async getBannedUsersWithPaginationConfigForOwner(
+    config: IPaginationConfig,
+  ): Promise<PaginatedOutput<UserForBloggerPresentation>> {
+    const [itemsDoc, totalCount] = await this.paginate(this.banModel, config);
+    const items = itemsDoc.map((user) => user.toPresentationModel());
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ totalCount, limit, pageNumber }, items);
+  }
+
+  public async getAllPostsByOwner(userId: string) {
+    return await this.findManyWithFilter(this.postModel, {
+      _ownerId: new ObjectId(userId),
+    });
+  }
+
+  public async getCommentsForPost(config: IPaginationConfig) {
+    const [itemsDoc, totalCount] = await this.paginate(
+      this.commentModel,
+      config,
+    );
+    const items = await Promise.all(
+      itemsDoc.map(async (comment) => {
+        const populatedComment = (await comment.populate(
+          'postId',
+        )) as Populated<CommentDocument, PostDocument, 'postId'>;
+        return {
+          ...populatedComment.toJSON(),
+          postInfo: populatedComment.postId.toPopulatedView(),
+        };
+      }),
+    );
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ totalCount, limit, pageNumber }, items);
   }
 }

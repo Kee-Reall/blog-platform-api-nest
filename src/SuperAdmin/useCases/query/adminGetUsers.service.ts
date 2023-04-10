@@ -4,13 +4,13 @@ import { UsersPaginationConfig, DefaultUsersQuery } from '../../pipes';
 import {
   PaginatedOutput,
   UserPresentationModel,
-  UsersFilter,
+  UsersForAdminFilter,
   WithBanInfo,
 } from '../../../Model';
 
 export class GetPaginatedUsers {
   config: UsersPaginationConfig;
-  constructor(input?: UsersFilter) {
+  constructor(input?: UsersForAdminFilter) {
     if (!input) {
       this.config = new UsersPaginationConfig(new DefaultUsersQuery());
     } else {

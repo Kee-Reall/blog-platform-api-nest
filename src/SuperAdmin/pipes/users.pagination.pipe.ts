@@ -4,12 +4,12 @@ import {
   BanQuery,
   Direction,
   UserPresentationModel,
-  UsersFilter,
+  UsersForAdminFilter,
 } from '../../Model';
 
 export class UsersPaginationConfig extends PaginationConfig {
   filter: FilterQuery<UserPresentationModel>;
-  constructor(query: UsersFilter) {
+  constructor(query: UsersForAdminFilter) {
     super(query);
     const banStatus =
       query.banStatus === 'banned'
@@ -31,7 +31,7 @@ export class UsersPaginationConfig extends PaginationConfig {
   }
 }
 
-export class DefaultUsersQuery implements Required<UsersFilter> {
+export class DefaultUsersQuery implements Required<UsersForAdminFilter> {
   public pageNumber = 1;
   public pageSize = 10;
   public searchEmailTerm = '[*]*';

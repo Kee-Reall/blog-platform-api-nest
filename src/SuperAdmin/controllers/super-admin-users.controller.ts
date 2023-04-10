@@ -16,7 +16,7 @@ import {
 import { BanUserInput, UserInput } from '../validators';
 import { adminCommand, adminQuery } from '../useCases';
 import { ParseObjectIdPipe } from '../../Base';
-import { UsersFilter } from '../../Model';
+import { UsersForAdminFilter } from '../../Model';
 import { BasicAuthGuard } from '../guard';
 
 @Controller('api/sa/users')
@@ -25,7 +25,7 @@ export class SuperAdminUsersController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Get()
-  public async getUsersForAdmin(@Query() fltr: UsersFilter) {
+  public async getUsersForAdmin(@Query() fltr: UsersForAdminFilter) {
     return await this.queryBus.execute(new adminQuery.GetPaginatedUsers(fltr));
   }
 

@@ -55,6 +55,15 @@ export class Post implements PostLogicModel {
     return this._id.toHexString();
   }
 
+  public toPopulatedView() {
+    return {
+      id: this._id.toHexString(),
+      title: this.title,
+      blogId: this.blogId.toHexString(),
+      blogName: this.blogName,
+    };
+  }
+
   static async NullableFindById(
     id: string | ObjectId,
   ): NullablePromise<PostDocument> {
@@ -82,6 +91,10 @@ export const PostSchema = SchemaFactory.createForClass(Post);
 PostSchema.statics = {
   NullableFindById: Post.NullableFindById,
   isPostExist: Post.NullableFindById,
+};
+
+PostSchema.methods = {
+  toPopulatedView: Post.prototype.toPopulatedView,
 };
 
 export interface PostStaticMethods {

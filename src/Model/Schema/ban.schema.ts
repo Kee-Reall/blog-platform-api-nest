@@ -9,13 +9,16 @@ export type BanDocument = HydratedDocument<Ban>;
 
 @Schema()
 export class Ban {
-  @Prop({ required: true, readonly: true, ref: 'User' }) ownerId: ObjectId;
-  @Prop({ required: true, readonly: true, ref: 'User' }) bannedUserId: ObjectId;
-  @Prop({ required: true, readonly: true }) bannedUserLogin: 'string';
-  @Prop({ required: true, readonly: true, ref: 'Blog' }) blogId: ObjectId;
-  @Prop({ default: true }) isBanned: boolean;
-  @Prop({ required: true }) banReason: string;
-  @Prop({ default: () => new Date() }) banDate: Date;
+  @Prop({ required: true, readonly: true, ref: 'User' })
+  public ownerId: ObjectId;
+  @Prop({ required: true, readonly: true, ref: 'User' })
+  public bannedUserId: ObjectId;
+  @Prop({ required: true, readonly: true }) public bannedUserLogin: 'string';
+  @Prop({ required: true, readonly: true, ref: 'Blog' })
+  public blogId: ObjectId;
+  @Prop({ default: true }) public isBanned: boolean;
+  @Prop({ required: true }) public banReason: string;
+  @Prop({ default: () => new Date() }) public banDate: Date;
 
   public toPresentationModel(): UserForBloggerPresentation {
     return {
@@ -33,5 +36,5 @@ export class Ban {
 export const BanSchema = SchemaFactory.createForClass(Ban);
 
 BanSchema.methods = {
-  toPresentationModel: Ban.prototype.toPresentationModel(),
+  toPresentationModel: Ban.prototype.toPresentationModel,
 };

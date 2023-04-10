@@ -2,6 +2,7 @@ import { BlogPresentationModel } from './blogs.types';
 import { PostPresentationModel } from './posts.types';
 import { UserPresentationModel } from './users.types';
 import { CommentsLogicModel } from './comments.types';
+import { Ban } from '../Schema';
 
 export type Direction = 'asc' | 'desc';
 
@@ -18,10 +19,15 @@ export interface BlogFilter extends AbstractFilter<BlogPresentationModel> {
 
 export type PostFilter = AbstractFilter<PostPresentationModel>;
 
-export interface UsersFilter extends AbstractFilter<UserPresentationModel> {
+export interface UsersForAdminFilter
+  extends AbstractFilter<UserPresentationModel> {
   searchLoginTerm?: string;
   searchEmailTerm?: string;
   banStatus?: string;
+}
+
+export interface UsersForBloggerFilter extends AbstractFilter<Ban> {
+  searchLoginTerm?: string;
 }
 
 export type CommentsFilter = AbstractFilter<CommentsLogicModel>;
