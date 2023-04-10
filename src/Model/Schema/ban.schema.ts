@@ -19,7 +19,7 @@ export class Ban {
   @Prop({ default: true }) public isBanned: boolean;
   @Prop({ required: true }) public banReason: string;
   @Prop({ default: () => new Date() }) public banDate: Date;
-
+  @Prop({ required: true }) public createdAt: Date; //user CreatedAt
   public toPresentationModel(): UserForBloggerPresentation {
     return {
       id: this.bannedUserId,

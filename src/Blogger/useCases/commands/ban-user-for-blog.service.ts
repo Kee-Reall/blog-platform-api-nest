@@ -105,6 +105,7 @@ export class BloggerBanUserUseCase implements ICommandHandler<BanUserForBlog> {
       blogId: blog._id,
       isBanned: command.isBanned,
       banReason: command.banReason,
+      createdAt: user.createdAt,
     });
     const isSaved = await this.commandRepo.saveBan(ban);
     if (!isSaved) {
