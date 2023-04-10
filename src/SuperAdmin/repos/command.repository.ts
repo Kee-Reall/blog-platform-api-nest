@@ -43,7 +43,7 @@ export class AdminCommandRepository extends Repository {
     return await this.saveEntity(blog);
   }
 
-  public async banEntities(
+  public async banUserEntities(
     userId: ObjectId,
     banStatus: boolean,
   ): Promise<boolean> {
@@ -69,6 +69,26 @@ export class AdminCommandRepository extends Repository {
       isProcessSuccess = false;
     } finally {
       return isProcessSuccess;
+    }
+  }
+
+  public async banBlogEntities(
+    blog: BlogDocument,
+    status: boolean,
+  ): Promise<boolean> {
+    try {
+      blog._isBlogBanned = status;
+      blog._banDate = status ? new Date() : null;
+      await Promise.all([
+        this.saveBlog(blog),
+        this.postModel.updateMany(
+          { blogId: blog._id },
+          { $set: { _isBlogBanned: status } },
+        ),
+      ]);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

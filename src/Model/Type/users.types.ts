@@ -77,4 +77,18 @@ export interface BanInfoModel {
   banDate: Nullable<Date>;
 }
 
+export interface BanUserForBlogInputModel extends BanUserInputModel {
+  blogId: string;
+}
+
 export type WithBanInfo<T = any> = T & { banInfo: BanInfoModel };
+
+export type UserForBloggerPresentation = {
+  id: string | ObjectId;
+  login: string;
+  banInfo: {
+    isBanned: boolean;
+    banDate: Nullable<string | Date>;
+    banReason?: Nullable<string>;
+  };
+};

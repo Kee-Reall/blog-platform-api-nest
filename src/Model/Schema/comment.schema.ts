@@ -11,6 +11,7 @@ export class CommentatorInfo implements CommentatorInfoType {
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
     readOnly: [true, MessageENUM.READONLY],
+    ref: 'User',
   })
   userId: ObjectId;
 
@@ -36,7 +37,11 @@ export class Comment implements Omit<CommentsLogicModel, '_id'> {
   @Prop({ required: true, default: () => new Date(), readonly: true })
   createdAt: Date;
 
-  @Prop({ required: [true, MessageENUM.REQUIRED_FIELD], readonly: true })
+  @Prop({
+    required: [true, MessageENUM.REQUIRED_FIELD],
+    readonly: true,
+    ref: 'Post',
+  })
   postId: ObjectId;
 
   @Prop({ default: false })

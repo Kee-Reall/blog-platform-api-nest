@@ -8,7 +8,7 @@ export type BlogDocument = HydratedDocument<Blog>;
 
 @Schema({ _id: false, versionKey: false })
 export class BlogOwnerInfo implements BlogOwnerInfoModel {
-  @Prop({ required: true, readonly: true })
+  @Prop({ required: true, readonly: true, ref: 'User' })
   userId: ObjectId;
   @Prop({ required: true })
   userLogin: string;
@@ -55,6 +55,9 @@ export class Blog implements Required<BlogLogicModel> {
   public _blogOwnerInfo: BlogOwnerInfo;
 
   @Prop({ default: false }) public _isOwnerBanned: boolean;
+  @Prop({ default: false }) public _isBlogBanned: boolean;
+  @Prop({ default: null, nullable: true }) public _banDate: Date;
+  @Prop({ type: [ObjectId], default: [] }) public _banList: ObjectId[];
 
   get id(): string {
     return this._id.toHexString();

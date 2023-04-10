@@ -15,7 +15,7 @@ export class PublicPostsByBlogPaginationPipe
     if (!blogId) {
       throw new NotFoundException();
     }
-    this.filter = { blogId, _isOwnerBanned: false };
+    this.filter = { blogId, _isOwnerBanned: false, _isBlogBanned: false };
   }
 
   private toMongoId(str: string): Nullable<ObjectId> {

@@ -29,7 +29,7 @@ export class GetPostsByBlogsUseCase implements IQueryHandler<GetPostsByBlog> {
     query: GetPostsByBlog,
   ): Promise<PaginatedOutput<WithExtendedLike<PostPresentationModel>>> {
     const blog = await this.repo.getBlogEntity(query.blogId);
-    if (!blog || blog._isOwnerBanned) {
+    if (!blog || blog._isOwnerBanned || blog._isBlogBanned) {
       throw new NotFoundException();
     }
     return await this.repo.getPaginatedPostsWithSpecifiedBlogs(

@@ -50,7 +50,7 @@ export class CreatePostUseCase
     command: CreatePost,
   ): Promise<WithExtendedLike<PostPresentationModel>> {
     const blog = await this.queryRepo.getBlogEntity(command.blogId);
-    if (!blog) {
+    if (!blog || blog._isBlogBanned) {
       throw new NotFoundException();
     }
     if (!this.isOwner(command.userId, blog._blogOwnerInfo.userId)) {

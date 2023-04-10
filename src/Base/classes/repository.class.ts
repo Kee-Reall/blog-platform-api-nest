@@ -166,13 +166,14 @@ export abstract class Repository {
     try {
       return await model.find(filter);
     } catch (e) {
+      console.log(e.message);
       return null;
     }
   }
 
   protected async findOneWithFilter<Doc>(
     model: Model<Doc>,
-    filter: FilterQuery<unknown>,
+    filter: FilterQuery<Doc>,
   ): NullablePromise<Doc> {
     try {
       return await model.findOne(filter);

@@ -37,6 +37,7 @@ export class Post implements PostLogicModel {
   @Prop({
     required: [true, MessageENUM.REQUIRED_FIELD],
     trim: true,
+    ref: 'Blog',
   })
   public blogId: ObjectId;
   @Prop({
@@ -46,10 +47,21 @@ export class Post implements PostLogicModel {
   public blogName: string;
 
   @Prop({ default: false }) public _isOwnerBanned: boolean;
-  @Prop({ required: true, readonly: true }) public _ownerId: ObjectId;
+  @Prop({ required: true, readonly: true, ref: 'User' })
+  public _ownerId: ObjectId;
+  @Prop({ default: false }) public _isBlogBanned: boolean;
 
   get id(): string {
     return this._id.toHexString();
+  }
+
+  public toPopulatedView() {
+    return {
+      id: this._id.toHexString(),
+      title: this.title,
+      blogId: this.blogId.toHexString(),
+      blogName: this.blogName,
+    };
   }
 
   static async NullableFindById(
@@ -79,6 +91,10 @@ export const PostSchema = SchemaFactory.createForClass(Post);
 PostSchema.statics = {
   NullableFindById: Post.NullableFindById,
   isPostExist: Post.NullableFindById,
+};
+
+PostSchema.methods = {
+  toPopulatedView: Post.prototype.toPopulatedView,
 };
 
 export interface PostStaticMethods {

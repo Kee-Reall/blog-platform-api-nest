@@ -1,1 +1,2 @@
-export * from './blogger.controller';
+export * from './blogger-blogs.controller';
+export * from './blogger-users.controller';

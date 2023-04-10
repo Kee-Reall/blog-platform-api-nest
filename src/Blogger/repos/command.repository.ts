@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Repository } from '../../Base';
 import {
+  Ban,
+  BanDocument,
   Blog,
   BlogDocument,
   BlogStaticMethods,
@@ -24,6 +26,7 @@ export class BloggerCommandRepository extends Repository {
     @InjectModel(Blog.name)
     private blogModel: ModelWithStatic<BlogDocument, BlogStaticMethods>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Ban.name) private banModel: Model<BanDocument>,
   ) {
     super();
   }
@@ -49,5 +52,13 @@ export class BloggerCommandRepository extends Repository {
 
   public async deletePost(postId: string) {
     return await this.deleteUsingId(this.postModel, postId);
+  }
+
+  public async saveBan(ban: BanDocument): Promise<boolean> {
+    return this.saveEntity(ban);
+  }
+
+  public async deleteBan(banId: string | ObjectId) {
+    return await this.deleteUsingId(this.banModel, banId);
   }
 }

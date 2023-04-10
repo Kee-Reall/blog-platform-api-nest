@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ImATeapotException, NotFoundException } from '@nestjs/common';
-import { Like, LikeDocument, LikeStatus } from '../../../Model';
+import { Like, LikeDocument, LikeStatus, VoidPromise } from '../../../Model';
 import { PublicQueryRepository, PublicCommandRepository } from '../../repos';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -21,7 +21,7 @@ export class LikePostUseCase implements ICommandHandler<LikePost> {
     @InjectModel(Like.name)
     private likeModel: Model<LikeDocument>,
   ) {}
-  public async execute(command: LikePost): Promise<any> {
+  public async execute(command: LikePost): VoidPromise {
     const like = await this.queryRepo.getLikeForPost(
       command.postId,
       command.userId,

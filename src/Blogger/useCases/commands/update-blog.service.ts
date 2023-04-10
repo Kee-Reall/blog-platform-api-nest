@@ -40,7 +40,7 @@ export class UpdateBlogUseCase
   }
   public async execute(command: UpdateBlog): VoidPromise {
     const blog = await this.queryRepo.getBlogEntity(command.blogId);
-    if (!blog) {
+    if (!blog || blog._isBlogBanned) {
       throw new NotFoundException();
     }
     if (!this.isOwner(command.userId, blog._blogOwnerInfo.userId)) {

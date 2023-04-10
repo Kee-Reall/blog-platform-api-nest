@@ -2,7 +2,7 @@ import { FilterQuery } from 'mongoose';
 import { Blog, BlogFilter } from '../../Model';
 import { PaginationConfig, Transformer } from '../../Base';
 
-export class BlogsForOwnerPaginationConfig extends PaginationConfig {
+export class BlogsForOwnerPaginationPipe extends PaginationConfig {
   filter: FilterQuery<Blog>;
 
   constructor(query: BlogFilter, userId: string) {
@@ -10,6 +10,7 @@ export class BlogsForOwnerPaginationConfig extends PaginationConfig {
     this.filter = {
       name: new RegExp(query.searchNameTerm || '[*]*', 'gi'),
       '_blogOwnerInfo.userId': Transformer.stringToObjectId(userId),
+      _isBlogBanned: false,
     };
   }
 }

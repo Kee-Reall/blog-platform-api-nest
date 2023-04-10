@@ -1,9 +1,14 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ImATeapotException, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  ImATeapotException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PublicCommandRepository, PublicQueryRepository } from '../../repos';
 import {
+  BanDocument,
   Comment,
   CommentDocument,
   CommentPresentationModel,
@@ -35,6 +40,16 @@ export class CreateCommentUseCase implements ICommandHandler<CreateComment> {
     ]);
     if (!post || !user) {
       throw new NotFoundException();
+    }
+    if (post._isBlogBanned) {
+      throw new NotFoundException();
+    }
+    const ban: BanDocument = await this.queryRepo.getBanEntity(
+      post.blogId,
+      user._id,
+    );
+    if (ban && ban.isBanned) {
+      throw new ForbiddenException();
     }
     const comment = new this.commentModel({
       postId: post._id,

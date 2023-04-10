@@ -37,6 +37,9 @@ export class DeletePostUseCase
       throw new NotFoundException();
     }
     const [user, blog, post] = entities;
+    if (blog._isOwnerBanned) {
+      throw new NotFoundException();
+    }
     if (!this.isPostBelongToBlog(post, blog)) {
       throw new NotFoundException();
     }

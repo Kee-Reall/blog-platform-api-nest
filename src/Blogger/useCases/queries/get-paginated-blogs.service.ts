@@ -5,12 +5,12 @@ import {
   PaginatedOutput,
 } from '../../../Model';
 import { BloggerQueryRepository } from '../../repos';
-import { BlogsForOwnerPaginationConfig } from '../../pipes';
+import { BlogsForOwnerPaginationPipe } from '../../pipes';
 
 export class GetPaginatedBlogs {
-  public config: BlogsForOwnerPaginationConfig;
+  public config: BlogsForOwnerPaginationPipe;
   constructor(userId: string, filters: BlogFilter) {
-    this.config = new BlogsForOwnerPaginationConfig(filters, userId);
+    this.config = new BlogsForOwnerPaginationPipe(filters, userId);
   }
 }
 

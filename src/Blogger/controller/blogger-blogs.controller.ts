@@ -20,6 +20,7 @@ import {
   AccessTokenMeta,
   BlogFilter,
   BlogPresentationModel,
+  CommentsFilter,
   PaginatedOutput,
   PostPresentationModel,
   VoidPromise,
@@ -28,7 +29,7 @@ import {
 
 @Controller('api/blogger/blogs')
 @UseGuards(JwtGuard)
-export class BloggerController {
+export class BloggerBlogsController {
   constructor(private queryBus: QueryBus, private commandBus: CommandBus) {}
   @Get()
   public async getBlogsForOwner(
@@ -40,8 +41,17 @@ export class BloggerController {
     );
   }
 
+  @Get('comments')
+  public async getCommentsForBlogger(
+    @Meta() meta: AccessTokenMeta,
+    @Query() filters: CommentsFilter,
+  ) {
+    return await this.queryBus.execute(
+      new bloggerQueries.GetCommentsForBlogger(meta.userId, filters),
+    );
+  }
   @Post()
-  public async CreateBlog(
+  public async createBlog(
     @Meta() user: AccessTokenMeta,
     @Body() dto: BlogInput,
   ): Promise<BlogPresentationModel> {
@@ -51,7 +61,7 @@ export class BloggerController {
   }
 
   @Post(':id/posts')
-  public async CreatePost(
+  public async createPost(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: PostInput,
@@ -63,7 +73,7 @@ export class BloggerController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async UpdateBlog(
+  public async updateBlog(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
     @Body() dto: BlogInput,
@@ -75,7 +85,7 @@ export class BloggerController {
 
   @Put(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async UpdatePost(
+  public async updatePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
     @Meta() tknMeta: AccessTokenMeta,
@@ -88,7 +98,7 @@ export class BloggerController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async DeleteBlog(
+  public async deleteBlog(
     @Param('id') blogId: string,
     @Meta() tknMeta: AccessTokenMeta,
   ): VoidPromise {
@@ -99,7 +109,7 @@ export class BloggerController {
 
   @Delete(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async DeletePost(
+  public async deletePost(
     @Param('blogId', MatchMongoIdPipe) blogId: string,
     @Param('postId', MatchMongoIdPipe) postId: string,
     @Meta() tknMeta: AccessTokenMeta,

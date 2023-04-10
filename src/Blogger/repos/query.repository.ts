@@ -1,18 +1,28 @@
 import { Model } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Repository } from '../../Base';
 import {
+  Ban,
+  BanDocument,
   Blog,
   BlogDocument,
   BlogPresentationModel,
+  Comment,
+  CommentDocument,
   IPaginationConfig,
+  Like,
+  LikeDocument,
+  LikesInfo,
   NullablePromise,
   PaginatedOutput,
+  Populated,
   Post,
   PostDocument,
   User,
   UserDocument,
+  UserForBloggerPresentation,
 } from '../../Model';
 
 @Injectable()
@@ -21,6 +31,9 @@ export class BloggerQueryRepository extends Repository {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Ban.name) private banModel: Model<BanDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
   ) {
     super();
   }
@@ -29,13 +42,8 @@ export class BloggerQueryRepository extends Repository {
   ): Promise<PaginatedOutput<BlogPresentationModel>> {
     const [itemsDoc, totalCount] = await this.paginate(this.blogModel, config);
     const items = itemsDoc as unknown as BlogPresentationModel[];
-    return {
-      pagesCount: Math.ceil(totalCount / config.limit),
-      page: config.pageNumber,
-      pageSize: config.limit,
-      totalCount,
-      items,
-    };
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ limit, pageNumber, totalCount }, items);
   }
 
   public async isBlogExist(blogId: string): Promise<boolean> {
@@ -52,5 +60,62 @@ export class BloggerQueryRepository extends Repository {
 
   public async getPostEntity(postId: string): NullablePromise<PostDocument> {
     return await this.findById(this.postModel, postId);
+  }
+
+  public async getBanEntity(
+    ownerId: string,
+    userId: string,
+    blogId: string,
+  ): NullablePromise<BanDocument> {
+    try {
+      return await this.findOneWithFilter(this.banModel, {
+        ownerId: new ObjectId(ownerId),
+        bannedUserId: new ObjectId(userId),
+        blogId: new ObjectId(blogId),
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  public async getBannedUsersWithPaginationConfigForOwner(
+    config: IPaginationConfig,
+  ): Promise<PaginatedOutput<UserForBloggerPresentation>> {
+    const [itemsDoc, totalCount] = await this.paginate(this.banModel, config);
+    const items = itemsDoc.map((user) => user.toPresentationModel());
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ totalCount, limit, pageNumber }, items);
+  }
+
+  public async getAllPostsByOwner(userId: string) {
+    return await this.findManyWithFilter(this.postModel, {
+      _ownerId: new ObjectId(userId),
+    });
+  }
+
+  public async getCommentsForPost(config: IPaginationConfig, userId: string) {
+    const [itemsDoc, totalCount] = await this.paginate(
+      this.commentModel,
+      config,
+    );
+    const likesInfo: LikesInfo[] = await this.countLikesInfo(
+      this.likeModel,
+      itemsDoc,
+      userId,
+    );
+    const items = await Promise.all(
+      itemsDoc.map(async (comment, idx) => {
+        const populatedComment = (await comment.populate(
+          'postId',
+        )) as Populated<CommentDocument, PostDocument, 'postId'>;
+        return {
+          ...populatedComment.toJSON(),
+          postInfo: populatedComment.postId.toPopulatedView(),
+          likesInfo: likesInfo[idx],
+        };
+      }),
+    );
+    const { limit, pageNumber } = config;
+    return this.paginationOutput({ totalCount, limit, pageNumber }, items);
   }
 }
