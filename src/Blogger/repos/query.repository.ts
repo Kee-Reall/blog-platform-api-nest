@@ -12,6 +12,9 @@ import {
   Comment,
   CommentDocument,
   IPaginationConfig,
+  Like,
+  LikeDocument,
+  LikesInfo,
   NullablePromise,
   PaginatedOutput,
   Populated,
@@ -30,6 +33,7 @@ export class BloggerQueryRepository extends Repository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Ban.name) private banModel: Model<BanDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
   ) {
     super();
   }
@@ -89,19 +93,25 @@ export class BloggerQueryRepository extends Repository {
     });
   }
 
-  public async getCommentsForPost(config: IPaginationConfig) {
+  public async getCommentsForPost(config: IPaginationConfig, userId: string) {
     const [itemsDoc, totalCount] = await this.paginate(
       this.commentModel,
       config,
     );
+    const likesInfo: LikesInfo[] = await this.countLikesInfo(
+      this.likeModel,
+      itemsDoc,
+      userId,
+    );
     const items = await Promise.all(
-      itemsDoc.map(async (comment) => {
+      itemsDoc.map(async (comment, idx) => {
         const populatedComment = (await comment.populate(
           'postId',
         )) as Populated<CommentDocument, PostDocument, 'postId'>;
         return {
           ...populatedComment.toJSON(),
           postInfo: populatedComment.postId.toPopulatedView(),
+          likesInfo: likesInfo[idx],
         };
       }),
     );

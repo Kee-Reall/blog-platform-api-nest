@@ -24,7 +24,10 @@ export class GetCommentsForBloggerUseCase
       _isOwnerBanned: false,
       postId: { $in: postsId },
     };
-    const comments = await this.repo.getCommentsForPost(query.config);
+    const comments = await this.repo.getCommentsForPost(
+      query.config,
+      query.userId,
+    );
     console.log(comments);
     return comments;
   }
