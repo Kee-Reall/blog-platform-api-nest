@@ -34,10 +34,16 @@ export class AdminQueryRepository extends Repository {
   ): Promise<PaginatedOutput<WithBanInfo<BlogPresentationModel>>> {
     const [itemsDoc, totalCount] = await this.paginate(this.blogModel, config);
     const { limit, pageNumber } = config;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     const items: WithBanInfo<BlogPresentationModel>[] = itemsDoc.map(
       (blog) => ({
         ...blog.toJSON(),
         blogOwnerInfo: blog._blogOwnerInfo,
+        banInfo: {
+          isBanned: blog._isBlogBanned,
+          banDate: blog._banDate,
+        },
       }),
     );
     const digits = { totalCount, limit, pageNumber };

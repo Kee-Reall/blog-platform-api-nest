@@ -89,6 +89,6 @@ export type UserForBloggerPresentation = {
   banInfo: {
     isBanned: boolean;
     banDate: Nullable<string | Date>;
-    banReason: Nullable<string>;
+    banReason?: Nullable<string>;
   };
 };

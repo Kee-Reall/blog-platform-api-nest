@@ -56,8 +56,8 @@ export class Blog implements Required<BlogLogicModel> {
 
   @Prop({ default: false }) public _isOwnerBanned: boolean;
   @Prop({ default: false }) public _isBlogBanned: boolean;
-
-  @Prop({ type: [ObjectId], default: [] }) _banList: ObjectId[];
+  @Prop({ default: null, nullable: true }) public _banDate: Date;
+  @Prop({ type: [ObjectId], default: [] }) public _banList: ObjectId[];
 
   get id(): string {
     return this._id.toHexString();
