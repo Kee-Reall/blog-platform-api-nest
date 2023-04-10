@@ -13,7 +13,7 @@ import { MessageENUM } from '../../Helpers';
 @ValidatorConstraint({ async: true })
 export class IsLoginUniqueConstraint implements ValidatorConstraintInterface {
   constructor(private queryRepo: AdminQueryRepository) {}
-  async validate(
+  public async validate(
     value: string,
     validationArguments?: ValidationArguments,
   ): Promise<boolean> {
