@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TestingController } from './testing.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  Ban,
+  BanSchema,
   Blog,
   BlogSchema,
   Comment,
@@ -19,6 +21,7 @@ import {
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: Ban.name, schema: BanSchema },
       { name: Post.name, schema: PostSchema },
       { name: Blog.name, schema: BlogSchema },
       { name: Like.name, schema: LikeSchema },

@@ -23,16 +23,19 @@ import {
   UserDocument,
   SessionDocument,
   Session,
+  Ban,
+  BanDocument,
 } from '../Model';
 
 @Controller('api/testing')
 export class TestingController {
   constructor(
+    @InjectModel(Ban.name) private banModel: Model<BanDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
   ) {}
 
@@ -69,6 +72,7 @@ export class TestingController {
       this.commentModel.deleteMany({}),
       this.userModel.deleteMany({}),
       this.sessionModel.deleteMany({}),
+      this.banModel.deleteMany({}),
     ]);
     return;
   }
