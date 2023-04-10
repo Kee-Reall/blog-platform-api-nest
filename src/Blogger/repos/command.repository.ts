@@ -34,7 +34,7 @@ export class BloggerCommandRepository extends Repository {
     return this.saveEntity(blog);
   }
 
-  async savePost(post: PostDocument): Promise<boolean> {
+  public async savePost(post: PostDocument): Promise<boolean> {
     return this.saveEntity(post);
   }
 

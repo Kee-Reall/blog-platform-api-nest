@@ -9,7 +9,7 @@ import { MessageENUM } from '../../Helpers';
 
 @ValidatorConstraint({ name: 'isValidObjectId', async: false })
 export class IsValidObjectIdConstraint implements ValidatorConstraintInterface {
-  validate(str: string) {
+  public validate(str: string) {
     return ObjectId.isValid(str);
   }
 }

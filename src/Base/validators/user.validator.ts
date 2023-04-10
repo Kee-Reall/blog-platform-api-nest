@@ -6,12 +6,12 @@ export class UserValidator implements UserInputModel {
   @TrimIfString()
   @IsEmail()
   @Length(5, 100)
-  email: string;
+  public email: string;
   @TrimIfString()
   @Length(3, 10)
   @Matches(/^[a-zA-Z0-9_-]*$/)
-  login: string;
+  public login: string;
   @TrimIfString()
   @Length(6, 20)
-  password: string;
+  public password: string;
 }

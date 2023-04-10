@@ -9,7 +9,7 @@ import { Response } from 'express';
 
 @Catch(HttpException)
 export class GlobalHTTPFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  public catch(exception: HttpException, host: ArgumentsHost) {
     const [response, status, errorsMessages] = [
       host.switchToHttp().getResponse<Response>(),
       exception.getStatus(),

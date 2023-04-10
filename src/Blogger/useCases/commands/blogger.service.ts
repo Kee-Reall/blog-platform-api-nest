@@ -5,6 +5,10 @@ import {
   PostDocument,
   UserDocument,
 } from '../../../Model';
+import { DeletePost } from './delete-post.service';
+import { UpdatePost } from './update-post.service';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BloggerQueryRepository } from '../../repos';
 
 export abstract class BloggerService {
   protected isOwner(userId: string, ownerId: ObjectId): boolean {
@@ -46,5 +50,30 @@ export abstract class BloggerService {
       this.isOwner(user.id, blog._blogOwnerInfo.userId) &&
       this.isOwner(user.id, post._ownerId)
     );
+  }
+
+  protected async checkEntitiesThenGetPost(
+    command: DeletePost | UpdatePost,
+    repo: BloggerQueryRepository,
+  ): Promise<PostDocument> {
+    const entities = await Promise.all([
+      repo.getUserEntity(command.userId),
+      repo.getBlogEntity(command.blogId),
+      repo.getPostEntity(command.postId),
+    ]);
+    if (!this.isAllFound(entities)) {
+      throw new NotFoundException();
+    }
+    const [user, blog, post] = entities;
+    if (blog._isOwnerBanned) {
+      throw new NotFoundException();
+    }
+    if (!this.isPostBelongToBlog(post, blog)) {
+      throw new NotFoundException();
+    }
+    if (!this.isUserOwnBlogAndPost(user, blog, post)) {
+      throw new ForbiddenException();
+    }
+    return post;
   }
 }

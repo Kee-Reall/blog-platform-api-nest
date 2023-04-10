@@ -3,7 +3,7 @@ import { Blog, BlogFilter } from '../../Model';
 import { PaginationConfig, Transformer } from '../../Base';
 
 export class BlogsForOwnerPaginationPipe extends PaginationConfig {
-  filter: FilterQuery<Blog>;
+  public filter: FilterQuery<Blog>;
 
   constructor(query: BlogFilter, userId: string) {
     super(query);

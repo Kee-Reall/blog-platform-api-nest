@@ -18,9 +18,9 @@ import {
 } from '../../../Model';
 
 export class CreatePost implements PostInputModel {
-  content: string;
-  shortDescription: string;
-  title: string;
+  public content: string;
+  public shortDescription: string;
+  public title: string;
 
   constructor(
     public userId: string,

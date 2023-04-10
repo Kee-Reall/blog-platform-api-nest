@@ -20,9 +20,9 @@ export class BlogsPagination
 }
 
 export class DefaultBlogQuery implements Required<BlogFilter> {
-  pageNumber: number = 1;
-  pageSize: number = 10;
-  searchNameTerm: string = '[*]*';
-  sortBy: string | keyof BlogPresentationModel = 'createdAt';
-  sortDirection: Direction = 'desc';
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public searchNameTerm: string = '[*]*';
+  public sortBy: string | keyof BlogPresentationModel = 'createdAt';
+  public sortDirection: Direction = 'desc';
 }

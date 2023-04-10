@@ -12,10 +12,10 @@ import {
 } from '../../../Model';
 
 export class CreateBlog implements BlogInputModel {
-  description: string;
+  public description: string;
 
-  name: string;
-  websiteUrl: string;
+  public name: string;
+  public websiteUrl: string;
   constructor(public userId: string, dto: BlogInputModel) {
     this.name = dto.name;
     this.description = dto.description;
