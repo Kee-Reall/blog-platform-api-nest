@@ -62,13 +62,9 @@ export class AdminQueryRepository extends Repository {
     const items: WithBanInfo<UserPresentationModel>[] = itemsDoc.map(
       (user: UserDocument) => ({ ...user.toJSON(), banInfo: user.banInfo }),
     );
-    return {
-      pagesCount: Math.ceil(totalCount / config.limit),
-      page: config.pageNumber,
-      pageSize: config.limit,
-      totalCount,
-      items,
-    };
+    const { limit, pageNumber } = config;
+    const digits = { totalCount, limit, pageNumber };
+    return this.paginationOutput(digits, items);
   }
 
   public async isUserUnique(

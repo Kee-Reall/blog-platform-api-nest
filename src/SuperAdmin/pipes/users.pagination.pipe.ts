@@ -14,7 +14,7 @@ export class UsersPaginationConfig extends PaginationConfig {
     const banStatus =
       query.banStatus === 'banned'
         ? true
-        : query.banStatus === 'notBanned' //если banned, то банстатус Тру, если notBanned он будет фолс
+        : query.banStatus === 'notBanned' //если banned, то banSatatus τρυe, если notBanned он будет false
         ? false
         : undefined; // если ни то, ни другое, то undefined
     const filter = {
