@@ -33,24 +33,25 @@ export class UpdatePostUseCase
     super();
   }
   public async execute(command: UpdatePost): VoidPromise {
-    const entities = await Promise.all([
-      this.queryRepo.getUserEntity(command.userId),
-      this.queryRepo.getBlogEntity(command.blogId),
-      this.queryRepo.getPostEntity(command.postId),
-    ]);
-    if (!this.isAllFound(entities)) {
-      throw new NotFoundException();
-    }
-    const [user, blog, post] = entities;
-    if (blog._isOwnerBanned) {
-      throw new NotFoundException();
-    }
-    if (!this.isPostBelongToBlog(post, blog)) {
-      throw new NotFoundException();
-    }
-    if (!this.isUserOwnBlogAndPost(user, blog, post)) {
-      throw new ForbiddenException();
-    }
+    const post = await this.checkEntitiesThenGetPost(command, this.queryRepo);
+    // const entities = await Promise.all([
+    //   this.queryRepo.getUserEntity(command.userId),
+    //   this.queryRepo.getBlogEntity(command.blogId),
+    //   this.queryRepo.getPostEntity(command.postId),
+    // ]);
+    // if (!this.isAllFound(entities)) {
+    //   throw new NotFoundException();
+    // }
+    // const [user, blog, post] = entities;
+    // if (blog._isOwnerBanned) {
+    //   throw new NotFoundException();
+    // }
+    // if (!this.isPostBelongToBlog(post, blog)) {
+    //   throw new NotFoundException();
+    // }
+    // if (!this.isUserOwnBlogAndPost(user, blog, post)) {
+    //   throw new ForbiddenException();
+    // }
     post.title = command.title;
     post.content = command.content;
     post.shortDescription = command.shortDescription;
