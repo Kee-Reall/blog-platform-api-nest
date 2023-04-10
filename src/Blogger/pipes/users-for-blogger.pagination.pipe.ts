@@ -13,5 +13,11 @@ export class UsersForBloggerPaginationPipe extends PaginationConfig {
       ownerId: new ObjectId(ownerId),
       blogId: new ObjectId(blogId),
     };
+    if (this.sortBy === 'login') {
+      this.sortBy = 'bannedUserLogin';
+    }
+    if (this.sortBy === 'id') {
+      this.sortBy = 'bannedUserId';
+    }
   }
 }
